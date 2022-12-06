@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
 @Entity
 public class Library {
     @Id
@@ -23,6 +25,7 @@ public class Library {
     private String path;
     @OneToMany(mappedBy = "library")
     @JsonIgnore
+    @ToString.Exclude
     List<Manga> mangas;
 
     public Library(String name, String path) {

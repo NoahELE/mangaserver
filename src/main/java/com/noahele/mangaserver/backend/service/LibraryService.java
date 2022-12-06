@@ -23,50 +23,48 @@ public class LibraryService {
         this.mangaService = mangaService;
     }
 
-    public List<Library> getAllLibraries() {
-        return new ArrayList<>(repo.findAll());
-    }
-
-    public Library getLibraryById(Integer id) {
-        return repo.findById(id).orElseThrow();
-    }
-
     public void addLibrary(Library library) {
         repo.save(library);
     }
 
-    public List<Manga> listManga(Integer id) {
-        return repo.findById(id).orElseThrow().getMangas();
-    }
-
-    public void scanManga(Integer id) {
-        Library library = getLibraryById(id);
-        File currDir = new File(library.getPath());
-        // check whether it is a valid directory
-        if (!currDir.isDirectory()) {
-            throw new RuntimeException("library path %s is not a directory".formatted(library.getPath()));
-        }
-        List<Manga> fileList = new ArrayList<>();
-        scanMangaRecursive(fileList, currDir, library);
-        fileList.forEach(mangaService::addManga);
-    }
-
-    private void scanMangaRecursive(List<Manga> fileList, File currDir, Library library) {
-        for (File f : Objects.requireNonNull(currDir.listFiles())) {
-            if (f.isDirectory()) {
-                scanMangaRecursive(fileList, f, library);
-            } else if (SUPPORTED_FORMATS.contains(Files.getFileExtension(f.getName()))) {
-                fileList.add(new Manga(f, library));
-            }
-        }
-    }
-
-    public void deleteLibrary(Integer id) {
+    public void deleteLibrary(int id) {
         repo.deleteById(id);
     }
 
-    public void updateLibrary(Integer id, Library library) {
+    public void updateLibrary(int id, Library library) {
         library.setId(id);
         repo.save(library);
+    }
+
+    public List<Library> getAllLibraries() {
+        return new ArrayList<>(repo.findAll());
+    }
+
+    public Library getLibraryById(int id) {
+        return repo.findById(id).orElseThrow();
+    }
+
+    public List<Manga> listManga(int id) {
+        return repo.findById(id).orElseThrow().getMangas();
+    }
+
+    public void scanManga(int id) {
+        Library library = getLibraryById(id);
+        File currDir = new File(library.getPath());
+        // check whether it is a valid directory
+        assert currDir.isDirectory();
+        List<Manga> mangaList = new ArrayList<>();
+        scanMangaRecursive(mangaList, currDir, library);
+        mangaService.addAllManga(mangaList);
+    }
+
+    private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) {
+        for (File file : Objects.requireNonNull(currDir.listFiles())) {
+            if (file.isDirectory()) {
+                scanMangaRecursive(mangaList, file, library);
+            } else if (SUPPORTED_FORMATS.contains(Files.getFileExtension(file.getName()))) {
+                mangaList.add(new Manga(file, library));
+            }
+        }
     }
 }

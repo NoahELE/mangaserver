@@ -16,38 +16,38 @@ public class LibraryController {
         this.service = service;
     }
 
-    @GetMapping("")
-    private List<Library> getAllLibraries() {
-        return service.getAllLibraries();
-    }
-
-    @GetMapping("/{id}")
-    public Library getLibraryById(@PathVariable Integer id) {
-        return service.getLibraryById(id);
-    }
-
-    @GetMapping("/{id}/scan-manga")
-    public void scanManga(@PathVariable Integer id) {
-        service.scanManga(id);
-    }
-
-    @GetMapping("/{id}/list-manga")
-    public List<Manga> listManga(@PathVariable Integer id) {
-        return service.listManga(id);
-    }
-
     @PostMapping("")
     public void addLibrary(@RequestBody Library library) {
         service.addLibrary(library);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteLibrary(@PathVariable Integer id) {
+    public void deleteLibrary(@PathVariable int id) {
         service.deleteLibrary(id);
     }
 
     @PutMapping("/{id}")
-    public void updateLibrary(@PathVariable Integer id, @RequestBody Library library) {
+    public void updateLibrary(@PathVariable int id, @RequestBody Library library) {
         service.updateLibrary(id, library);
+    }
+
+    @GetMapping("")
+    private List<Library> getAllLibraries() {
+        return service.getAllLibraries();
+    }
+
+    @GetMapping("/{id}")
+    public Library getLibraryById(@PathVariable int id) {
+        return service.getLibraryById(id);
+    }
+
+    @GetMapping("/{id}/scan-manga")
+    public void scanManga(@PathVariable int id) {
+        service.scanManga(id);
+    }
+
+    @GetMapping("/{id}/list-manga")
+    public List<Manga> listManga(@PathVariable int id) {
+        return service.listManga(id);
     }
 }

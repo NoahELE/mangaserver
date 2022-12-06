@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.io.File;
@@ -14,32 +15,33 @@ import java.util.Objects;
 
 @Getter
 @Setter
+@ToString
 @Entity
 public class Manga {
     @Id
     @GeneratedValue
     private Integer id;
     private String name;
-    private String path;
     private String ext;
+    private String path;
     @ManyToOne
     private Library library;
 
-    public Manga(String name, String path, String ext, Library library) {
+    public Manga(String name, String ext, String path, Library library) {
         this.name = name;
-        this.path = path;
         this.ext = ext;
+        this.path = path;
         this.library = library;
-    }
-
-    protected Manga() {
     }
 
     public Manga(File mangaFile, Library library) {
-        this.name = Files.getFileExtension(mangaFile.getName());
-        this.path = mangaFile.getPath();
-        this.ext = Files.getNameWithoutExtension(mangaFile.getName());
-        this.library = library;
+        this(Files.getFileExtension(mangaFile.getName()),
+                Files.getNameWithoutExtension(mangaFile.getName()),
+                mangaFile.getPath(),
+                library);
+    }
+
+    protected Manga() {
     }
 
     @Override

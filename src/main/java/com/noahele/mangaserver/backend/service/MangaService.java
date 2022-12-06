@@ -7,10 +7,12 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.io.Files;
 import com.noahele.mangaserver.backend.entity.Library;
 import com.noahele.mangaserver.backend.entity.Manga;
+import com.noahele.mangaserver.backend.exception.UnsupportedFormatException;
 import com.noahele.mangaserver.backend.repository.MangaRepository;
 import com.noahele.mangaserver.backend.util.MangaReader;
 import com.noahele.mangaserver.backend.util.ZipMangaReader;
 import lombok.NonNull;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -36,9 +38,11 @@ public class MangaService {
             .build(new CacheLoader<>() {
                 @Override
                 public @NonNull MangaReader load(@NonNull String path) throws Exception {
-                    return switch (Files.getFileExtension(path)) {
+                    String ext = Files.getFileExtension(path);
+                    return switch (ext) {
                         case "zip" -> new ZipMangaReader(path);
-                        default -> throw new RuntimeException("not implemented");
+                        // TODO support more archive format
+                        default -> throw new UnsupportedFormatException("unknown archive type: " + ext);
                     };
                 }
             });
@@ -47,33 +51,45 @@ public class MangaService {
         this.repo = repo;
     }
 
+    public void addManga(Manga manga) {
+        repo.save(manga);
+    }
+
+    public void addAllManga(List<Manga> mangaList) {
+        repo.saveAll(mangaList);
+    }
+
+    public void deleteManga(int id) {
+        repo.deleteById(id);
+    }
+
+    public void updateManga(int id, Manga manga) {
+        manga.setId(id);
+        repo.save(manga);
+    }
+
     public List<Manga> getAllMangasInLibrary(Library library) {
         return repo.findAllByLibrary(library);
     }
 
-    public Manga getMangaById(Integer id) {
+    public Manga getMangaById(int id) {
         return repo.findById(id).orElseThrow();
     }
 
-    public void addManga(Manga manga) {
-        // check duplication
-        if (repo.existsByPath(manga.getPath())) {
-            throw new RuntimeException("manga with path %s already exists".formatted(manga.getPath()));
-        }
-        repo.save(manga);
-    }
-
-    public void deleteManga(Integer id) {
-        repo.deleteById(id);
-    }
-
-    public List<String> getAllMangaImagesNames(Integer id) throws ExecutionException {
-        Manga manga = getMangaById(id);
+    public List<String> getAllMangaPageNames(Manga manga) throws ExecutionException {
         return readerCache.get(manga.getPath()).getAllFileNames();
     }
 
-    public byte[] getMangaPage(Integer id, int pageIndex) throws ExecutionException {
-        Manga manga = getMangaById(id);
+    public byte[] getMangaPage(Manga manga, int pageIndex) throws ExecutionException {
         return readerCache.get(manga.getPath()).getPage(pageIndex);
+    }
+
+    public MediaType getMangaPageExt(Manga manga, int pageIndex) throws ExecutionException {
+        String ext = Files.getFileExtension(readerCache.get(manga.getPath()).getAllFileNames().get(pageIndex));
+        return switch (ext) {
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
+            case "png" -> MediaType.IMAGE_PNG;
+            default -> throw new UnsupportedFormatException("unknown image type: " + ext);
+        };
     }
 }
