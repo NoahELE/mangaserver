@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "mangaserver.database",
+      "type": "java.lang.String",
+      "description": "The path of the sqlite database."
+    }
+  ]
+}

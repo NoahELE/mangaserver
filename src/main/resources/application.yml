@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    driver-class-name: org.sqlite.JDBC
+    url: jdbc:sqlite:${mangaserver.database}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: true
+
+mangaserver:
+  database: database.sqlite
