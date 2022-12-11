@@ -2,13 +2,13 @@ package com.noahele.mangaserver.backend.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,16 +17,14 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-public class Library {
-    @Id
-    @GeneratedValue
-    private Integer id;
+@EntityListeners(AuditingEntityListener.class)
+public class Library extends BaseEntity {
     private String name;
     private String path;
-    @OneToMany(mappedBy = "library")
-    @JsonIgnore
     @ToString.Exclude
-    List<Manga> mangas;
+    @JsonIgnore
+    @OneToMany(mappedBy = "library")
+    List<Manga> mangaList;
 
     public Library(String name, String path) {
         this.name = name;

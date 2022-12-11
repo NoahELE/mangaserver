@@ -45,7 +45,7 @@ public class LibraryService {
     }
 
     public List<Manga> listManga(int id) {
-        return repo.findById(id).orElseThrow().getMangas();
+        return repo.findById(id).orElseThrow().getMangaList();
     }
 
     public void scanManga(int id) {

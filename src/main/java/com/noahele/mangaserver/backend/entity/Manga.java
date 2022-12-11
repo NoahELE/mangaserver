@@ -2,8 +2,6 @@ package com.noahele.mangaserver.backend.entity;
 
 import com.google.common.io.Files;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,10 +15,7 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-public class Manga {
-    @Id
-    @GeneratedValue
-    private Integer id;
+public class Manga extends BaseEntity {
     private String name;
     private String ext;
     private String path;
