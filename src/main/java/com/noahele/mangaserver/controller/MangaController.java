@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -82,7 +81,7 @@ public class MangaController {
     }
 
     @GetMapping("/{id}/page/{pageIndex}")
-    public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex) throws ExecutionException {
+    public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex) {
         log.info("Get page {} from manga with id {}", pageIndex, id);
         Manga manga = mangaService.getManga(id);
         return ResponseEntity.ok()

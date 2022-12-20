@@ -20,7 +20,7 @@ import java.util.Objects;
 @Entity
 public class User extends BaseEntity {
     @NotBlank
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String username;
     @ToString.Exclude
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

@@ -1,61 +1,73 @@
 package com.noahele.mangaserver.util;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheStats;
-import com.google.common.collect.ImmutableMap;
-import lombok.NonNull;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Policy;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
+import org.checkerframework.checker.index.qual.NonNegative;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.checkerframework.checker.nullness.qual.PolyNull;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.CheckForNull;
+import java.time.Duration;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 @Component
 public class UserCache implements Cache<Integer, MyUserDetails> {
-    private final int USER_CACHE_SIZE = 32;
-    private final Cache<Integer, MyUserDetails> cache = CacheBuilder.newBuilder()
-            .initialCapacity(USER_CACHE_SIZE)
-            .maximumSize(USER_CACHE_SIZE)
+    private static final int MAX_USER = 128;
+    private static final int EXPIRE_DAYS = 1;
+    private final Cache<Integer, MyUserDetails> cache = Caffeine.newBuilder()
+            .initialCapacity(MAX_USER)
+            .maximumSize(MAX_USER)
+            .expireAfterAccess(Duration.ofDays(EXPIRE_DAYS))
             .build();
 
-    @CheckForNull
     @Override
-    public MyUserDetails getIfPresent(@NonNull Object key) {
+    public @Nullable MyUserDetails getIfPresent(Integer key) {
         return cache.getIfPresent(key);
     }
 
     @Override
-    public @NonNull MyUserDetails get(@NonNull Integer key,
-                                      @NonNull Callable<? extends MyUserDetails> loader)
-            throws ExecutionException {
-        return cache.get(key, loader);
+    public @PolyNull MyUserDetails get(Integer key,
+                                       Function<? super Integer,
+                                               ? extends @PolyNull MyUserDetails>
+                                               mappingFunction) {
+        return cache.get(key, mappingFunction);
     }
 
     @Override
-    public @NonNull ImmutableMap<Integer, MyUserDetails> getAllPresent(@NonNull Iterable<?> keys) {
+    public Map<Integer, MyUserDetails> getAllPresent(Iterable<? extends Integer> keys) {
         return cache.getAllPresent(keys);
     }
 
     @Override
-    public void put(@NonNull Integer key, @NonNull MyUserDetails value) {
+    public Map<Integer, MyUserDetails> getAll(Iterable<? extends Integer> keys,
+                                              Function<? super Set<? extends Integer>,
+                                                      ? extends Map<? extends Integer, ? extends MyUserDetails>>
+                                                      mappingFunction) {
+        return cache.getAll(keys, mappingFunction);
+    }
+
+    @Override
+    public void put(Integer key, MyUserDetails value) {
         cache.put(key, value);
     }
 
     @Override
-    public void putAll(@NonNull Map<? extends Integer, ? extends MyUserDetails> m) {
-        cache.putAll(m);
+    public void putAll(Map<? extends Integer, ? extends MyUserDetails> map) {
+        cache.putAll(map);
     }
 
     @Override
-    public void invalidate(@NonNull Object key) {
+    public void invalidate(Integer key) {
         cache.invalidate(key);
     }
 
     @Override
-    public void invalidateAll(@NonNull Iterable<?> keys) {
+    public void invalidateAll(Iterable<? extends Integer> keys) {
         cache.invalidateAll(keys);
     }
 
@@ -65,22 +77,27 @@ public class UserCache implements Cache<Integer, MyUserDetails> {
     }
 
     @Override
-    public long size() {
-        return cache.size();
+    public @NonNegative long estimatedSize() {
+        return cache.estimatedSize();
     }
 
     @Override
-    public @NonNull CacheStats stats() {
+    public CacheStats stats() {
         return cache.stats();
     }
 
     @Override
-    public @NonNull ConcurrentMap<Integer, MyUserDetails> asMap() {
+    public ConcurrentMap<Integer, MyUserDetails> asMap() {
         return cache.asMap();
     }
 
     @Override
     public void cleanUp() {
         cache.cleanUp();
+    }
+
+    @Override
+    public Policy<Integer, MyUserDetails> policy() {
+        return cache.policy();
     }
 }

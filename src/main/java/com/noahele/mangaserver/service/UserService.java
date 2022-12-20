@@ -8,10 +8,9 @@ import com.noahele.mangaserver.util.UserCache;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class UserService {
@@ -51,7 +50,7 @@ public class UserService {
         return userRepository.findById(id).orElseThrow();
     }
 
-    public String login(User user) throws ExecutionException {
+    public String login(User user) {
         // authenticate the user
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
@@ -61,5 +60,15 @@ public class UserService {
         userCache.put(userDetails.getId(), userDetails);
         // return the generated jws
         return JwtUtils.createJws(userDetails);
+    }
+
+    public MyUserDetails logout() {
+        // get authentication from context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // cast to MyUserDetails
+        MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        // invalidate from cache
+        userCache.invalidate(myUserDetails.getId());
+        return myUserDetails;
     }
 }

@@ -1,9 +1,7 @@
 package com.noahele.mangaserver.util.reader;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import lombok.NonNull;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
@@ -13,21 +11,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class ZipMangaReader implements MangaReader {
     private final ZipFile zipFile;
-    private final List<String> fileNames;
+    private final List<String> filenames;
     private static final int PAGE_CACHE_SIZE = 16;
-    private final LoadingCache<String, byte[]> pageCache = CacheBuilder.newBuilder()
-            .initialCapacity(PAGE_CACHE_SIZE)
-            .maximumSize(PAGE_CACHE_SIZE)
-            .build(new CacheLoader<>() {
-                @Override
-                public byte @NonNull [] load(@NonNull String fileName) throws Exception {
-                    return IOUtils.toByteArray(zipFile.getInputStream(zipFile.getEntry(fileName)));
-                }
-            });
+    private final LoadingCache<String, byte[]> pageCache;
 
     public ZipMangaReader(String file) throws IOException {
         this.zipFile = new ZipFile(file);
@@ -42,17 +31,23 @@ public class ZipMangaReader implements MangaReader {
         }
         // list of names is sorted
         entryList.sort(Comparator.comparing(ZipArchiveEntry::getName));
-        this.fileNames = entryList.stream().map(ZipArchiveEntry::getName).toList();
+        this.filenames = entryList.stream().map(ZipArchiveEntry::getName).toList();
+        // init page cache
+        this.pageCache = Caffeine.newBuilder()
+                .initialCapacity(PAGE_CACHE_SIZE)
+                .maximumSize(PAGE_CACHE_SIZE)
+                .build(filename ->
+                        IOUtils.toByteArray(zipFile.getInputStream(zipFile.getEntry(filename))));
     }
 
     @Override
     public List<String> getAllFileNames() {
-        return fileNames;
+        return filenames;
     }
 
     @Override
-    public byte[] getPage(int pageIndex) throws ExecutionException {
-        return pageCache.get(fileNames.get(pageIndex));
+    public byte[] getPage(int pageIndex) {
+        return pageCache.get(filenames.get(pageIndex));
     }
 
     @Override
