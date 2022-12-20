@@ -1,14 +1,15 @@
-package com.noahele.mangaserver.backend.entity;
+package com.noahele.mangaserver.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,19 +18,19 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 public class Library extends BaseEntity {
+    @NotBlank
+    @Column(nullable = false)
     private String name;
+    @NotBlank
+    @Column(nullable = false)
     private String path;
     @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "library")
-    List<Manga> mangaList;
-
-    public Library(String name, String path) {
-        this.name = name;
-        this.path = path;
-    }
+    private List<Manga> mangaList;
+    @ManyToOne
+    private User user;
 
     protected Library() {
     }

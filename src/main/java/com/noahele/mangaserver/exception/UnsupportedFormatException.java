@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.backend.exception;
+package com.noahele.mangaserver.exception;
 
 public class UnsupportedFormatException extends RuntimeException {
     public UnsupportedFormatException(String message) {

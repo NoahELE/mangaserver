@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.backend.util;
+package com.noahele.mangaserver.util.reader;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

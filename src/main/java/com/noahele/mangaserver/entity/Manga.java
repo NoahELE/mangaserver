@@ -1,8 +1,11 @@
-package com.noahele.mangaserver.backend.entity;
+package com.noahele.mangaserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.Files;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,24 +19,32 @@ import java.util.Objects;
 @ToString
 @Entity
 public class Manga extends BaseEntity {
+    @NotBlank
+    @Column(nullable = false)
     private String name;
+    @NotBlank
+    @Column(nullable = false)
     private String ext;
+    @NotBlank
+    @Column(nullable = false)
     private String path;
+    @ToString.Exclude
+    @JsonIgnore
+    private byte[] cover;
     @ManyToOne
     private Library library;
+
+    public static Manga fromFile(File mangaFile, Library library) {
+        String name = Files.getNameWithoutExtension(mangaFile.getName());
+        String ext = Files.getFileExtension(mangaFile.getName());
+        return new Manga(name, ext, mangaFile.getPath(), library);
+    }
 
     public Manga(String name, String ext, String path, Library library) {
         this.name = name;
         this.ext = ext;
         this.path = path;
         this.library = library;
-    }
-
-    public Manga(File mangaFile, Library library) {
-        this(Files.getFileExtension(mangaFile.getName()),
-                Files.getNameWithoutExtension(mangaFile.getName()),
-                mangaFile.getPath(),
-                library);
     }
 
     protected Manga() {

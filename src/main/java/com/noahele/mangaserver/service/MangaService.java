@@ -1,16 +1,16 @@
-package com.noahele.mangaserver.backend.service;
+package com.noahele.mangaserver.service;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.io.Files;
-import com.noahele.mangaserver.backend.entity.Library;
-import com.noahele.mangaserver.backend.entity.Manga;
-import com.noahele.mangaserver.backend.exception.UnsupportedFormatException;
-import com.noahele.mangaserver.backend.repository.MangaRepository;
-import com.noahele.mangaserver.backend.util.MangaReader;
-import com.noahele.mangaserver.backend.util.ZipMangaReader;
+import com.noahele.mangaserver.entity.Library;
+import com.noahele.mangaserver.entity.Manga;
+import com.noahele.mangaserver.exception.UnsupportedFormatException;
+import com.noahele.mangaserver.repository.MangaRepository;
+import com.noahele.mangaserver.util.reader.MangaReader;
+import com.noahele.mangaserver.util.reader.ZipMangaReader;
 import lombok.NonNull;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class MangaService {
-    private final MangaRepository repo;
+    private final MangaRepository mangaRepository;
     private static final int READER_CACHE_SIZE = 2;
     private final LoadingCache<String, MangaReader> readerCache = CacheBuilder.newBuilder()
             .initialCapacity(READER_CACHE_SIZE)
@@ -47,33 +47,38 @@ public class MangaService {
                 }
             });
 
-    public MangaService(MangaRepository repo) {
-        this.repo = repo;
+    public MangaService(MangaRepository mangaRepository) {
+        this.mangaRepository = mangaRepository;
     }
 
     public void addManga(Manga manga) {
-        repo.save(manga);
+        assert manga.getId() != null;
+        mangaRepository.save(manga);
     }
 
     public void addAllManga(List<Manga> mangaList) {
-        repo.saveAll(mangaList);
+        for (Manga manga : mangaList) {
+            assert manga.getId() != null;
+        }
+        mangaRepository.saveAll(mangaList);
     }
 
     public void deleteManga(int id) {
-        repo.deleteById(id);
+        mangaRepository.deleteById(id);
     }
 
     public void updateManga(int id, Manga manga) {
+        assert manga.getId() == null;
         manga.setId(id);
-        repo.save(manga);
+        mangaRepository.save(manga);
+    }
+
+    public Manga getManga(int id) {
+        return mangaRepository.findById(id).orElseThrow();
     }
 
     public List<Manga> getAllMangasInLibrary(Library library) {
-        return repo.findAllByLibrary(library);
-    }
-
-    public Manga getMangaById(int id) {
-        return repo.findById(id).orElseThrow();
+        return mangaRepository.findAllByLibrary(library);
     }
 
     public List<String> getAllMangaPageNames(Manga manga) throws ExecutionException {

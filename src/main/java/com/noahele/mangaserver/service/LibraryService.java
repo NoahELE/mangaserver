@@ -1,9 +1,9 @@
-package com.noahele.mangaserver.backend.service;
+package com.noahele.mangaserver.service;
 
 import com.google.common.io.Files;
-import com.noahele.mangaserver.backend.entity.Library;
-import com.noahele.mangaserver.backend.entity.Manga;
-import com.noahele.mangaserver.backend.repository.LibraryRepository;
+import com.noahele.mangaserver.entity.Library;
+import com.noahele.mangaserver.entity.Manga;
+import com.noahele.mangaserver.repository.LibraryRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,42 +14,44 @@ import java.util.Set;
 
 @Service
 public class LibraryService {
-    private final LibraryRepository repo;
+    private final LibraryRepository libraryRepository;
     private final MangaService mangaService;
     private static final Set<String> SUPPORTED_FORMATS = Set.of("zip");
 
-    public LibraryService(LibraryRepository repo, MangaService mangaService) {
-        this.repo = repo;
+    public LibraryService(LibraryRepository libraryRepository, MangaService mangaService) {
+        this.libraryRepository = libraryRepository;
         this.mangaService = mangaService;
     }
 
     public void addLibrary(Library library) {
-        repo.save(library);
+        assert library.getId() != null;
+        libraryRepository.save(library);
     }
 
     public void deleteLibrary(int id) {
-        repo.deleteById(id);
+        libraryRepository.deleteById(id);
     }
 
     public void updateLibrary(int id, Library library) {
+        assert library.getId() == null;
         library.setId(id);
-        repo.save(library);
+        libraryRepository.save(library);
+    }
+
+    public Library getLibrary(int id) {
+        return libraryRepository.findById(id).orElseThrow();
     }
 
     public List<Library> getAllLibraries() {
-        return new ArrayList<>(repo.findAll());
-    }
-
-    public Library getLibraryById(int id) {
-        return repo.findById(id).orElseThrow();
+        return libraryRepository.findAll();
     }
 
     public List<Manga> listManga(int id) {
-        return repo.findById(id).orElseThrow().getMangaList();
+        return libraryRepository.findById(id).orElseThrow().getMangaList();
     }
 
     public void scanManga(int id) {
-        Library library = getLibraryById(id);
+        Library library = getLibrary(id);
         File currDir = new File(library.getPath());
         // check whether it is a valid directory
         assert currDir.isDirectory();
@@ -63,7 +65,7 @@ public class LibraryService {
             if (file.isDirectory()) {
                 scanMangaRecursive(mangaList, file, library);
             } else if (SUPPORTED_FORMATS.contains(Files.getFileExtension(file.getName()))) {
-                mangaList.add(new Manga(file, library));
+                mangaList.add(Manga.fromFile(file, library));
             }
         }
     }
