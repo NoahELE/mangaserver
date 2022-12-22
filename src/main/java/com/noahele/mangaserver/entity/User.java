@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     private String password;
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "owner")
     private List<Library> libraries;
 
     protected User() {

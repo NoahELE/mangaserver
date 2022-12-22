@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.Files;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -32,6 +33,7 @@ public class Manga extends BaseEntity {
     @JsonIgnore
     private byte[] cover;
     @ManyToOne
+    @JoinColumn(nullable = false)
     private Library library;
 
     public static Manga fromFile(File mangaFile, Library library) {

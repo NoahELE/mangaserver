@@ -34,10 +34,12 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // set UserDetailsService
         http.userDetailsService(myUserDetailsService);
-        // allow anonymous access for login api
-        http.authorizeHttpRequests().requestMatchers(HttpMethod.POST, "/api/user/login").anonymous();
-        // all other api require authentication
-        http.authorizeHttpRequests().requestMatchers("/api/**").authenticated();
+
+        http.authorizeHttpRequests()
+                // allow anonymous access for login api
+                .requestMatchers(HttpMethod.POST, "/api/user/login").anonymous()
+                // all other api require authentication
+                .requestMatchers("/api/**").authenticated();
         // add JwtAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

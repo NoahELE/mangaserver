@@ -50,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // retrieve user from UserCache
         MyUserDetails myUserDetails = userCache.getIfPresent(userId);
         if (myUserDetails == null) {
-            log.warn("No user in UserCache");
+            log.warn("No user with id {} in UserCache", userId);
             filterChain.doFilter(request, response);
             return;
         }

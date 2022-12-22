@@ -55,11 +55,11 @@ public class UserService {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         Authentication auth = authenticationManager.authenticate(token);
-        MyUserDetails userDetails = (MyUserDetails) auth.getPrincipal();
+        MyUserDetails myUserDetails = (MyUserDetails) auth.getPrincipal();
         // save the user in cache
-        userCache.put(userDetails.getId(), userDetails);
+        userCache.put(myUserDetails.getId(), myUserDetails);
         // return the generated jws
-        return JwtUtils.createJws(userDetails);
+        return JwtUtils.createJws(myUserDetails);
     }
 
     public MyUserDetails logout() {

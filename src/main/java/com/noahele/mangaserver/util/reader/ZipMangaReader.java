@@ -8,14 +8,13 @@ import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
 
 public class ZipMangaReader implements MangaReader {
+    private static final int PAGE_CACHE_SIZE = 16;
     private final ZipFile zipFile;
     private final List<String> filenames;
-    private static final int PAGE_CACHE_SIZE = 16;
     private final LoadingCache<String, byte[]> pageCache;
 
     public ZipMangaReader(String file) throws IOException {
@@ -24,14 +23,17 @@ public class ZipMangaReader implements MangaReader {
         List<ZipArchiveEntry> entryList = new ArrayList<>();
         while (entries.hasMoreElements()) {
             ZipArchiveEntry entry = entries.nextElement();
-            // add the non dir entry to list
+            // add entry to list if it is not a directory
             if (!entry.isDirectory()) {
                 entryList.add(entry);
             }
         }
-        // list of names is sorted
-        entryList.sort(Comparator.comparing(ZipArchiveEntry::getName));
-        this.filenames = entryList.stream().map(ZipArchiveEntry::getName).toList();
+        this.filenames = entryList.stream()
+                // map to list of String
+                .map(ZipArchiveEntry::getName)
+                // sort filenames
+                .sorted()
+                .toList();
         // init page cache
         this.pageCache = Caffeine.newBuilder()
                 .initialCapacity(PAGE_CACHE_SIZE)

@@ -17,11 +17,10 @@ import java.util.function.Function;
 
 @Component
 public class UserCache implements Cache<Integer, MyUserDetails> {
-    private static final int MAX_USER = 128;
+    private static final int INITIAL_USER_SIZE = 32;
     private static final int EXPIRE_DAYS = 1;
     private final Cache<Integer, MyUserDetails> cache = Caffeine.newBuilder()
-            .initialCapacity(MAX_USER)
-            .maximumSize(MAX_USER)
+            .initialCapacity(INITIAL_USER_SIZE)
             .expireAfterAccess(Duration.ofDays(EXPIRE_DAYS))
             .build();
 
@@ -46,7 +45,8 @@ public class UserCache implements Cache<Integer, MyUserDetails> {
     @Override
     public Map<Integer, MyUserDetails> getAll(Iterable<? extends Integer> keys,
                                               Function<? super Set<? extends Integer>,
-                                                      ? extends Map<? extends Integer, ? extends MyUserDetails>>
+                                                      ? extends Map<? extends Integer,
+                                                              ? extends MyUserDetails>>
                                                       mappingFunction) {
         return cache.getAll(keys, mappingFunction);
     }

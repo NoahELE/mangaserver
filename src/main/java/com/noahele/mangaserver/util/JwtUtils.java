@@ -12,7 +12,6 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public final class JwtUtils {
-    private static final int EXPIRE_HOURS = 8;
     private static final KeyPair SECRET_KEYS = Keys.keyPairFor(SignatureAlgorithm.ES256);
 
     private JwtUtils() {
@@ -20,12 +19,9 @@ public final class JwtUtils {
 
     public static String createJws(MyUserDetails userDetails) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiration = now.plusHours(EXPIRE_HOURS);
         return Jwts.builder()
                 .setSubject(String.valueOf(userDetails.getId()))
-                .setIssuer("mangaserver")
                 .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
-                .setExpiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(SECRET_KEYS.getPrivate())
                 .compact();
     }

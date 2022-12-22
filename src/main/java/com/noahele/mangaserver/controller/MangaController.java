@@ -1,10 +1,13 @@
 package com.noahele.mangaserver.controller;
 
 import com.noahele.mangaserver.entity.Manga;
+import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.service.MangaService;
+import com.noahele.mangaserver.util.MyUserDetails;
 import com.noahele.mangaserver.util.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,59 +23,70 @@ public class MangaController {
     }
 
     @PostMapping("")
-    public Response<?> addManga(@RequestBody Manga manga) {
+    public Response<?> addManga(@RequestBody Manga manga,
+                                int libraryId,
+                                @AuthenticationPrincipal MyUserDetails myUserDetails) {
         try {
-            log.info("Add manga: {}", manga);
-            mangaService.addManga(manga);
+            User user = myUserDetails.user();
+            log.info("User {} add manga {} to library {}", user, manga, libraryId);
+            mangaService.addManga(manga, libraryId, user);
             return Response.ok();
         } catch (Exception e) {
-            log.error("Add manga error: ", e);
+            log.error("Add manga error", e);
             return Response.err(e);
         }
     }
 
     @DeleteMapping("/{id}")
-    public Response<?> deleteManga(@PathVariable int id) {
+    public Response<?> deleteManga(@PathVariable int id,
+                                   @AuthenticationPrincipal MyUserDetails myUserDetails) {
         try {
-            log.info("Delete manga: {}", id);
-            mangaService.deleteManga(id);
+            User user = myUserDetails.user();
+            log.info("User {} delete manga {}", user, id);
+            mangaService.deleteManga(id, user);
             return Response.ok();
         } catch (Exception e) {
-            log.error("Delete manga error: ", e);
+            log.error("Delete manga error", e);
             return Response.err(e);
         }
     }
 
     @PutMapping("/{id}")
-    public Response<?> updateManga(@PathVariable int id, @RequestBody Manga manga) {
+    public Response<?> updateManga(@PathVariable int id,
+                                   @RequestBody Manga manga,
+                                   @AuthenticationPrincipal MyUserDetails myUserDetails) {
         try {
-            log.info("Update manga: {}", manga);
-            mangaService.updateManga(id, manga);
+            User user = myUserDetails.user();
+            log.info("User {} update manga {}", user, manga);
+            mangaService.updateManga(id, manga, user);
             return Response.ok();
         } catch (Exception e) {
-            log.error("Update manga error: ", e);
+            log.error("Update manga error", e);
             return Response.err(e);
         }
     }
 
     @GetMapping("/{id}")
-    public Response<Manga> getManga(@PathVariable int id) {
+    public Response<Manga> getManga(@PathVariable int id,
+                                    @AuthenticationPrincipal MyUserDetails myUserDetails) {
         try {
-            log.info("Get manga: {}", id);
-            Manga manga = mangaService.getManga(id);
+            User user = myUserDetails.user();
+            log.info("User {} Get manga {}", user, id);
+            Manga manga = mangaService.getManga(id, user);
             return Response.ok(manga);
         } catch (Exception e) {
-            log.error("Get manga error: ", e);
+            log.error("Get manga error", e);
             return Response.err(e);
         }
     }
 
     @GetMapping("/{id}/page")
-    public Response<List<String>> getAllMangaPageNames(@PathVariable int id) {
+    public Response<List<String>> getAllMangaPageNames(@PathVariable int id,
+                                                       @AuthenticationPrincipal MyUserDetails myUserDetails) {
         try {
-            log.info("Get all pages from manga with id {}", id);
-            Manga manga = mangaService.getManga(id);
-            List<String> mangaPageNames = mangaService.getAllMangaPageNames(manga);
+            User user = myUserDetails.user();
+            log.info("User {} get all pages from manga {}", user, id);
+            List<String> mangaPageNames = mangaService.getAllMangaPageNames(id, user);
             return Response.ok(mangaPageNames);
         } catch (Exception e) {
             log.error("Get manga page names error: ", e);
@@ -81,11 +95,17 @@ public class MangaController {
     }
 
     @GetMapping("/{id}/page/{pageIndex}")
-    public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex) {
-        log.info("Get page {} from manga with id {}", pageIndex, id);
-        Manga manga = mangaService.getManga(id);
-        return ResponseEntity.ok()
-                .contentType(mangaService.getMangaPageExt(manga, pageIndex))
-                .body(mangaService.getMangaPage(manga, pageIndex));
+    public ResponseEntity<byte[]> getMangaPage(@PathVariable int id,
+                                               @PathVariable int pageIndex,
+                                               @AuthenticationPrincipal MyUserDetails myUserDetails) {
+        try {
+            User user = myUserDetails.user();
+            log.info("Get page {} from manga with id {}", pageIndex, id);
+            return ResponseEntity.ok()
+                    .contentType(mangaService.getMangaPageExt(id, pageIndex, user))
+                    .body(mangaService.getMangaPage(id, pageIndex, user));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
