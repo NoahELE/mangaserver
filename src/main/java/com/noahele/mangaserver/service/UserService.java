@@ -2,9 +2,9 @@ package com.noahele.mangaserver.service;
 
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.repository.UserRepository;
-import com.noahele.mangaserver.util.JwtUtils;
-import com.noahele.mangaserver.util.MyUserDetails;
-import com.noahele.mangaserver.util.UserCache;
+import com.noahele.mangaserver.utils.JwtUtils;
+import com.noahele.mangaserver.utils.MyUserDetails;
+import com.noahele.mangaserver.utils.UserCache;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -57,9 +57,9 @@ public class UserService {
         Authentication auth = authenticationManager.authenticate(token);
         MyUserDetails myUserDetails = (MyUserDetails) auth.getPrincipal();
         // save the user in cache
-        userCache.put(myUserDetails.getId(), myUserDetails);
-        // return the generated jws
-        return JwtUtils.createJws(myUserDetails);
+        userCache.put(myUserDetails.user().getId(), myUserDetails);
+        // return the generated jwt
+        return JwtUtils.createJwt(myUserDetails);
     }
 
     public MyUserDetails logout() {
@@ -68,7 +68,7 @@ public class UserService {
         // cast to MyUserDetails
         MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
         // invalidate from cache
-        userCache.invalidate(myUserDetails.getId());
+        userCache.invalidate(myUserDetails.user().getId());
         return myUserDetails;
     }
 }

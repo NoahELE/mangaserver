@@ -21,7 +21,8 @@ public class WebSecurityConfig {
     private final MyUserDetailsService myUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public WebSecurityConfig(MyUserDetailsService myUserDetailsService, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public WebSecurityConfig(MyUserDetailsService myUserDetailsService,
+                             JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.myUserDetailsService = myUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
@@ -36,10 +37,15 @@ public class WebSecurityConfig {
         http.userDetailsService(myUserDetailsService);
 
         http.authorizeHttpRequests()
+                // allow all access to web ui
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                // allow anonymous to sign up
+                .requestMatchers(HttpMethod.POST, "/api/user").anonymous()
                 // allow anonymous access for login api
                 .requestMatchers(HttpMethod.POST, "/api/user/login").anonymous()
                 // all other api require authentication
                 .requestMatchers("/api/**").authenticated();
+
         // add JwtAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

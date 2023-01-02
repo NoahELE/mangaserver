@@ -6,6 +6,7 @@ import com.noahele.mangaserver.entity.Manga;
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.LibraryRepository;
+import com.noahele.mangaserver.utils.CurrUserFacade;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -30,37 +31,42 @@ public class LibraryService {
         libraryRepository.save(library);
     }
 
-    public void deleteLibrary(int id, User user) throws OwnerNotMatchException {
-        checkUser(id, user);
+    public void deleteLibrary(int id) throws OwnerNotMatchException {
+        checkUser(id);
         libraryRepository.deleteById(id);
     }
 
-    public void updateLibrary(int id, Library library, User user) throws OwnerNotMatchException {
-        checkUser(id, user);
+    public void updateLibrary(int id, Library library) throws OwnerNotMatchException {
+        checkUser(id);
         assert library.getId() == null;
         library.setId(id);
         libraryRepository.save(library);
     }
 
-    public Library getLibrary(int id, User user) throws OwnerNotMatchException {
-        checkUser(id, user);
+    public Library getLibrary(int id) throws OwnerNotMatchException {
+        checkUser(id);
         return libraryRepository.findById(id).orElseThrow();
     }
 
-    public List<Manga> listManga(int id, User user) throws OwnerNotMatchException {
-        checkUser(id, user);
+    public List<Manga> listManga(int id) throws OwnerNotMatchException {
+        checkUser(id);
         return libraryRepository.findById(id).orElseThrow().getMangaList();
     }
 
-    public void scanManga(int id, User user) throws OwnerNotMatchException {
-        checkUser(id, user);
-        Library library = getLibrary(id, user);
+    public List<Library> getAllLibraries() {
+        User user = CurrUserFacade.getUser();
+        return libraryRepository.findAllByOwner(user);
+    }
+
+    public void scanManga(int id) throws OwnerNotMatchException {
+        checkUser(id);
+        Library library = getLibrary(id);
         File currDir = new File(library.getPath());
         // check whether it is a valid directory
         assert currDir.isDirectory();
         List<Manga> mangaList = new ArrayList<>();
         scanMangaRecursive(mangaList, currDir, library);
-        mangaService.addAllManga(mangaList, id, user);
+        mangaService.addAllManga(mangaList, id);
     }
 
     private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) {
@@ -73,7 +79,8 @@ public class LibraryService {
         }
     }
 
-    private void checkUser(int id, User user) throws OwnerNotMatchException {
+    private void checkUser(int id) throws OwnerNotMatchException {
+        User user = CurrUserFacade.getUser();
         Library library = libraryRepository.findById(id).orElseThrow();
         if (!user.equals(library.getOwner())) {
             throw new OwnerNotMatchException(user);

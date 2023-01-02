@@ -2,8 +2,8 @@ package com.noahele.mangaserver.controller;
 
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.service.UserService;
-import com.noahele.mangaserver.util.MyUserDetails;
-import com.noahele.mangaserver.util.Response;
+import com.noahele.mangaserver.utils.MyUserDetails;
+import com.noahele.mangaserver.utils.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,7 @@ public class UserController {
     }
 
     @PostMapping("")
-    public Response<?> addUser(@RequestBody User user) {
+    public Response<Void> addUser(@RequestBody User user) {
         try {
             log.info("Add user: {}", user);
             userService.addUser(user);
@@ -33,8 +33,8 @@ public class UserController {
     public Response<String> login(@RequestBody User user) {
         try {
             log.info("User login: {}", user);
-            String jws = userService.login(user);
-            return Response.ok(jws);
+            String jwt = userService.login(user);
+            return Response.ok(jwt);
         } catch (Exception e) {
             log.error("User login error: ", e);
             return Response.err(e);
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public Response<?> logout() {
+    public Response<Void> logout() {
         try {
             MyUserDetails myUserDetails = userService.logout();
             log.info("User logout: {}", myUserDetails);

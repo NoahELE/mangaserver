@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.util;
+package com.noahele.mangaserver.utils;
 
 import com.noahele.mangaserver.entity.User;
 import org.junit.jupiter.api.Assertions;
@@ -12,19 +12,19 @@ class JwtUtilsTest {
             setPassword("bbb");
         }
     };
-    private String jws;
+    private String jwt;
 
     @Test
-    void generateJws() {
-        jws = JwtUtils.createJws(new MyUserDetails(user));
+    void generateJwt() {
+        jwt = JwtUtils.createJwt(new MyUserDetails(user));
         System.out.println(user);
-        System.out.println(jws);
+        System.out.println(jwt);
     }
 
     @Test
-    void parseJws() {
-        generateJws();
-        int id = JwtUtils.parseJws(jws);
+    void parseJwt() {
+        generateJwt();
+        int id = JwtUtils.parseJwt(jwt);
         System.out.println(id);
         Assertions.assertEquals(id, user.getId());
     }

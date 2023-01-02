@@ -11,8 +11,9 @@ import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.exception.UnsupportedFormatException;
 import com.noahele.mangaserver.repository.LibraryRepository;
 import com.noahele.mangaserver.repository.MangaRepository;
-import com.noahele.mangaserver.util.reader.MangaReader;
-import com.noahele.mangaserver.util.reader.ZipMangaReader;
+import com.noahele.mangaserver.utils.CurrUserFacade;
+import com.noahele.mangaserver.utils.reader.MangaReader;
+import com.noahele.mangaserver.utils.reader.ZipMangaReader;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
@@ -51,10 +52,10 @@ public class MangaService {
     }
 
     public void addManga(Manga manga,
-                         int libraryId,
-                         User user) throws OwnerNotMatchException {
+                         int libraryId) throws OwnerNotMatchException {
         assert manga.getId() != null;
         // check if user owns the library
+        User user = CurrUserFacade.getUser();
         Library library = libraryRepository.findById(libraryId).orElseThrow();
         if (!user.equals(library.getOwner())) {
             throw new OwnerNotMatchException(user);
@@ -63,10 +64,9 @@ public class MangaService {
         mangaRepository.save(manga);
     }
 
-    public void addAllManga(List<Manga> mangaList,
-                            int libraryId,
-                            User user) throws OwnerNotMatchException {
+    public void addAllManga(List<Manga> mangaList, int libraryId) throws OwnerNotMatchException {
         // check if user owns the library
+        User user = CurrUserFacade.getUser();
         Library library = libraryRepository.findById(libraryId).orElseThrow();
         if (!user.equals(library.getOwner())) {
             throw new OwnerNotMatchException(user);
@@ -78,7 +78,8 @@ public class MangaService {
         mangaRepository.saveAll(mangaList);
     }
 
-    public void deleteManga(int id, User user) throws OwnerNotMatchException {
+    public void deleteManga(int id) throws OwnerNotMatchException {
+        User user = CurrUserFacade.getUser();
         Manga manga = mangaRepository.findById(id).orElseThrow();
         if (!user.equals(manga.getLibrary().getOwner())) {
             throw new OwnerNotMatchException(user);
@@ -86,7 +87,8 @@ public class MangaService {
         mangaRepository.deleteById(id);
     }
 
-    public void updateManga(int id, Manga manga, User user) throws OwnerNotMatchException {
+    public void updateManga(int id, Manga manga) throws OwnerNotMatchException {
+        User user = CurrUserFacade.getUser();
         Manga m = mangaRepository.findById(id).orElseThrow();
         if (!user.equals(m.getLibrary().getOwner())) {
             throw new OwnerNotMatchException(user);
@@ -96,7 +98,8 @@ public class MangaService {
         mangaRepository.save(manga);
     }
 
-    public Manga getManga(int id, User user) throws OwnerNotMatchException {
+    public Manga getManga(int id) throws OwnerNotMatchException {
+        User user = CurrUserFacade.getUser();
         Manga manga = mangaRepository.findById(id).orElseThrow();
         if (!user.equals(manga.getLibrary().getOwner())) {
             throw new OwnerNotMatchException(user);
@@ -104,18 +107,18 @@ public class MangaService {
         return mangaRepository.findById(id).orElseThrow();
     }
 
-    public List<String> getAllMangaPageNames(int id, User user) throws OwnerNotMatchException {
-        Manga manga = getManga(id, user);
+    public List<String> getAllMangaPageNames(int id) throws OwnerNotMatchException {
+        Manga manga = getManga(id);
         return readerCache.get(manga.getPath()).getAllFileNames();
     }
 
-    public byte[] getMangaPage(int id, int pageIndex, User user) throws OwnerNotMatchException {
-        Manga manga = getManga(id, user);
+    public byte[] getMangaPage(int id, int pageIndex) throws OwnerNotMatchException {
+        Manga manga = getManga(id);
         return readerCache.get(manga.getPath()).getPage(pageIndex);
     }
 
-    public MediaType getMangaPageExt(int id, int pageIndex, User user) throws OwnerNotMatchException {
-        Manga manga = getManga(id, user);
+    public MediaType getMangaPageExt(int id, int pageIndex) throws OwnerNotMatchException {
+        Manga manga = getManga(id);
         String ext = Files.getFileExtension(readerCache.get(manga.getPath()).getAllFileNames().get(pageIndex));
         return switch (ext) {
             case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;

@@ -2,7 +2,7 @@ package com.noahele.mangaserver.service;
 
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.repository.UserRepository;
-import com.noahele.mangaserver.util.MyUserDetails;
+import com.noahele.mangaserver.utils.MyUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

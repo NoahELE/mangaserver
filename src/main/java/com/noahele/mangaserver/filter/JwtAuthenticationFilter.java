@@ -1,8 +1,8 @@
 package com.noahele.mangaserver.filter;
 
-import com.noahele.mangaserver.util.JwtUtils;
-import com.noahele.mangaserver.util.MyUserDetails;
-import com.noahele.mangaserver.util.UserCache;
+import com.noahele.mangaserver.utils.JwtUtils;
+import com.noahele.mangaserver.utils.MyUserDetails;
+import com.noahele.mangaserver.utils.UserCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,11 +37,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        // parse jws
-        String jws = header.split(" ")[1].trim();
+        // parse jwt
+        String jwt = header.split(" ")[1].trim();
         int userId;
         try {
-            userId = JwtUtils.parseJws(jws);
+            userId = JwtUtils.parseJwt(jwt);
         } catch (Exception e) {
             log.error("JWT parse error: ", e);
             filterChain.doFilter(request, response);

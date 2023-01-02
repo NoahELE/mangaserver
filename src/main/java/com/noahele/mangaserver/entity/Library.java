@@ -25,7 +25,6 @@ public class Library extends BaseEntity {
     @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "library")
-    @JoinColumn(nullable = false)
     private List<Manga> mangaList;
     @ManyToOne
     @JoinColumn(nullable = false)

@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.util.reader;
+package com.noahele.mangaserver.utils.reader;
 
 import java.io.Closeable;
 import java.util.List;

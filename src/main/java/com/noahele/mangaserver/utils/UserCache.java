@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.util;
+package com.noahele.mangaserver.utils;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

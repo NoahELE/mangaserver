@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.util;
+package com.noahele.mangaserver.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -17,20 +17,20 @@ public final class JwtUtils {
     private JwtUtils() {
     }
 
-    public static String createJws(MyUserDetails userDetails) {
+    public static String createJwt(MyUserDetails userDetails) {
         LocalDateTime now = LocalDateTime.now();
         return Jwts.builder()
-                .setSubject(String.valueOf(userDetails.getId()))
+                .setSubject(String.valueOf(userDetails.user().getId()))
                 .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(SECRET_KEYS.getPrivate())
                 .compact();
     }
 
-    public static int parseJws(String jws) {
+    public static int parseJwt(String jwt) {
         Jws<Claims> claims = Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEYS.getPublic())
                 .build()
-                .parseClaimsJws(jws);
+                .parseClaimsJws(jwt);
         return Integer.parseInt(claims.getBody().getSubject());
     }
 }

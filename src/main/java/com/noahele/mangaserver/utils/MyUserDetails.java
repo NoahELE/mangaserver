@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.util;
+package com.noahele.mangaserver.utils;
 
 import com.noahele.mangaserver.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,10 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 public record MyUserDetails(User user) implements UserDetails {
-    public int getId() {
-        return this.user.getId();
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("USER"));
