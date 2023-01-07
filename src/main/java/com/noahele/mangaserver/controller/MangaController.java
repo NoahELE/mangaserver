@@ -82,11 +82,12 @@ public class MangaController {
     @GetMapping("/{id}/page/{pageIndex}")
     public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex) {
         try {
-            log.info("Get page {} from manga with id {}", pageIndex, id);
+            log.info("Get page {} from manga {}", pageIndex, id);
             return ResponseEntity.ok()
                     .contentType(mangaService.getMangaPageExt(id, pageIndex))
                     .body(mangaService.getMangaPage(id, pageIndex));
         } catch (Exception e) {
+            log.error("Get manga page error", e);
             throw new RuntimeException(e);
         }
     }

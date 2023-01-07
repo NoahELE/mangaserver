@@ -17,7 +17,7 @@ import java.util.function.Function;
 
 @Component
 public class UserCache implements Cache<Integer, MyUserDetails> {
-    private static final int INITIAL_USER_SIZE = 32;
+    private static final int INITIAL_USER_SIZE = 16;
     private static final int EXPIRE_DAYS = 1;
     private final Cache<Integer, MyUserDetails> cache = Caffeine.newBuilder()
             .initialCapacity(INITIAL_USER_SIZE)

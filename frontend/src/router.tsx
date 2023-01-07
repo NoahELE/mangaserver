@@ -1,14 +1,23 @@
 import { createBrowserRouter } from 'react-router-dom'
-import LibraryPage from './page/LibraryPage'
+import ErrorPage from './page/ErrorPage'
+import LibraryListPage from './page/LibraryListPage'
 import LoginPage from './page/LoginPage'
+import MangaListPage from './page/MangaListPage'
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <LibraryListPage />,
+    errorElement: <ErrorPage />,
+  },
   {
     path: '/login',
     element: <LoginPage />,
   },
   {
-    path: '/',
-    element: <LibraryPage />,
+    path: '/library/:libraryId',
+    element: <MangaListPage />,
   },
 ])
+
+export default router

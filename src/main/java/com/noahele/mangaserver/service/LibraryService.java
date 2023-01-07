@@ -7,6 +7,7 @@ import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.LibraryRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -17,40 +18,43 @@ import java.util.Set;
 
 @Service
 public class LibraryService {
+    private static final Set<String> SUPPORTED_FORMATS = Set.of("zip");
     private final LibraryRepository libraryRepository;
     private final MangaService mangaService;
-    private static final Set<String> SUPPORTED_FORMATS = Set.of("zip");
 
-    public LibraryService(LibraryRepository libraryRepository, MangaService mangaService) {
+    public LibraryService(LibraryRepository libraryRepository, @Lazy MangaService mangaService) {
         this.libraryRepository = libraryRepository;
         this.mangaService = mangaService;
     }
 
     public void addLibrary(Library library) {
-        assert library.getId() != null;
+        assert library.getId() == null;
         libraryRepository.save(library);
     }
 
     public void deleteLibrary(int id) throws OwnerNotMatchException {
-        checkUser(id);
+        getLibrary(id); // check if the user can access the library
         libraryRepository.deleteById(id);
     }
 
     public void updateLibrary(int id, Library library) throws OwnerNotMatchException {
-        checkUser(id);
+        getLibrary(id); // check if the user can access the library
         assert library.getId() == null;
         library.setId(id);
         libraryRepository.save(library);
     }
 
     public Library getLibrary(int id) throws OwnerNotMatchException {
-        checkUser(id);
-        return libraryRepository.findById(id).orElseThrow();
+        Library library = libraryRepository.findById(id).orElseThrow();
+        User user = CurrUserFacade.getUser();
+        if (!user.equals(library.getOwner())) {
+            throw new OwnerNotMatchException(user);
+        }
+        return library;
     }
 
     public List<Manga> listManga(int id) throws OwnerNotMatchException {
-        checkUser(id);
-        return libraryRepository.findById(id).orElseThrow().getMangaList();
+        return getLibrary(id).getMangaList();
     }
 
     public List<Library> getAllLibraries() {
@@ -59,7 +63,6 @@ public class LibraryService {
     }
 
     public void scanManga(int id) throws OwnerNotMatchException {
-        checkUser(id);
         Library library = getLibrary(id);
         File currDir = new File(library.getPath());
         // check whether it is a valid directory
@@ -76,14 +79,6 @@ public class LibraryService {
             } else if (SUPPORTED_FORMATS.contains(Files.getFileExtension(file.getName()))) {
                 mangaList.add(Manga.fromFile(file, library));
             }
-        }
-    }
-
-    private void checkUser(int id) throws OwnerNotMatchException {
-        User user = CurrUserFacade.getUser();
-        Library library = libraryRepository.findById(id).orElseThrow();
-        if (!user.equals(library.getOwner())) {
-            throw new OwnerNotMatchException(user);
         }
     }
 }

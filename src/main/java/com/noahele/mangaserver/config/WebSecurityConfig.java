@@ -37,14 +37,12 @@ public class WebSecurityConfig {
         http.userDetailsService(myUserDetailsService);
 
         http.authorizeHttpRequests()
-                // allow all access to web ui
-                .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                // allow anonymous to sign up
-                .requestMatchers(HttpMethod.POST, "/api/user").anonymous()
-                // allow anonymous access for login api
-                .requestMatchers(HttpMethod.POST, "/api/user/login").anonymous()
+                // allow anonymous to sign up and login
+                .requestMatchers(HttpMethod.POST, "/api/user", "/api/user/login").anonymous()
                 // all other api require authentication
-                .requestMatchers("/api/**").authenticated();
+                .requestMatchers("/api/**").authenticated()
+                // allow all access to web ui
+                .requestMatchers(HttpMethod.GET, "/**").permitAll();
 
         // add JwtAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

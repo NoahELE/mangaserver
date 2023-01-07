@@ -1,22 +1,29 @@
 import { Button, Form, Input, Typography } from 'antd'
+import { ValidateErrorEntity } from 'rc-field-form/lib/interface'
 import { ReactElement } from 'react'
-import { api, User } from '../request'
-import { useStore } from '../store'
+import { useNavigate } from 'react-router-dom'
+import api, { User } from '../api'
+import useStore from '../store'
 
 const { Title } = Typography
 
 export default function LoginPage(): ReactElement {
   const setJwt = useStore((state) => state.setJwt)
+  const navigate = useNavigate()
 
-  const onFinish = async (user: User) => {
-    try {
-      const jwt = await api.login(user)
-      setJwt(jwt)
-      location.assign('/')
-    } catch (error) {
-      alert(error)
-      location.assign('/login')
-    }
+  const handleFinish = (user: User): void => {
+    api.login(user).then(
+      (jwt) => {
+        setJwt(jwt)
+        navigate('/')
+      },
+      (error) => {
+        throw error
+      }
+    )
+  }
+  const handleFinishFailed = (error: ValidateErrorEntity<User>) => {
+    throw error
   }
 
   return (
@@ -32,8 +39,8 @@ export default function LoginPage(): ReactElement {
       <Form
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
-        onFinish={onFinish}
-        onFinishFailed={alert}
+        onFinish={handleFinish}
+        onFinishFailed={handleFinishFailed}
         style={{
           marginLeft: 500,
           marginRight: 500,

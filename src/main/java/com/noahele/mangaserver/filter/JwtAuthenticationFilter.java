@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         // get Authorization header, return if there is no Authorization Bearer header
         String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer")) {
+        if (header == null || !header.startsWith("Bearer ")) {
             log.warn("No Authorization Bearer header");
             filterChain.doFilter(request, response);
             return;

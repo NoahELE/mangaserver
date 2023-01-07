@@ -6,12 +6,16 @@ export interface State {
   setJwt: (jwt: string) => void
 }
 
-export const useStore = create<State>()(
+const useStore = create<State>()(
   persist(
-    (set) => ({
-      jwt: '',
-      setJwt: (jwt) => set({ jwt }),
-    }),
+    (set) => {
+      return {
+        jwt: '',
+        setJwt: (jwt) => set({ jwt }),
+      }
+    },
     { name: 'mangaserver-storage' }
   )
 )
+
+export default useStore

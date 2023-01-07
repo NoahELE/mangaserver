@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class WebUIController {
-    @GetMapping({"/login"})
+    @GetMapping({"/login", "/library/**"})
     public String index() {
         return "forward:/";
     }

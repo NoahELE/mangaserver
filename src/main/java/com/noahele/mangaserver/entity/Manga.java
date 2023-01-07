@@ -1,6 +1,5 @@
 package com.noahele.mangaserver.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.Files;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,9 +28,7 @@ public class Manga extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
     private String path;
-    @ToString.Exclude
-    @JsonIgnore
-    private byte[] cover;
+    private Integer numOfPages;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Library library;
