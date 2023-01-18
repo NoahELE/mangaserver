@@ -1,50 +1,38 @@
 import { Button, Form, Input, Typography } from 'antd'
-import { ValidateErrorEntity } from 'rc-field-form/lib/interface'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api, { User } from '../api'
+import { login } from '../api'
+import { User } from '../entity'
 import useStore from '../store'
 
 const { Title } = Typography
 
 export default function LoginPage(): ReactElement {
-  const setJwt = useStore((state) => state.setJwt)
   const navigate = useNavigate()
-
-  const handleFinish = (user: User): void => {
-    api.login(user).then(
-      (jwt) => {
-        setJwt(jwt)
-        navigate('/')
-      },
-      (error) => {
-        throw error
-      }
-    )
-  }
-  const handleFinishFailed = (error: ValidateErrorEntity<User>) => {
+  const setJwt = useStore((state) => state.setJwt)
+  const [error, setError] = useState<unknown>(null)
+  if (error !== null) {
     throw error
   }
 
   return (
     <>
-      <Title
-        style={{
-          textAlign: 'center',
-          marginTop: 100,
-        }}
-      >
+      <Title style={{ textAlign: 'center', margin: '100px 0' }}>
         MangaServer
       </Title>
+
       <Form
         labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
-        onFinish={handleFinish}
-        onFinishFailed={handleFinishFailed}
-        style={{
-          marginLeft: 500,
-          marginRight: 500,
+        wrapperCol={{ span: 12 }}
+        onFinish={(user: User): void => {
+          login(user)
+            .then((jwt) => {
+              setJwt(jwt)
+              navigate('/')
+            })
+            .catch(setError)
         }}
+        style={{ margin: '0 400px' }}
       >
         <Form.Item
           name="username"

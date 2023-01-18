@@ -10,7 +10,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          react: ['react', 'react-dom', 'react-router-dom', 'zustand'],
+          react: ['react', 'react-dom'],
           antd: ['antd'],
           lodash: ['lodash-es'],
           axios: ['axios'],

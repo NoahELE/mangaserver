@@ -1,33 +1,33 @@
 import { Button, Typography } from 'antd'
-import { ReactElement } from 'react'
-import {
-  isRouteErrorResponse,
-  useNavigate,
-  useRouteError,
-} from 'react-router-dom'
+import { CSSProperties, ReactElement } from 'react'
+import { useNavigate, useRouteError } from 'react-router-dom'
 
-const { Title, Text } = Typography
+const { Title, Paragraph } = Typography
+
+const style: CSSProperties = { margin: '20px 10px' }
 
 export default function ErrorPage(): ReactElement {
   const error = useRouteError()
   const navigate = useNavigate()
 
-  let msg: string
-  if (isRouteErrorResponse(error)) {
-    msg = error.data.msg + ''
+  let errorMsg: string
+  if (error instanceof Error) {
+    errorMsg = `${error.name}\n${error.message}`
   } else {
-    msg = error + ''
+    errorMsg = error + ''
   }
 
   return (
     <>
-      <Title>Error</Title>
-      <Text>{msg}</Text>
-      <Button type="primary" onClick={() => navigate(-1)}>
-        Return to Last Page
-      </Button>
-      <Button type="default" onClick={() => navigate('/login')}>
+      <Title style={style}>Error</Title>
+      <Paragraph code copyable style={{ margin: 20 }}>
+        {errorMsg}
+      </Paragraph>
+      <Button type="primary" onClick={() => navigate('/login')} style={style}>
         Login
+      </Button>
+      <Button type="default" onClick={() => navigate(-1)} style={style}>
+        Return to Last Page
       </Button>
     </>
   )

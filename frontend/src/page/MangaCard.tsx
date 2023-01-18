@@ -1,7 +1,10 @@
-import { Card } from 'antd'
-import { ReactElement } from 'react'
+import { Card, Spin } from 'antd'
+import { ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Manga } from '../api'
+import { getMangaPage } from '../api'
+import { Manga } from '../entity'
+
+const { Meta } = Card
 
 interface Props {
   manga: Manga
@@ -10,14 +13,18 @@ interface Props {
 export default function MangaCard({ manga }: Props): ReactElement {
   const { id, name, path } = manga
   const navigate = useNavigate()
-  const handleClick = () => navigate(`/manga/${id}`)
+  const [cover, setCover] = useState<string | null>(null)
+  useEffect(() => {
+    getMangaPage(manga.id, 0).then(setCover)
+  }, [manga.id])
+
   return (
     <Card
       hoverable
-      onClick={handleClick}
-      cover={<img alt="manga cover" src={`/api/manga/${id}/page/0`} />}
+      onClick={() => navigate(`/manga/${id}`)}
+      cover={cover === null ? <Spin /> : <img src={cover} />}
     >
-      <Card.Meta title={name} description={path} />
+      <Meta title={name} description={path} />
     </Card>
   )
 }

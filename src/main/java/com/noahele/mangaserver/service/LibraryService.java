@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,17 +63,18 @@ public class LibraryService {
         return libraryRepository.findAllByOwner(user);
     }
 
-    public void scanManga(int id) throws OwnerNotMatchException {
+    public void scanManga(int id) throws OwnerNotMatchException, IOException {
         Library library = getLibrary(id);
         File currDir = new File(library.getPath());
         // check whether it is a valid directory
         assert currDir.isDirectory();
         List<Manga> mangaList = new ArrayList<>();
         scanMangaRecursive(mangaList, currDir, library);
+        mangaList = mangaList.stream().filter((manga) -> !mangaService.existsByPath(manga.getPath())).toList();
         mangaService.addAllManga(mangaList, id);
     }
 
-    private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) {
+    private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) throws IOException {
         for (File file : Objects.requireNonNull(currDir.listFiles())) {
             if (file.isDirectory()) {
                 scanMangaRecursive(mangaList, file, library);

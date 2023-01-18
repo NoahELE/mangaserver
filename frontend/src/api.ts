@@ -1,34 +1,11 @@
 import axios from 'axios'
-import { json } from 'react-router-dom'
+import { Library, Manga, User } from './entity'
 import useStore from './store'
 
 interface R<T> {
   code: number
   msg: string
   data: T
-}
-
-interface BaseEntity {
-  id: number
-  createdDate: Date
-  lastModifiedDate: Date
-}
-
-export interface User extends BaseEntity {
-  username: string
-  password: string
-}
-
-export interface Library extends BaseEntity {
-  name: string
-  path: string
-}
-
-export interface Manga extends BaseEntity {
-  name: string
-  path: string
-  ext: string
-  library: Library
 }
 
 axios.defaults.baseURL = '/api'
@@ -38,52 +15,93 @@ function setJwtHeader(): void {
   if (jwt.length !== 0) {
     axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
   } else {
-    throw json({ msg: 'jwt is empty' })
+    throw new Error('jwt is empty')
   }
 }
 
-const api = {
-  async login(user: User): Promise<string> {
-    const { data: jwtResponse } = await axios.post<R<string>>(
-      '/user/login',
-      user
-    )
-    if (jwtResponse.code === 0) {
-      return jwtResponse.data
-    } else {
-      throw json({
-        msg: `code: ${jwtResponse.code}\nlogin failed\n${jwtResponse.msg}`,
-      })
-    }
-  },
+export async function login(user: User): Promise<string> {
+  const {
+    data: { code, msg, data: jwt },
+  } = await axios.post<R<string>>('/user/login', user)
 
-  async getAllLibraries(): Promise<Library[]> {
-    setJwtHeader() // set jwt auth token
-    const {
-      data: { code, data: libraries, msg },
-    } = await axios.get<R<Library[]>>('/library')
-    if (code === 0) {
-      return libraries
-    } else {
-      throw json({
-        msg: `code: ${code}\nfailed to get libraries\n${msg}`,
-      })
-    }
-  },
-
-  async getAllManga(libraryId: number): Promise<Manga[]> {
-    setJwtHeader() // set jwt auth token
-    const {
-      data: { code, data: manga, msg },
-    } = await axios.get<R<Manga[]>>(`/library/${libraryId}/listManga`)
-    if (code === 0) {
-      return manga
-    } else {
-      throw json({
-        msg: `code: ${code}\nfailed to get manga\n${msg}`,
-      })
-    }
-  },
+  if (code === 0) {
+    return jwt
+  } else {
+    throw new Error(`code: ${code}\nlogin failed\n${msg}`)
+  }
 }
 
-export default api
+export async function getAllLibraries(): Promise<Library[]> {
+  setJwtHeader()
+
+  const {
+    data: { code, msg, data: libraries },
+  } = await axios.get<R<Library[]>>('/library')
+
+  if (code === 0) {
+    return libraries
+  } else {
+    throw new Error(`code: ${code}\nfailed to get libraries\n${msg}`)
+  }
+}
+
+// export function useAllLibraries(): Library[] {
+//   const { data, error, isLoading } = useSWR(undefined, fetcher)
+// }
+
+export async function getAllMangas(libraryId: number): Promise<Manga[]> {
+  setJwtHeader()
+
+  const {
+    data: { code, msg, data: mangas },
+  } = await axios.get<R<Manga[]>>(`/library/${libraryId}/listManga`)
+
+  if (code === 0) {
+    return mangas
+  } else {
+    throw new Error(`code: ${code}\nfailed to get mangas\n${msg}`)
+  }
+}
+
+export async function scanManga(libraryId: number): Promise<void> {
+  setJwtHeader()
+
+  const {
+    data: { code, msg },
+  } = await axios.get<R<void>>(`/library/${libraryId}/scanManga`)
+
+  if (code !== 0) {
+    throw new Error(`code: ${code}\nfailed to scan manga\n${msg}`)
+  }
+}
+
+export async function getManga(mangaId: number): Promise<Manga> {
+  setJwtHeader()
+
+  const {
+    data: { code, msg, data: manga },
+  } = await axios.get<R<Manga>>(`/manga/${mangaId}`)
+
+  if (code === 0) {
+    return manga
+  } else {
+    throw new Error(`${code}\nfailed to get manga\n${msg}`)
+  }
+}
+
+export async function getMangaPage(
+  mangaId: number,
+  pageId: number
+): Promise<string> {
+  setJwtHeader()
+
+  const { data: page } = await axios.get<Blob>(
+    `/manga/${mangaId}/page/${pageId}`,
+    {
+      responseType: 'blob',
+    }
+  )
+
+  // return the data url of the page
+  return URL.createObjectURL(page)
+}

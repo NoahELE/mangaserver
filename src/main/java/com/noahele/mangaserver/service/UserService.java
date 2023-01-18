@@ -4,7 +4,7 @@ import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.repository.UserRepository;
 import com.noahele.mangaserver.utils.JwtUtils;
 import com.noahele.mangaserver.utils.MyUserDetails;
-import com.noahele.mangaserver.utils.UserCache;
+import com.noahele.mangaserver.utils.cache.UserCache;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

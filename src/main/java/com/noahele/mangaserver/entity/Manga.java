@@ -1,6 +1,7 @@
 package com.noahele.mangaserver.entity;
 
 import com.google.common.io.Files;
+import com.noahele.mangaserver.utils.reader.MangaReader;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -12,6 +13,7 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 @Getter
@@ -24,25 +26,33 @@ public class Manga extends BaseEntity {
     private String name;
     @NotBlank
     @Column(nullable = false)
+    private String path;
+    @NotBlank
+    @Column(nullable = false)
     private String ext;
     @NotBlank
     @Column(nullable = false)
-    private String path;
     private Integer numOfPages;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Library library;
 
-    public static Manga fromFile(File mangaFile, Library library) {
-        String name = Files.getNameWithoutExtension(mangaFile.getName());
-        String ext = Files.getFileExtension(mangaFile.getName());
-        return new Manga(name, ext, mangaFile.getPath(), library);
+    public static Manga fromFile(File mangaFile, Library library) throws IOException {
+        String filename = mangaFile.getName();
+        String name = Files.getNameWithoutExtension(filename);
+        String ext = Files.getFileExtension(filename);
+        String path = mangaFile.getPath();
+        try (MangaReader reader = MangaReader.getByPath(path)) {
+            int numOfPages = reader.getNumOfPages();
+            return new Manga(name, path, ext, numOfPages, library);
+        }
     }
 
-    public Manga(String name, String ext, String path, Library library) {
+    public Manga(String name, String path, String ext, int numOfPages, Library library) {
         this.name = name;
-        this.ext = ext;
         this.path = path;
+        this.ext = ext;
+        this.numOfPages = numOfPages;
         this.library = library;
     }
 

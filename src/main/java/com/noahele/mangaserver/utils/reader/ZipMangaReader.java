@@ -1,55 +1,57 @@
 package com.noahele.mangaserver.utils.reader;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.collect.Streams;
+import com.google.common.io.Files;
+import com.noahele.mangaserver.exception.UnsupportedFormatException;
+import com.noahele.mangaserver.utils.MangaPage;
+import com.noahele.mangaserver.utils.NaturalOrder;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
+import org.springframework.http.MediaType;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
 
-public class ZipMangaReader implements MangaReader {
-    private static final int PAGE_CACHE_SIZE = 16;
+public class ZipMangaReader extends MangaReader {
     private final ZipFile zipFile;
     private final List<String> filenames;
-    private final LoadingCache<String, byte[]> pageCache;
 
-    public ZipMangaReader(String file) throws IOException {
-        this.zipFile = new ZipFile(file);
+    public ZipMangaReader(String path) throws IOException {
+        this.zipFile = new ZipFile(path);
         Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
-        List<ZipArchiveEntry> entryList = new ArrayList<>();
-        while (entries.hasMoreElements()) {
-            ZipArchiveEntry entry = entries.nextElement();
-            // add entry to list if it is not a directory
-            if (!entry.isDirectory()) {
-                entryList.add(entry);
-            }
-        }
-        this.filenames = entryList.stream()
-                // map to list of String
+        this.filenames = Streams.stream(entries::asIterator)
+                // remove directory entry
+                .filter(entry -> !entry.isDirectory())
+                // map to filenames
                 .map(ZipArchiveEntry::getName)
-                // sort filenames
-                .sorted()
+                // sort filenames with natural order
+                .sorted(NaturalOrder::compare)
                 .toList();
-        // init page cache
-        this.pageCache = Caffeine.newBuilder()
-                .initialCapacity(PAGE_CACHE_SIZE)
-                .maximumSize(PAGE_CACHE_SIZE)
-                .build(filename ->
-                        IOUtils.toByteArray(zipFile.getInputStream(zipFile.getEntry(filename))));
     }
 
     @Override
-    public List<String> getAllFileNames() {
-        return filenames;
+    public int getNumOfPages() {
+        return filenames.size();
     }
 
+
     @Override
-    public byte[] getPage(int pageIndex) {
-        return pageCache.get(filenames.get(pageIndex));
+    public MangaPage getPage(int pageIndex) throws IOException {
+        String ext = Files.getFileExtension(filenames.get(pageIndex)).toLowerCase();
+        MediaType mediaType = switch (ext) {
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
+            case "png" -> MediaType.IMAGE_PNG;
+            case "gif" -> MediaType.IMAGE_GIF;
+            default -> throw new UnsupportedFormatException("unknown image type: " + ext);
+        };
+        String filename = filenames.get(pageIndex);
+        ZipArchiveEntry entry = zipFile.getEntry(filename);
+        try (InputStream input = zipFile.getInputStream(entry)) {
+            return new MangaPage(IOUtils.toByteArray(input), mediaType);
+        }
     }
 
     @Override

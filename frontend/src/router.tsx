@@ -1,8 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom'
 import ErrorPage from './page/ErrorPage'
+import LibraryDetailPage from './page/LibraryDetailPage'
 import LibraryListPage from './page/LibraryListPage'
 import LoginPage from './page/LoginPage'
-import MangaListPage from './page/MangaListPage'
+import MangaDetailPage from './page/MangaDetailPage'
 
 const router = createBrowserRouter([
   {
@@ -13,10 +14,17 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <LoginPage />,
+    errorElement: <ErrorPage />,
   },
   {
     path: '/library/:libraryId',
-    element: <MangaListPage />,
+    element: <LibraryDetailPage />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/manga/:mangaId',
+    element: <MangaDetailPage />,
+    errorElement: <ErrorPage />,
   },
 ])
 
