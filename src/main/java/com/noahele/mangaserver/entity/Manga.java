@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -25,15 +27,16 @@ public class Manga extends BaseEntity {
     @Column(nullable = false)
     private String name;
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String path;
     @NotBlank
     @Column(nullable = false)
     private String ext;
-    @NotBlank
+    @Positive
     @Column(nullable = false)
-    private Integer numOfPages;
+    private int numOfPages;
     @ManyToOne
+    @NotNull
     @JoinColumn(nullable = false)
     private Library library;
 

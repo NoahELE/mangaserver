@@ -7,6 +7,7 @@ import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.LibraryRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
+import com.noahele.mangaserver.utils.NaturalOrder;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,7 @@ public class LibraryService {
     public Library getLibrary(int id) throws OwnerNotMatchException {
         Library library = libraryRepository.findById(id).orElseThrow();
         User user = CurrUserFacade.getUser();
-        if (!user.equals(library.getOwner())) {
+        if (user == null || !user.equals(library.getOwner())) {
             throw new OwnerNotMatchException(user);
         }
         return library;
@@ -60,7 +61,9 @@ public class LibraryService {
 
     public List<Library> getAllLibraries() {
         User user = CurrUserFacade.getUser();
-        return libraryRepository.findAllByOwner(user);
+        List<Library> libraryList = libraryRepository.findAllByOwner(user);
+        libraryList.sort((l1, l2) -> NaturalOrder.compare(l1.getName(), l2.getName()));
+        return libraryList;
     }
 
     public void scanManga(int id) throws OwnerNotMatchException, IOException {

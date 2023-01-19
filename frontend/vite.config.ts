@@ -14,6 +14,8 @@ export default defineConfig({
           antd: ['antd'],
           lodash: ['lodash-es'],
           axios: ['axios'],
+          router: ['react-router-dom'],
+          zustand: ['zustand'],
         },
       },
     },

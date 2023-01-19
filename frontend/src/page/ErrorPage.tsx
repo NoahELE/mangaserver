@@ -1,4 +1,5 @@
 import { Button, Typography } from 'antd'
+import { AxiosError } from 'axios'
 import { CSSProperties, ReactElement } from 'react'
 import { useNavigate, useRouteError } from 'react-router-dom'
 
@@ -11,6 +12,9 @@ export default function ErrorPage(): ReactElement {
   const navigate = useNavigate()
 
   let errorMsg: string
+  if (error instanceof AxiosError && error.response) {
+    errorMsg = `${error.name}\n${error.message}\n${error.response.status}\n${error.response.statusText}`
+  }
   if (error instanceof Error) {
     errorMsg = `${error.name}\n${error.message}`
   } else {

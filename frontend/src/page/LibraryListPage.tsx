@@ -17,15 +17,13 @@ export default function LibraryListPage(): ReactElement {
     getAllLibraries().then(setLibraries).catch(setError)
   }, [])
 
-  const libraryCards = chunk(libraries, 4).map((row, i) => (
-    <Row key={i} gutter={16}>
-      {row.map((library, j) => (
-        <Col key={`${i}-${j}`} span={6}>
-          <LibraryCard library={library} />
-        </Col>
-      ))}
-    </Row>
-  ))
+  const libraryCards = chunk(libraries, 4).map((row) =>
+    row.map((library) => (
+      <Col span={6} key={library.id}>
+        <LibraryCard library={library} />
+      </Col>
+    ))
+  )
 
   return (
     <>
@@ -33,7 +31,7 @@ export default function LibraryListPage(): ReactElement {
 
       <Divider />
 
-      {...libraryCards}
+      <Row gutter={[16, 16]}>{...libraryCards}</Row>
     </>
   )
 }

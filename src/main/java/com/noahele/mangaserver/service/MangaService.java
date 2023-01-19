@@ -42,24 +42,23 @@ public class MangaService {
         mangaRepository.saveAll(mangaList);
     }
 
-    public void deleteManga(int id) throws OwnerNotMatchException, IOException {
+    public void deleteManga(int id) throws OwnerNotMatchException {
         getManga(id); // check if the user can access the manga
         mangaRepository.deleteById(id);
     }
 
-    public void updateManga(int id, Manga manga) throws OwnerNotMatchException, IOException {
+    public void updateManga(int id, Manga manga) throws OwnerNotMatchException {
         getManga(id); // check if the user can access the manga
         assert manga.getId() == null;
         manga.setId(id);
         mangaRepository.save(manga);
     }
 
-    public Manga getManga(int id) throws OwnerNotMatchException, IOException {
+    public Manga getManga(int id) throws OwnerNotMatchException {
         Manga manga = mangaRepository.findById(id).orElseThrow();
         // throw OwnerNotMatchException if the user does not have access to the manga's library
         User user = CurrUserFacade.getUser();
-        assert user != null;
-        if (!user.equals(manga.getLibrary().getOwner())) {
+        if (user == null || !user.equals(manga.getLibrary().getOwner())) {
             throw new OwnerNotMatchException(user);
         }
         return manga;

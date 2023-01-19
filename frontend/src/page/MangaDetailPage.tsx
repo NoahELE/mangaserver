@@ -36,9 +36,7 @@ export default function MangaDetailPage(): ReactElement {
   } else {
     const pages: ReactElement[] = []
     for (let pageId = 0; pageId < manga.numOfPages; pageId++) {
-      pages.push(
-        <MangaPageImage mangaId={mangaId} pageId={pageId} key={pageId} />
-      )
+      pages.push(<MangaPageImage manga={manga} pageId={pageId} key={pageId} />)
     }
 
     return (

@@ -3,7 +3,6 @@ package com.noahele.mangaserver.controller;
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.service.UserService;
 import com.noahele.mangaserver.utils.MyUserDetails;
-import com.noahele.mangaserver.utils.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,38 +17,20 @@ public class UserController {
     }
 
     @PostMapping("")
-    public R<Void> addUser(@RequestBody User user) {
-        try {
-            log.info("Add user: {}", user);
-            userService.addUser(user);
-            return R.ok();
-        } catch (Exception e) {
-            log.error("Add user error: ", e);
-            return R.err(e);
-        }
+    public void addUser(@RequestBody User user) {
+        log.info("Add user: {}", user);
+        userService.addUser(user);
     }
 
     @PostMapping("/login")
-    public R<String> login(@RequestBody User user) {
-        try {
-            log.info("User login: {}", user);
-            String jwt = userService.login(user);
-            return R.ok(jwt);
-        } catch (Exception e) {
-            log.error("User login error: ", e);
-            return R.err(e);
-        }
+    public String login(@RequestBody User user) {
+        log.info("User login: {}", user);
+        return userService.login(user);
     }
 
     @GetMapping("/logout")
-    public R<Void> logout() {
-        try {
-            MyUserDetails myUserDetails = userService.logout();
-            log.info("User logout: {}", myUserDetails);
-            return R.ok();
-        } catch (Exception e) {
-            log.error("User logout error: ", e);
-            return R.err(e);
-        }
+    public void logout() {
+        MyUserDetails myUserDetails = userService.logout();
+        log.info("User logout: {}", myUserDetails);
     }
 }
