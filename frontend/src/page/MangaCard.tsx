@@ -13,16 +13,20 @@ interface Props {
 export default function MangaCard({ manga }: Props): ReactElement {
   const { id, name, path } = manga
   const navigate = useNavigate()
-  const [cover, setCover] = useState<string | null>(null)
+  const [cover, setCover] = useState<string>('')
+  const [error, setError] = useState<unknown>(null)
+  if (error !== null) {
+    throw error
+  }
   useEffect(() => {
-    getMangaPage(manga.id, 0).then(setCover)
+    getMangaPage(manga.id, 0).then(setCover).catch(setError)
   }, [manga.id])
 
   return (
     <Card
       hoverable
       onClick={() => navigate(`/manga/${id}`)}
-      cover={cover === null ? <Spin /> : <img src={cover} />}
+      cover={cover.length === 0 ? <Spin /> : <img src={cover} />}
     >
       <Meta title={name} description={path} />
     </Card>

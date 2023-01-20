@@ -1,7 +1,7 @@
 package com.noahele.mangaserver.utils.cache;
 
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.Policy;
 import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import com.noahele.mangaserver.utils.MangaPage;
@@ -15,42 +15,52 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
+
 @Component
-public class MangaPageCache implements Cache<MangaPageCache.Key, MangaPage> {
+public class MangaPageCache implements LoadingCache<MangaPageCache.Key, MangaPage> {
     public record Key(String path, int index) {
     }
 
     private final static int CACHE_INITIAL_SIZE = 64;
     private final static int CACHE_MAX_SIZE = 128;
     private final static int CACHE_EXPIRE_MINUTES = 10;
-    private final static int READ_AHEAD_SIZE = 8;
-    private final Cache<Key, MangaPage> cache = Caffeine.newBuilder()
+    private final LoadingCache<Key, MangaPage> cache = Caffeine.newBuilder()
             .initialCapacity(CACHE_INITIAL_SIZE)
             .maximumSize(CACHE_MAX_SIZE)
             .expireAfterWrite(Duration.ofMinutes(CACHE_EXPIRE_MINUTES))
-            .build();
+            .build(key -> {
+                try (MangaReader reader = MangaReader.getByPath(key.path)) {
+                    return reader.getPage(key.index);
+                }
+            });
 
     public @NonNull MangaPage get(String path, int index) throws IOException {
-        Key key = new Key(path, index);
-        MangaPage mangaPage = getIfPresent(key);
-        if (mangaPage != null) {
-            return mangaPage;
-        } else {
-            // read ahead pages after index and put them in cache
-            try (MangaReader reader = MangaReader.getByPath(path)) {
-                // read ahead `READ_AHEAD_SIZE` pages
-                int numOfPages = reader.getNumOfPages();
-                for (int i = index; i < Math.min(numOfPages, index + READ_AHEAD_SIZE); i++) {
-                    put(new Key(path, index), reader.getPage(i));
-                }
-            }
-            return Objects.requireNonNull(getIfPresent(key));
-        }
+        return get(new Key(path, index));
+    }
+
+    @Override
+    public MangaPage get(Key key) {
+        return cache.get(key);
+    }
+
+    @Override
+    public Map<Key, MangaPage> getAll(Iterable<? extends Key> keys) {
+        return cache.getAll(keys);
+    }
+
+    @Override
+    public CompletableFuture<MangaPage> refresh(Key key) {
+        return cache.refresh(key);
+    }
+
+    @Override
+    public CompletableFuture<Map<Key, MangaPage>> refreshAll(Iterable<? extends Key> keys) {
+        return cache.refreshAll(keys);
     }
 
     @Override

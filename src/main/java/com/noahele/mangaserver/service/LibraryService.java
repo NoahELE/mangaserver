@@ -73,7 +73,7 @@ public class LibraryService {
         assert currDir.isDirectory();
         List<Manga> mangaList = new ArrayList<>();
         scanMangaRecursive(mangaList, currDir, library);
-        mangaList = mangaList.stream().filter((manga) -> !mangaService.existsByPath(manga.getPath())).toList();
+        mangaList = mangaList.stream().filter(manga -> !mangaService.existsByPath(manga.getPath())).toList();
         mangaService.addAllManga(mangaList, id);
     }
 
