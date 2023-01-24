@@ -15,18 +15,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserCache userCache;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final UserCache userCache;
 
     public UserService(UserRepository userRepository,
+                       UserCache userCache,
                        PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager,
-                       UserCache userCache) {
+                       AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.userCache = userCache;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.userCache = userCache;
     }
 
     public void addUser(User user) {

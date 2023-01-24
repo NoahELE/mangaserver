@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // get Authorization header, return if there is no Authorization Bearer header
         String header = request.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            log.warn("No Authorization Bearer header to {}", request.getRequestURI());
+            log.warn("No Authorization Bearer header to {}", request);
             filterChain.doFilter(request, response);
             return;
         }

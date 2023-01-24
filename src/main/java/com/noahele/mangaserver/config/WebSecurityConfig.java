@@ -35,7 +35,6 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // set UserDetailsService
         http.userDetailsService(myUserDetailsService);
-
         http.authorizeHttpRequests()
                 // allow anonymous to sign up and login
                 .requestMatchers(HttpMethod.POST, "/api/user", "/api/user/login").anonymous()
@@ -43,10 +42,8 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/**").authenticated()
                 // allow all access to web ui
                 .requestMatchers(HttpMethod.GET, "/**").permitAll();
-
         // add JwtAuthenticationFilter
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

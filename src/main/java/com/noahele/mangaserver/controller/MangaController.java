@@ -4,6 +4,7 @@ import com.noahele.mangaserver.entity.Manga;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.service.MangaService;
 import com.noahele.mangaserver.utils.MangaPage;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ public class MangaController {
     }
 
     @PostMapping("")
+    @Operation(summary = "add a manga")
     public void addManga(@RequestBody Manga manga, int libraryId)
             throws OwnerNotMatchException {
         log.info("Add manga {} to library {}", manga, libraryId);
@@ -28,12 +30,14 @@ public class MangaController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "delete a manga")
     public void deleteManga(@PathVariable int id) throws OwnerNotMatchException {
         log.info("Delete manga {}", id);
         mangaService.deleteManga(id);
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "update a manga")
     public void updateManga(@PathVariable int id, @RequestBody Manga manga)
             throws OwnerNotMatchException {
         log.info("Update manga {}", manga);
@@ -41,12 +45,14 @@ public class MangaController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "get manga by id")
     public Manga getManga(@PathVariable int id) throws OwnerNotMatchException {
         log.info("Get manga {}", id);
         return mangaService.getManga(id);
     }
 
     @GetMapping("/{id}/page/{pageIndex}")
+    @Operation(summary = "get a page from manga")
     public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex)
             throws OwnerNotMatchException, IOException {
         log.info("Get page {} from manga {}", pageIndex, id);

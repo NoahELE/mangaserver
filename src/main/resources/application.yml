@@ -5,10 +5,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    open-in-view: true
-  data:
-    rest:
-      base-path: /api
 
 mangaserver:
   database: database.sqlite
