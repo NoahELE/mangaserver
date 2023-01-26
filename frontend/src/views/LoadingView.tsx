@@ -1,7 +1,7 @@
 import { Spin } from 'antd'
 import { ReactElement } from 'react'
 
-export default function LoadingPage(): ReactElement {
+export default function LoadingView(): ReactElement {
   return (
     <div
       style={{

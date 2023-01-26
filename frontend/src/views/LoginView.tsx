@@ -7,7 +7,7 @@ import useStore from '../store'
 
 const { Title } = Typography
 
-export default function LoginPage(): ReactElement {
+export default function LoginView(): ReactElement {
   const navigate = useNavigate()
   const setJwt = useStore((state) => state.setJwt)
   const [error, setError] = useState<unknown>(null)

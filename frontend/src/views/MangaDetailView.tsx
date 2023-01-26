@@ -3,13 +3,13 @@ import { ReactElement, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getManga } from '../api'
 import { Manga } from '../entity'
-import LoadingPage from './LoadingPage'
-import MangaPageImage from './MangaPageImage'
+import LoadingView from './LoadingView'
+import MangaPageImage from '../components/MangaPageImage'
 
 const { Title } = Typography
 const { Item } = Descriptions
 
-export default function MangaDetailPage(): ReactElement {
+export default function MangaDetailView(): ReactElement {
   // parse mangaId from url
   const { mangaId: mangaIdString } = useParams()
   if (mangaIdString === undefined) {
@@ -32,7 +32,7 @@ export default function MangaDetailPage(): ReactElement {
 
   if (manga === null) {
     // full screen loading
-    return <LoadingPage />
+    return <LoadingView />
   } else {
     const pages: ReactElement[] = []
     for (let pageId = 0; pageId < manga.numOfPages; pageId++) {

@@ -3,12 +3,12 @@ import { chunk } from 'lodash-es'
 import { ReactElement, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getAllMangas, scanManga } from '../api'
+import MangaCard from '../components/MangaCard'
 import { Manga } from '../entity'
-import MangaCard from './MangaCard'
 
 const { Title } = Typography
 
-export default function LibraryDetailPage(): ReactElement {
+export default function LibraryDetailView(): ReactElement {
   // parse libraryId from url
   const { libraryId: libraryIdString } = useParams()
   if (libraryIdString === undefined) {

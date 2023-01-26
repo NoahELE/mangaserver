@@ -1,30 +1,30 @@
 import { createBrowserRouter } from 'react-router-dom'
-import ErrorPage from './page/ErrorPage'
-import LibraryDetailPage from './page/LibraryDetailPage'
-import LibraryListPage from './page/LibraryListPage'
-import LoginPage from './page/LoginPage'
-import MangaDetailPage from './page/MangaDetailPage'
+import ErrorView from './views/ErrorView'
+import LibraryDetailView from './views/LibraryDetailView'
+import LibraryListView from './views/LibraryListView'
+import LoginView from './views/LoginView'
+import MangaDetailView from './views/MangaDetailView'
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <LibraryListPage />,
-    errorElement: <ErrorPage />,
+    element: <LibraryListView />,
+    errorElement: <ErrorView />,
   },
   {
     path: '/login',
-    element: <LoginPage />,
-    errorElement: <ErrorPage />,
+    element: <LoginView />,
+    errorElement: <ErrorView />,
   },
   {
     path: '/library/:libraryId',
-    element: <LibraryDetailPage />,
-    errorElement: <ErrorPage />,
+    element: <LibraryDetailView />,
+    errorElement: <ErrorView />,
   },
   {
     path: '/manga/:mangaId',
-    element: <MangaDetailPage />,
-    errorElement: <ErrorPage />,
+    element: <MangaDetailView />,
+    errorElement: <ErrorView />,
   },
 ])
 

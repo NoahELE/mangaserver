@@ -2,12 +2,12 @@ import { Col, Divider, Row, Typography } from 'antd'
 import { chunk } from 'lodash-es'
 import { ReactElement, useEffect, useState } from 'react'
 import { getAllLibraries } from '../api'
+import LibraryCard from '../components/LibraryCard'
 import { Library } from '../entity'
-import LibraryCard from './LibraryCard'
 
 const { Title } = Typography
 
-export default function LibraryListPage(): ReactElement {
+export default function LibraryListView(): ReactElement {
   const [libraries, setLibraries] = useState<Library[]>([])
   const [error, setError] = useState<unknown>(null)
   if (error !== null) {

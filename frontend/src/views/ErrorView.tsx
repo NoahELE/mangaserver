@@ -7,7 +7,7 @@ const { Title, Paragraph } = Typography
 
 const style: CSSProperties = { margin: '20px 10px' }
 
-export default function ErrorPage(): ReactElement {
+export default function ErrorView(): ReactElement {
   const error = useRouteError()
   const navigate = useNavigate()
 
