@@ -21,3 +21,9 @@ export interface Manga extends BaseEntity {
   numOfPages: number
   library: Library
 }
+
+export interface Page<T> {
+  content: T
+  number: number
+  totalElements: number
+}

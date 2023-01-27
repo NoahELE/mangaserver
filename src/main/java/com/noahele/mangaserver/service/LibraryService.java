@@ -7,8 +7,10 @@ import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.LibraryRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
-import com.noahele.mangaserver.utils.NaturalOrder;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -21,6 +23,7 @@ import java.util.Set;
 @Service
 public class LibraryService {
     private static final Set<String> SUPPORTED_FORMATS = Set.of("zip");
+    private static final Sort LIBRARY_SORT = Sort.sort(Library.class).by(Library::getName).ascending();
     private final LibraryRepository libraryRepository;
     private final MangaService mangaService;
 
@@ -55,15 +58,10 @@ public class LibraryService {
         return library;
     }
 
-    public List<Manga> listManga(int id) throws OwnerNotMatchException {
-        return getLibrary(id).getMangaList();
-    }
-
-    public List<Library> getAllLibraries() {
+    public Page<Library> getAllLibraries(int page, int size) {
         User user = CurrUserFacade.getUser();
-        List<Library> libraryList = libraryRepository.findAllByOwner(user);
-        libraryList.sort((l1, l2) -> NaturalOrder.compare(l1.getName(), l2.getName()));
-        return libraryList;
+        PageRequest pageRequest = PageRequest.of(page, size, LIBRARY_SORT);
+        return libraryRepository.findAllByOwner(user, pageRequest);
     }
 
     public void scanManga(int id) throws OwnerNotMatchException, IOException {

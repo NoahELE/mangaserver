@@ -9,7 +9,7 @@ import org.springframework.data.domain.AuditorAware;
 import java.util.Optional;
 
 @Configuration
-public class AuditorAwareImpl implements AuditorAware<User> {
+public class CurrUserAuditorAware implements AuditorAware<User> {
     @Override
     public @NonNull Optional<User> getCurrentAuditor() {
         return Optional.ofNullable(CurrUserFacade.getUser());

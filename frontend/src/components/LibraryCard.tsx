@@ -14,7 +14,7 @@ export default function LibraryCard({
 
   return (
     <Card title={name} hoverable onClick={() => navigate(`/library/${id}`)}>
-      {path}
+      <p style={{ wordWrap: 'break-word' }}>{path}</p>
     </Card>
   )
 }

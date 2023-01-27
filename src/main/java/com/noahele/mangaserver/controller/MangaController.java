@@ -6,6 +6,7 @@ import com.noahele.mangaserver.service.MangaService;
 import com.noahele.mangaserver.utils.MangaPage;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,6 +45,13 @@ public class MangaController {
         mangaService.updateManga(id, manga);
     }
 
+    @GetMapping("")
+    @Operation(summary = "get all manga from a library")
+    public Page<Manga> getAllByLibrary(int libraryId, int page, int size) throws OwnerNotMatchException {
+        log.info("Library {} get all manga in page {}", libraryId, page);
+        return mangaService.getAllByLibrary(libraryId, page, size);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "get manga by id")
     public Manga getManga(@PathVariable int id) throws OwnerNotMatchException {
@@ -56,7 +64,7 @@ public class MangaController {
     public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex)
             throws OwnerNotMatchException, IOException {
         log.info("Get page {} from manga {}", pageIndex, id);
-        MangaPage mangaPage = mangaService.getMangaPageInfo(id, pageIndex);
+        MangaPage mangaPage = mangaService.getMangaPage(id, pageIndex);
         return ResponseEntity.ok()
                 .contentType(mangaPage.type())
                 .body(mangaPage.page());

@@ -7,15 +7,12 @@ export default defineConfig({
   build: {
     outDir: '../src/main/resources/static',
     emptyOutDir: true,
+    chunkSizeWarningLimit: 1000, // XXX find a better way to chunk
     rollupOptions: {
       output: {
         manualChunks: {
           react: ['react', 'react-dom'],
           antd: ['antd'],
-          lodash: ['lodash-es'],
-          axios: ['axios'],
-          router: ['react-router-dom'],
-          zustand: ['zustand'],
         },
       },
     },

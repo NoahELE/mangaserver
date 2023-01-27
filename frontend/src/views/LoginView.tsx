@@ -11,6 +11,7 @@ export default function LoginView(): ReactElement {
   const navigate = useNavigate()
   const setJwt = useStore((state) => state.setJwt)
   const [error, setError] = useState<unknown>(null)
+
   if (error !== null) {
     throw error
   }

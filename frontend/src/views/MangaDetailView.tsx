@@ -2,9 +2,9 @@ import { Descriptions, Divider, Typography } from 'antd'
 import { ReactElement, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getManga } from '../api'
-import { Manga } from '../entity'
-import LoadingView from './LoadingView'
+import Loading from '../components/Loading'
 import MangaPageImage from '../components/MangaPageImage'
+import { Manga } from '../entity'
 
 const { Title } = Typography
 const { Item } = Descriptions
@@ -23,6 +23,7 @@ export default function MangaDetailView(): ReactElement {
   // get manga from api
   const [manga, setManga] = useState<Manga | null>(null)
   const [error, setError] = useState<unknown>(null)
+
   if (error !== null) {
     throw error
   }
@@ -32,7 +33,7 @@ export default function MangaDetailView(): ReactElement {
 
   if (manga === null) {
     // full screen loading
-    return <LoadingView />
+    return <Loading />
   } else {
     const pages: ReactElement[] = []
     for (let pageId = 0; pageId < manga.numOfPages; pageId++) {
@@ -55,7 +56,15 @@ export default function MangaDetailView(): ReactElement {
 
         <Divider />
 
-        {...pages}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+          }}
+        >
+          {...pages}
+        </div>
       </>
     )
   }

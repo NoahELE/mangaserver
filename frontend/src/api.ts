@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { Library, Manga, User } from './entity'
+import { Library, Manga, Page, User } from './entity'
 import useStore from './store'
 
 axios.defaults.baseURL = '/api'
@@ -18,18 +18,27 @@ export async function login(user: User): Promise<string> {
   return jwt
 }
 
-export async function getAllLibraries(): Promise<Library[]> {
+export async function getAllLibraries(
+  page: number,
+  size: number
+): Promise<Page<Library[]>> {
   setJwtHeader()
-  const { data: libraries } = await axios.get<Library[]>('/library')
-  return libraries
+  const { data: libraryPage } = await axios.get<Page<Library[]>>('/library', {
+    params: { page: page - 1, size },
+  })
+  return libraryPage
 }
 
-export async function getAllMangas(libraryId: number): Promise<Manga[]> {
+export async function getAllMangas(
+  libraryId: number,
+  page: number,
+  size: number
+): Promise<Page<Manga[]>> {
   setJwtHeader()
-  const { data: mangas } = await axios.get<Manga[]>(
-    `/library/${libraryId}/listManga`
-  )
-  return mangas
+  const { data: mangaPage } = await axios.get<Page<Manga[]>>('/manga', {
+    params: { libraryId, page: page - 1, size },
+  })
+  return mangaPage
 }
 
 export async function scanManga(libraryId: number): Promise<void> {
