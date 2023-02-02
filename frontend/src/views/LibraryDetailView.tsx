@@ -1,10 +1,10 @@
 import { Button, Col, Divider, Pagination, Row, Typography } from 'antd'
 import { chunk } from 'lodash-es'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getAllMangas, scanManga } from '../api'
+import { scanManga, useAllMangas } from '../api'
+import Loading from '../components/Loading'
 import MangaCard from '../components/MangaCard'
-import { Manga } from '../entity'
 
 const { Title } = Typography
 
@@ -21,22 +21,24 @@ export default function LibraryDetailView(): ReactElement {
 
   // get manga list from api
   const [current, setCurrent] = useState(1)
-  const [total, setTotal] = useState(0)
   const [pageSize, setPageSize] = useState(20)
-  const [mangas, setMangas] = useState<Manga[]>([])
-  const [error, setError] = useState<unknown>(null)
+  const [scanError, setScanError] = useState<unknown>(null)
+  const { data, error, isLoading } = useAllMangas(libraryId, current, pageSize)
 
-  if (error !== null) {
+  if (scanError) {
+    throw scanError
+  }
+  if (error) {
     throw error
   }
-  useEffect(() => {
-    getAllMangas(libraryId, current, pageSize)
-      .then((mangaPage) => {
-        setMangas(mangaPage.content)
-        setTotal(mangaPage.totalElements)
-      })
-      .catch(setError)
-  }, [current, libraryId, pageSize])
+  if (isLoading) {
+    return <Loading />
+  }
+  if (!data) {
+    throw new Error('null or undefined data')
+  }
+  const mangas = data.content
+  const total = data.totalElements
 
   const mangaCards = chunk(mangas, 4).map((row) =>
     row.map((manga) => (
@@ -51,7 +53,7 @@ export default function LibraryDetailView(): ReactElement {
       <Title>Manga List</Title>
       <Button
         type="default"
-        onClick={() => scanManga(libraryId).catch(setError)}
+        onClick={() => scanManga(libraryId).catch(setScanError)}
       >
         Scan Manga
       </Button>

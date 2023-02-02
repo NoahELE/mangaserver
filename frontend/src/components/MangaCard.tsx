@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import { getMangaPage } from '../api'
 import { Manga } from '../entity'
 
-const { Meta } = Card
-
 interface Props {
   manga: Manga
 }
@@ -28,7 +26,7 @@ export default function MangaCard({ manga }: Props): ReactElement {
       onClick={() => navigate(`/manga/${id}`)}
       cover={cover.length === 0 ? <Spin /> : <img src={cover} />}
     >
-      <Meta title={name} description={path} />
+      <Card.Meta title={name} description={path} />
     </Card>
   )
 }

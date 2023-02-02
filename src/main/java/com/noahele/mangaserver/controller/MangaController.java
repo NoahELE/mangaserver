@@ -3,7 +3,7 @@ package com.noahele.mangaserver.controller;
 import com.noahele.mangaserver.entity.Manga;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.service.MangaService;
-import com.noahele.mangaserver.utils.MangaPage;
+import com.noahele.mangaserver.utils.MangaPageInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -64,9 +64,9 @@ public class MangaController {
     public ResponseEntity<byte[]> getMangaPage(@PathVariable int id, @PathVariable int pageIndex)
             throws OwnerNotMatchException, IOException {
         log.info("Get page {} from manga {}", pageIndex, id);
-        MangaPage mangaPage = mangaService.getMangaPage(id, pageIndex);
+        MangaPageInfo mangaPageInfo = mangaService.getMangaPage(id, pageIndex);
         return ResponseEntity.ok()
-                .contentType(mangaPage.type())
-                .body(mangaPage.page());
+                .contentType(mangaPageInfo.type())
+                .body(mangaPageInfo.page());
     }
 }

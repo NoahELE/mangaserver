@@ -6,7 +6,7 @@ import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.MangaRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
-import com.noahele.mangaserver.utils.MangaPage;
+import com.noahele.mangaserver.utils.MangaPageInfo;
 import com.noahele.mangaserver.utils.cache.MangaPageCache;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -78,7 +78,7 @@ public class MangaService {
         return mangaRepository.existsByPath(path);
     }
 
-    public MangaPage getMangaPage(int id, int pageIndex) throws OwnerNotMatchException, IOException {
+    public MangaPageInfo getMangaPage(int id, int pageIndex) throws OwnerNotMatchException, IOException {
         Manga manga = getManga(id);
         return mangaPageCache.get(manga.getPath(), pageIndex);
     }

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
-export interface State {
+interface State {
   jwt: string
   setJwt(jwt: string): void
 }
@@ -14,7 +14,7 @@ const useStore = create<State>()(
         set({ jwt })
       },
     }),
-    { name: 'mangaserver-storage' }
+    { version: 0, name: 'mangaserver-storage' }
   )
 )
 

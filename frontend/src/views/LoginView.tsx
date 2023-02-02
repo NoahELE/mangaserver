@@ -23,13 +23,13 @@ export default function LoginView(): ReactElement {
       </Title>
 
       <Form
-        labelCol={{ span: 8 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 12 }}
         onFinish={(user: User): void => {
           login(user)
             .then((jwt) => {
               setJwt(jwt)
-              navigate('/')
+              navigate('/', { replace: true })
             })
             .catch(setError)
         }}

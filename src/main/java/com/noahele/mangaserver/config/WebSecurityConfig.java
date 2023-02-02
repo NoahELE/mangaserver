@@ -31,13 +31,13 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // disable csrf as the application uses jwt
         http.csrf().disable();
-        // also disable session id
+        // disable session id
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // set UserDetailsService
         http.userDetailsService(myUserDetailsService);
         http.authorizeHttpRequests()
-                // allow anonymous to sign up and login
-                .requestMatchers(HttpMethod.POST, "/api/user", "/api/user/login").anonymous()
+                // allow all access to sign up and login
+                .requestMatchers(HttpMethod.POST, "/api/user", "/api/user/login").permitAll()
                 // all other api require authentication
                 .requestMatchers("/api/**").authenticated()
                 // allow all access to web ui

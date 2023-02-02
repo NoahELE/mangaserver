@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Slf4j
 @Controller
 public class WebUIController {
-    @GetMapping({"/login", "/library/**", "/manga/**"})
+    @GetMapping({"", "/login", "/library/**", "/manga/**"})
     public String index() {
         log.info("Request index");
         return "forward:/index.html";

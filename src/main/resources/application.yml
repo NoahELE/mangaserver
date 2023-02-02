@@ -5,6 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    open-in-view: true
 
 mangaserver:
   database: database.sqlite

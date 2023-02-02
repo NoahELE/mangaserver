@@ -1,12 +1,18 @@
 import axios from 'axios'
+import useSWR, { SWRResponse } from 'swr'
 import { Library, Manga, Page, User } from './entity'
 import useStore from './store'
 
 axios.defaults.baseURL = '/api'
 
+async function fetcher<T>(url: string): Promise<T> {
+  const { data } = await axios.get<T>(url)
+  return data
+}
+
 function setJwtHeader(): void {
   const { jwt } = useStore.getState() // get jwt from store
-  if (jwt.length !== 0) {
+  if (jwt !== '') {
     axios.defaults.headers.common.Authorization = `Bearer ${jwt}`
   } else {
     throw new Error('jwt is empty')
@@ -18,27 +24,27 @@ export async function login(user: User): Promise<string> {
   return jwt
 }
 
-export async function getAllLibraries(
+export function useAllLibraries(
   page: number,
   size: number
-): Promise<Page<Library[]>> {
+): SWRResponse<Page<Library[]>> {
   setJwtHeader()
-  const { data: libraryPage } = await axios.get<Page<Library[]>>('/library', {
-    params: { page: page - 1, size },
-  })
-  return libraryPage
+  const params = new URLSearchParams({ page: page - 1 + '', size: size + '' })
+  return useSWR<Page<Library[]>>(`/library?${params}`, fetcher)
 }
 
-export async function getAllMangas(
+export function useAllMangas(
   libraryId: number,
   page: number,
   size: number
-): Promise<Page<Manga[]>> {
+): SWRResponse<Page<Manga[]>> {
   setJwtHeader()
-  const { data: mangaPage } = await axios.get<Page<Manga[]>>('/manga', {
-    params: { libraryId, page: page - 1, size },
+  const params = new URLSearchParams({
+    libraryId: libraryId + '',
+    page: page - 1 + '',
+    size: size + '',
   })
-  return mangaPage
+  return useSWR<Page<Manga[]>>(`/manga?${params}`, fetcher)
 }
 
 export async function scanManga(libraryId: number): Promise<void> {

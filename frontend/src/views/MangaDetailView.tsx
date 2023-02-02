@@ -7,7 +7,6 @@ import MangaPageImage from '../components/MangaPageImage'
 import { Manga } from '../entity'
 
 const { Title } = Typography
-const { Item } = Descriptions
 
 export default function MangaDetailView(): ReactElement {
   // parse mangaId from url
@@ -32,7 +31,6 @@ export default function MangaDetailView(): ReactElement {
   }, [mangaId])
 
   if (manga === null) {
-    // full screen loading
     return <Loading />
   } else {
     const pages: ReactElement[] = []
@@ -47,11 +45,15 @@ export default function MangaDetailView(): ReactElement {
         <Divider />
 
         <Descriptions bordered column={2}>
-          <Item label="Name">{manga.name}</Item>
-          <Item label="Path">{manga.path}</Item>
-          <Item label="Ext">{manga.ext}</Item>
-          <Item label="Number of Pages">{manga.numOfPages}</Item>
-          <Item label="Library">{manga.library.name}</Item>
+          <Descriptions.Item label="Name">{manga.name}</Descriptions.Item>
+          <Descriptions.Item label="Path">{manga.path}</Descriptions.Item>
+          <Descriptions.Item label="Ext">{manga.ext}</Descriptions.Item>
+          <Descriptions.Item label="Number of Pages">
+            {manga.numOfPages}
+          </Descriptions.Item>
+          <Descriptions.Item label="Library">
+            {manga.library.name}
+          </Descriptions.Item>
         </Descriptions>
 
         <Divider />

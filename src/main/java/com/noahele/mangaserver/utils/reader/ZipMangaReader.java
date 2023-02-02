@@ -3,7 +3,7 @@ package com.noahele.mangaserver.utils.reader;
 import com.google.common.collect.Streams;
 import com.google.common.io.Files;
 import com.noahele.mangaserver.exception.UnsupportedFormatException;
-import com.noahele.mangaserver.utils.MangaPage;
+import com.noahele.mangaserver.utils.MangaPageInfo;
 import com.noahele.mangaserver.utils.NaturalOrder;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
@@ -37,7 +37,7 @@ public class ZipMangaReader extends MangaReader {
 
 
     @Override
-    public MangaPage getPage(int pageIndex) throws IOException {
+    public MangaPageInfo getPage(int pageIndex) throws IOException {
         String ext = Files.getFileExtension(entries.get(pageIndex).getName()).toLowerCase();
         MediaType mediaType = switch (ext) {
             case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
@@ -47,7 +47,7 @@ public class ZipMangaReader extends MangaReader {
         };
         ZipArchiveEntry entry = entries.get(pageIndex);
         try (InputStream input = zipFile.getInputStream(entry)) {
-            return new MangaPage(IOUtils.toByteArray(input), mediaType);
+            return new MangaPageInfo(IOUtils.toByteArray(input), mediaType);
         }
     }
 

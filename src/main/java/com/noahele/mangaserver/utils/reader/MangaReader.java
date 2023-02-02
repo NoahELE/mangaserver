@@ -2,7 +2,7 @@ package com.noahele.mangaserver.utils.reader;
 
 import com.google.common.io.Files;
 import com.noahele.mangaserver.exception.UnsupportedFormatException;
-import com.noahele.mangaserver.utils.MangaPage;
+import com.noahele.mangaserver.utils.MangaPageInfo;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -19,5 +19,5 @@ public abstract class MangaReader implements Closeable {
 
     public abstract int getNumOfPages();
 
-    public abstract MangaPage getPage(int pageIndex) throws IOException;
+    public abstract MangaPageInfo getPage(int pageIndex) throws IOException;
 }
