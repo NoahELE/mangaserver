@@ -14,7 +14,10 @@ const useStore = create<State>()(
         set({ jwt })
       },
     }),
-    { version: 0, name: 'mangaserver-storage' }
+    {
+      version: 0,
+      name: 'mangaserver-storage',
+    }
   )
 )
 

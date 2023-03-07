@@ -58,15 +58,7 @@ export default function MangaDetailView(): ReactElement {
 
         <Divider />
 
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          {...pages}
-        </div>
+        <div className="flex flex-col items-center">{...pages}</div>
       </>
     )
   }

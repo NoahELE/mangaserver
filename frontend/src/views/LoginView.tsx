@@ -18,9 +18,7 @@ export default function LoginView(): ReactElement {
 
   return (
     <>
-      <Title style={{ textAlign: 'center', margin: '100px 0' }}>
-        MangaServer
-      </Title>
+      <Title className="my-20 text-center">MangaServer</Title>
 
       <Form
         labelCol={{ span: 6 }}
@@ -33,7 +31,7 @@ export default function LoginView(): ReactElement {
             })
             .catch(setError)
         }}
-        style={{ margin: '0 400px' }}
+        className="mx-60"
       >
         <Form.Item
           name="username"

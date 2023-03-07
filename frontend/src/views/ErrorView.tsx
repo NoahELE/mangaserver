@@ -1,29 +1,27 @@
 import { Button, Typography } from 'antd'
-import { CSSProperties, ReactElement } from 'react'
+import { ReactElement } from 'react'
 import { useNavigate, useRouteError } from 'react-router-dom'
 
 const { Title, Paragraph } = Typography
 
-const style: CSSProperties = { margin: '20px 10px' }
-
 export default function ErrorView(): ReactElement {
-  const error = useRouteError() + ''
-  const navigate = useNavigate()
+  const error = String(useRouteError())
+  const navigate /* eslint-env node */ = useNavigate()
 
   return (
     <>
-      <Title style={style}>Error</Title>
-      <Paragraph code copyable style={{ margin: 20 }}>
+      <Title className="my-10">Error</Title>
+      <Paragraph code copyable className="my-10">
         {error}
       </Paragraph>
       <Button
         type="primary"
         onClick={() => navigate('/login', { replace: true })}
-        style={style}
+        className="my-10 mr-10"
       >
         Login
       </Button>
-      <Button type="default" onClick={() => navigate(-1)} style={style}>
+      <Button type="default" onClick={() => navigate(-1)} className="my-10">
         Return to Last Page
       </Button>
     </>

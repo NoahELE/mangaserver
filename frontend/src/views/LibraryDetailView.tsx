@@ -62,7 +62,7 @@ export default function LibraryDetailView(): ReactElement {
 
       <Row gutter={[16, 16]}>{...mangaCards}</Row>
 
-      <div style={{ marginTop: 10, display: 'flex', justifyContent: 'center' }}>
+      <div className="mt-10 flex justify-center">
         <Pagination
           current={current}
           total={total}

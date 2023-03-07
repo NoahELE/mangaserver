@@ -29,8 +29,8 @@ export function useAllLibraries(
   size: number
 ): SWRResponse<Page<Library[]>> {
   setJwtHeader()
-  const params = new URLSearchParams({ page: page - 1 + '', size: size + '' })
-  return useSWR<Page<Library[]>>(`/library?${params}`, fetcher)
+  const params = new URLSearchParams({ page: `${page - 1}`, size: `${size}` })
+  return useSWR<Page<Library[]>>(`/library?${params.toString()}`, fetcher)
 }
 
 export function useAllMangas(
@@ -40,11 +40,11 @@ export function useAllMangas(
 ): SWRResponse<Page<Manga[]>> {
   setJwtHeader()
   const params = new URLSearchParams({
-    libraryId: libraryId + '',
-    page: page - 1 + '',
-    size: size + '',
+    libraryId: `${libraryId}`,
+    page: `${page - 1}`,
+    size: `${size}`,
   })
-  return useSWR<Page<Manga[]>>(`/manga?${params}`, fetcher)
+  return useSWR<Page<Manga[]>>(`/manga?${params.toString()}`, fetcher)
 }
 
 export async function scanManga(libraryId: number): Promise<void> {
