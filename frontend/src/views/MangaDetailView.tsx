@@ -1,41 +1,41 @@
-import { Descriptions, Divider, Typography } from 'antd'
-import { ReactElement, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { getManga } from '../api'
-import Loading from '../components/Loading'
-import MangaPageImage from '../components/MangaPageImage'
-import { Manga } from '../entity'
+import { Descriptions, Divider, Typography } from 'antd';
+import { ReactElement, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { getManga } from '../api';
+import Loading from '../components/Loading';
+import MangaPageImage from '../components/MangaPageImage';
+import { Manga } from '../entity';
 
-const { Title } = Typography
+const { Title } = Typography;
 
 export default function MangaDetailView(): ReactElement {
   // parse mangaId from url
-  const { mangaId: mangaIdString } = useParams()
+  const { mangaId: mangaIdString } = useParams();
   if (mangaIdString === undefined) {
-    throw new Error('mangaId does not exist')
+    throw new Error('mangaId does not exist');
   }
-  const mangaId = +mangaIdString
+  const mangaId = +mangaIdString;
   if (isNaN(mangaId)) {
-    throw new Error('mangaId is not a number')
+    throw new Error('mangaId is not a number');
   }
 
   // get manga from api
-  const [manga, setManga] = useState<Manga | null>(null)
-  const [error, setError] = useState<unknown>(null)
+  const [manga, setManga] = useState<Manga | null>(null);
+  const [error, setError] = useState<unknown>(null);
 
   if (error !== null) {
-    throw error
+    throw error;
   }
   useEffect(() => {
-    getManga(mangaId).then(setManga).catch(setError)
-  }, [mangaId])
+    getManga(mangaId).then(setManga).catch(setError);
+  }, [mangaId]);
 
   if (manga === null) {
-    return <Loading />
+    return <Loading />;
   } else {
-    const pages: ReactElement[] = []
+    const pages: ReactElement[] = [];
     for (let pageId = 0; pageId < manga.numOfPages; pageId++) {
-      pages.push(<MangaPageImage manga={manga} pageId={pageId} key={pageId} />)
+      pages.push(<MangaPageImage manga={manga} pageId={pageId} key={pageId} />);
     }
 
     return (
@@ -60,6 +60,6 @@ export default function MangaDetailView(): ReactElement {
 
         <div className="flex flex-col items-center">{...pages}</div>
       </>
-    )
+    );
   }
 }

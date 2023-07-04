@@ -1,28 +1,28 @@
 interface BaseEntity {
-  id: number
-  createdDate: Date
-  lastModifiedDate: Date
+  id: number;
+  createdDate: Date;
+  lastModifiedDate: Date;
 }
 
 export interface User extends BaseEntity {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 export interface Library extends BaseEntity {
-  name: string
-  path: string
+  name: string;
+  path: string;
 }
 
 export interface Manga extends BaseEntity {
-  name: string
-  path: string
-  ext: string
-  numOfPages: number
-  library: Library
+  name: string;
+  path: string;
+  ext: string;
+  numOfPages: number;
+  library: Library;
 }
 
 export interface Page<T> {
-  content: T
-  totalElements: number
+  content: T;
+  totalElements: number;
 }

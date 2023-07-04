@@ -1,3 +1,6 @@
+server:
+  port: 10033
+
 spring:
   datasource:
     driver-class-name: org.sqlite.JDBC
@@ -6,6 +9,8 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: true
+  artemis:
+    mode: embedded
 
 mangaserver:
   database: database.sqlite

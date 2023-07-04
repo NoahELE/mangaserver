@@ -8,6 +8,7 @@ import com.noahele.mangaserver.repository.MangaRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
 import com.noahele.mangaserver.utils.MangaPageInfo;
 import com.noahele.mangaserver.utils.cache.MangaPageCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ public class MangaService {
     private final LibraryService libraryService;
     private final MangaPageCache mangaPageCache;
 
+    @Autowired
     public MangaService(MangaRepository mangaRepository, @Lazy LibraryService libraryService, MangaPageCache mangaPageCache) {
         this.mangaRepository = mangaRepository;
         this.libraryService = libraryService;

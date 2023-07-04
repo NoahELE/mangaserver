@@ -43,7 +43,7 @@ public class ZipMangaReader extends MangaReader {
             case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
             case "png" -> MediaType.IMAGE_PNG;
             case "gif" -> MediaType.IMAGE_GIF;
-            default -> throw new UnsupportedFormatException("unknown image type: " + ext);
+            default -> throw new UnsupportedFormatException(ext);
         };
         ZipArchiveEntry entry = entries.get(pageIndex);
         try (InputStream input = zipFile.getInputStream(entry)) {

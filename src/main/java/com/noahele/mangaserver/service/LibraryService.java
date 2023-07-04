@@ -7,6 +7,7 @@ import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.LibraryRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ public class LibraryService {
     private final LibraryRepository libraryRepository;
     private final MangaService mangaService;
 
+    @Autowired
     public LibraryService(LibraryRepository libraryRepository, @Lazy MangaService mangaService) {
         this.libraryRepository = libraryRepository;
         this.mangaService = mangaService;

@@ -7,7 +7,6 @@ import com.noahele.mangaserver.utils.reader.MangaReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.time.Duration;
 
 
@@ -15,18 +14,18 @@ import java.time.Duration;
 public class MangaPageCache {
     private final static int CACHE_INITIAL_SIZE = 64;
     private final static int CACHE_MAX_SIZE = 128;
-    private final static int CACHE_EXPIRE_MINUTES = 10;
+    private final static int CACHE_EXPIRE_MINUTES = 30;
     private final LoadingCache<Key, MangaPageInfo> cache = Caffeine.newBuilder()
             .initialCapacity(CACHE_INITIAL_SIZE)
             .maximumSize(CACHE_MAX_SIZE)
             .expireAfterWrite(Duration.ofMinutes(CACHE_EXPIRE_MINUTES))
-            .build(key -> {
+            .build((key) -> {
                 try (MangaReader reader = MangaReader.getByPath(key.path)) {
                     return reader.getPage(key.index);
                 }
             });
 
-    public @NonNull MangaPageInfo get(String path, int index) throws IOException {
+    public @NonNull MangaPageInfo get(String path, int index) {
         return cache.get(new Key(path, index));
     }
 

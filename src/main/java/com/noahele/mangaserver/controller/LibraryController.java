@@ -5,6 +5,7 @@ import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.service.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.io.IOException;
 public class LibraryController {
     private final LibraryService libraryService;
 
+    @Autowired
     public LibraryController(LibraryService libraryService) {
         this.libraryService = libraryService;
     }

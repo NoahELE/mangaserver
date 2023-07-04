@@ -13,7 +13,7 @@ public abstract class MangaReader implements Closeable {
         return switch (ext) {
             case "zip", "cbz" -> new ZipMangaReader(path);
             // TODO support more archive format
-            default -> throw new UnsupportedFormatException("unknown archive type: " + ext);
+            default -> throw new UnsupportedFormatException(ext);
         };
     }
 

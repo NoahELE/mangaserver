@@ -1,12 +1,12 @@
-import { Button, Typography } from 'antd'
-import { ReactElement } from 'react'
-import { useNavigate, useRouteError } from 'react-router-dom'
+import { Button, Typography } from 'antd';
+import { ReactElement } from 'react';
+import { useNavigate, useRouteError } from 'react-router-dom';
 
-const { Title, Paragraph } = Typography
+const { Title, Paragraph } = Typography;
 
 export default function ErrorView(): ReactElement {
-  const error = String(useRouteError())
-  const navigate /* eslint-env node */ = useNavigate()
+  const error = String(useRouteError());
+  const navigate /* eslint-env node */ = useNavigate();
 
   return (
     <>
@@ -25,5 +25,5 @@ export default function ErrorView(): ReactElement {
         Return to Last Page
       </Button>
     </>
-  )
+  );
 }

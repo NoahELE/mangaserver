@@ -1,29 +1,29 @@
-import { Col, Divider, Pagination, Row, Typography } from 'antd'
-import { chunk } from 'lodash-es'
-import { ReactElement, useState } from 'react'
-import { useAllLibraries } from '../api'
-import LibraryCard from '../components/LibraryCard'
-import Loading from '../components/Loading'
+import { Col, Divider, Pagination, Row, Typography } from 'antd';
+import { chunk } from 'lodash-es';
+import { ReactElement, useState } from 'react';
+import { useAllLibraries } from '../api';
+import LibraryCard from '../components/LibraryCard';
+import Loading from '../components/Loading';
 
-const { Title } = Typography
+const { Title } = Typography;
 
 export default function LibraryListView(): ReactElement {
-  const [current, setCurrent] = useState(1)
-  const [pageSize, setPageSize] = useState(20)
-  const { data, error, isLoading } = useAllLibraries(current, pageSize)
+  const [current, setCurrent] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const { data, error, isLoading } = useAllLibraries(current, pageSize);
 
   if (error) {
-    throw error
+    throw error;
   }
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
   if (!data) {
-    throw new Error('null or undefined data')
+    throw new Error('null or undefined data');
   }
 
-  const libraries = data.content
-  const total = data.totalElements
+  const libraries = data.content;
+  const total = data.totalElements;
 
   const libraryCards = chunk(libraries, 4).map((row) =>
     row.map((library) => (
@@ -31,7 +31,7 @@ export default function LibraryListView(): ReactElement {
         <LibraryCard library={library} />
       </Col>
     ))
-  )
+  );
 
   return (
     <>
@@ -51,11 +51,11 @@ export default function LibraryListView(): ReactElement {
           pageSize={pageSize}
           showSizeChanger
           onChange={(page, pageSize) => {
-            setCurrent(page)
-            setPageSize(pageSize)
+            setCurrent(page);
+            setPageSize(pageSize);
           }}
         />
       </div>
     </>
-  )
+  );
 }

@@ -1,19 +1,19 @@
-import { Button, Form, Input, Typography } from 'antd'
-import { ReactElement, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { login } from '../api'
-import { User } from '../entity'
-import useStore from '../store'
+import { Button, Form, Input, Typography } from 'antd';
+import { ReactElement, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../api';
+import { User } from '../entity';
+import useStore from '../store';
 
-const { Title } = Typography
+const { Title } = Typography;
 
 export default function LoginView(): ReactElement {
-  const navigate = useNavigate()
-  const setJwt = useStore((state) => state.setJwt)
-  const [error, setError] = useState<unknown>(null)
+  const navigate = useNavigate();
+  const setJwt = useStore((state) => state.setJwt);
+  const [error, setError] = useState<unknown>(null);
 
   if (error !== null) {
-    throw error
+    throw error;
   }
 
   return (
@@ -26,10 +26,10 @@ export default function LoginView(): ReactElement {
         onFinish={(user: User): void => {
           login(user)
             .then((jwt) => {
-              setJwt(jwt)
-              navigate('/', { replace: true })
+              setJwt(jwt);
+              navigate('/', { replace: true });
             })
-            .catch(setError)
+            .catch(setError);
         }}
         className="mx-60"
       >
@@ -56,5 +56,5 @@ export default function LoginView(): ReactElement {
         </Form.Item>
       </Form>
     </>
-  )
+  );
 }

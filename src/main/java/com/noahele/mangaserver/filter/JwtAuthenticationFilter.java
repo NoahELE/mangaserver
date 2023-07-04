@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserCache userCache;
 
+    @Autowired
     public JwtAuthenticationFilter(UserCache userCache) {
         this.userCache = userCache;
     }
@@ -32,8 +34,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         // get Authorization header, return if there is no Authorization Bearer header
         String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
-            log.warn("No Authorization Bearer header to {}", request.getRequestURI());
+        if (header == null) {
+            log.warn("No Authorization header, url = {}", request.getRequestURI());
+            filterChain.doFilter(request, response);
+            return;
+        } else if (!header.startsWith("Bearer ")) {
+            log.warn("Authorization header does not start with Bearer, url = {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }

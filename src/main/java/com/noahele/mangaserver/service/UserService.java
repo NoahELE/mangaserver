@@ -5,6 +5,7 @@ import com.noahele.mangaserver.repository.UserRepository;
 import com.noahele.mangaserver.utils.JwtUtils;
 import com.noahele.mangaserver.utils.MyUserDetails;
 import com.noahele.mangaserver.utils.cache.UserCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
+    @Autowired
     public UserService(UserRepository userRepository,
                        UserCache userCache,
                        PasswordEncoder passwordEncoder,
