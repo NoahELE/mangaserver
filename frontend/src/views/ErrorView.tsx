@@ -1,27 +1,28 @@
 import { Button, Typography } from 'antd';
-import { ReactElement } from 'react';
+import { ReactElement, useCallback } from 'react';
 import { useNavigate, useRouteError } from 'react-router-dom';
 
 const { Title, Paragraph } = Typography;
 
 export default function ErrorView(): ReactElement {
-  const error = String(useRouteError());
+  const error = useRouteError();
   const navigate /* eslint-env node */ = useNavigate();
+  const loginOnClick = useCallback(
+    () => navigate('/login', { replace: true }),
+    [navigate]
+  );
+  const returnOnClick = useCallback(() => navigate(-1), [navigate]);
 
   return (
     <>
-      <Title className="my-10">Error</Title>
-      <Paragraph code copyable className="my-10">
-        {error}
+      <Title className="mx-5 my-10">Error</Title>
+      <Paragraph code copyable className="mx-5 my-10">
+        {JSON.stringify(error)}
       </Paragraph>
-      <Button
-        type="primary"
-        onClick={() => navigate('/login', { replace: true })}
-        className="my-10 mr-10"
-      >
+      <Button type="primary" onClick={loginOnClick} className="mx-5 my-10">
         Login
       </Button>
-      <Button type="default" onClick={() => navigate(-1)} className="my-10">
+      <Button type="default" onClick={returnOnClick} className="mx-5 my-10">
         Return to Last Page
       </Button>
     </>

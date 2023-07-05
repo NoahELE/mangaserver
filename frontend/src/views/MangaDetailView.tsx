@@ -27,15 +27,19 @@ export default function MangaDetailView(): ReactElement {
     throw error;
   }
   useEffect(() => {
-    getManga(mangaId).then(setManga).catch(setError);
+    getManga(mangaId)
+      .then((manga) => setManga(manga))
+      .catch((error) => setError(error));
   }, [mangaId]);
 
   if (manga === null) {
     return <Loading />;
   } else {
     const pages: ReactElement[] = [];
-    for (let pageId = 0; pageId < manga.numOfPages; pageId++) {
-      pages.push(<MangaPageImage manga={manga} pageId={pageId} key={pageId} />);
+    for (let pageIndex = 0; pageIndex < manga.numOfPages; pageIndex++) {
+      pages.push(
+        <MangaPageImage manga={manga} pageIndex={pageIndex} key={pageIndex} />
+      );
     }
 
     return (

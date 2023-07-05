@@ -7,12 +7,12 @@ const { Text } = Typography;
 
 interface Props {
   manga: Manga;
-  pageId: number;
+  pageIndex: number;
 }
 
 export default function MangaPageImage({
-  manga: { id: mangaId, numOfPages },
-  pageId,
+  manga: { id, numOfPages },
+  pageIndex,
 }: Props) {
   const [page, setPage] = useState<string | null>(null);
   const [error, setError] = useState<unknown>(null);
@@ -20,19 +20,24 @@ export default function MangaPageImage({
     throw error;
   }
   useEffect(() => {
-    getMangaPage(mangaId, pageId)
-      .then((page) => setPage(page))
+    getMangaPage(id, 0)
+      .then((page) => setPage(URL.createObjectURL(page)))
       .catch((error) => setError(error));
-  }, [mangaId, pageId]);
+    return () => {
+      if (page !== null) {
+        URL.revokeObjectURL(page);
+      }
+    };
+  }, [page, id]);
 
   if (page === null) {
     return <Spin />;
   } else {
     return (
       <>
-        <img alt={`page ${pageId}`} src={page} width="75%" />
+        <img alt={`page ${pageIndex}`} src={page} width="75%" />
         <Text type="secondary">
-          {pageId + 1} / {numOfPages}
+          {pageIndex + 1} / {numOfPages}
         </Text>
       </>
     );

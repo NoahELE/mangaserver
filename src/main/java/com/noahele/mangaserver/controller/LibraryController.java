@@ -1,15 +1,12 @@
 package com.noahele.mangaserver.controller;
 
 import com.noahele.mangaserver.entity.Library;
-import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.service.LibraryService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -31,16 +28,14 @@ public class LibraryController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "delete a library")
-    public void deleteLibrary(@PathVariable int id)
-            throws OwnerNotMatchException {
+    public void deleteLibrary(@PathVariable int id) {
         log.info("Delete library {}", id);
         libraryService.deleteLibrary(id);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "update a library")
-    public void updateLibrary(@PathVariable int id, @RequestBody Library library)
-            throws OwnerNotMatchException {
+    public void updateLibrary(@PathVariable int id, @RequestBody Library library) {
         log.info("Update library {}, {}", id, library);
         libraryService.updateLibrary(id, library);
     }
@@ -54,14 +49,14 @@ public class LibraryController {
 
     @GetMapping("/{id}")
     @Operation(summary = "get library by id")
-    public Library getLibrary(@PathVariable int id) throws OwnerNotMatchException {
+    public Library getLibrary(@PathVariable int id) {
         log.info("Get library {}", id);
         return libraryService.getLibrary(id);
     }
 
     @GetMapping("/{id}/scanManga")
     @Operation(summary = "scan manga in library")
-    public void scanManga(@PathVariable int id) throws OwnerNotMatchException, IOException {
+    public void scanManga(@PathVariable int id) {
         log.info("Scan manga in library {}", id);
         libraryService.scanManga(id);
     }

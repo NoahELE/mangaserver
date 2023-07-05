@@ -15,7 +15,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -80,7 +79,7 @@ public class MangaService {
         return mangaRepository.existsByPath(path);
     }
 
-    public MangaPageInfo getMangaPage(int id, int pageIndex) throws OwnerNotMatchException, IOException {
+    public MangaPageInfo getMangaPage(int id, int pageIndex) throws OwnerNotMatchException {
         Manga manga = getManga(id);
         return mangaPageCache.get(manga.getPath(), pageIndex);
     }

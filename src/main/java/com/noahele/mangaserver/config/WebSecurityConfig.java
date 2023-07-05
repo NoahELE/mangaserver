@@ -1,7 +1,7 @@
 package com.noahele.mangaserver.config;
 
 import com.noahele.mangaserver.filter.JwtAuthenticationFilter;
-import com.noahele.mangaserver.service.MyUserDetailsService;
+import com.noahele.mangaserver.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,13 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfig {
-    private final MyUserDetailsService myUserDetailsService;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
-    public WebSecurityConfig(MyUserDetailsService myUserDetailsService,
+    public WebSecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
                              JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.myUserDetailsService = myUserDetailsService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
@@ -35,12 +35,12 @@ public class WebSecurityConfig {
         // disable csrf as the application uses jwt
         http.csrf(AbstractHttpConfigurer::disable);
         // disable session id
-        http.sessionManagement(session ->
+        http.sessionManagement((session) ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // set UserDetailsService
-        http.userDetailsService(myUserDetailsService);
+        http.userDetailsService(userDetailsServiceImpl);
         // authorize requests
-        http.authorizeHttpRequests(requests -> {
+        http.authorizeHttpRequests((requests) -> {
             // allow all access to sign up and login
             requests.requestMatchers(HttpMethod.POST, "/api/user", "/api/user/login").permitAll();
             // all other api require authentication

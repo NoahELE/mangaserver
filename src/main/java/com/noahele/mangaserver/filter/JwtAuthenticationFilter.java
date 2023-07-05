@@ -1,7 +1,7 @@
 package com.noahele.mangaserver.filter;
 
 import com.noahele.mangaserver.utils.JwtUtils;
-import com.noahele.mangaserver.utils.MyUserDetails;
+import com.noahele.mangaserver.utils.UserDetailsImpl;
 import com.noahele.mangaserver.utils.cache.UserCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,15 +54,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         // retrieve user from UserCache
-        MyUserDetails myUserDetails = userCache.getIfPresent(userId);
-        if (myUserDetails == null) {
+        UserDetailsImpl userDetailsImpl = userCache.getIfPresent(userId);
+        if (userDetailsImpl == null) {
             log.warn("No user with id {} in UserCache", userId);
             filterChain.doFilter(request, response);
             return;
         }
         // set Authentication to SecurityContext
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(myUserDetails, null, null);
+                new UsernamePasswordAuthenticationToken(userDetailsImpl, null, null);
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
         filterChain.doFilter(request, response);
     }

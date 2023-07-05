@@ -60,13 +60,13 @@ export async function getManga(mangaId: number): Promise<Manga> {
 
 export async function getMangaPage(
   mangaId: number,
-  pageId: number
-): Promise<string> {
+  pageIndex: number
+): Promise<Blob> {
   setJwtHeader();
   const { data: page } = await axios.get<Blob>(
-    `/manga/${mangaId}/page/${pageId}`,
+    `/manga/${mangaId}/page/${pageIndex}`,
     { responseType: 'blob' }
   );
   // return the data url of the page
-  return URL.createObjectURL(page);
+  return page;
 }

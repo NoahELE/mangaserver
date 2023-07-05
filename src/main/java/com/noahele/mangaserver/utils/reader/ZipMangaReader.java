@@ -24,7 +24,7 @@ public class ZipMangaReader extends MangaReader {
         Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         this.entries = Streams.stream(entries::asIterator)
                 // remove directory entry
-                .filter(entry -> !entry.isDirectory())
+                .filter((entry) -> !entry.isDirectory())
                 // sort entries by name with natural order
                 .sorted((e1, e2) -> NaturalOrder.compare(e1.getName(), e2.getName()))
                 .toList();

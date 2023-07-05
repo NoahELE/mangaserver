@@ -1,5 +1,5 @@
 import { Button, Form, Input, Typography } from 'antd';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { User } from '../entity';
@@ -11,6 +11,17 @@ export default function LoginView(): ReactElement {
   const navigate = useNavigate();
   const setJwt = useStore((state) => state.setJwt);
   const [error, setError] = useState<unknown>(null);
+  const onFinish = useCallback(
+    (user: User) => {
+      login(user)
+        .then((jwt) => {
+          setJwt(jwt);
+          navigate('/', { replace: true });
+        })
+        .catch((error) => setError(error));
+    },
+    [navigate, setJwt]
+  );
 
   if (error !== null) {
     throw error;
@@ -23,14 +34,7 @@ export default function LoginView(): ReactElement {
       <Form
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 12 }}
-        onFinish={(user: User): void => {
-          login(user)
-            .then((jwt) => {
-              setJwt(jwt);
-              navigate('/', { replace: true });
-            })
-            .catch(setError);
-        }}
+        onFinish={onFinish}
         className="mx-60"
       >
         <Form.Item

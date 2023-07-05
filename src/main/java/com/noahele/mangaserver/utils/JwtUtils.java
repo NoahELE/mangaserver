@@ -19,12 +19,12 @@ public final class JwtUtils {
     private JwtUtils() {
     }
 
-    public static String createJwt(@NonNull MyUserDetails myUserDetails) {
+    public static String createJwt(@NonNull UserDetailsImpl userDetailsImpl) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusDays(EXPIRE_DAYS);
         return Jwts.builder()
                 .setIssuer("mangaserver")
-                .setSubject(String.valueOf(myUserDetails.user().getId()))
+                .setSubject(String.valueOf(userDetailsImpl.user().getId()))
                 .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
                 .setExpiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(SECRET_KEYS.getPrivate())

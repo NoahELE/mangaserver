@@ -3,7 +3,7 @@ package com.noahele.mangaserver.service;
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.repository.UserRepository;
 import com.noahele.mangaserver.utils.JwtUtils;
-import com.noahele.mangaserver.utils.MyUserDetails;
+import com.noahele.mangaserver.utils.UserDetailsImpl;
 import com.noahele.mangaserver.utils.cache.UserCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,20 +57,20 @@ public class UserService {
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
         Authentication auth = authenticationManager.authenticate(token);
-        MyUserDetails myUserDetails = (MyUserDetails) auth.getPrincipal();
+        UserDetailsImpl userDetailsImpl = (UserDetailsImpl) auth.getPrincipal();
         // save the user in cache
-        userCache.put(myUserDetails.user().getId(), myUserDetails);
+        userCache.put(userDetailsImpl.user().getId(), userDetailsImpl);
         // return the generated jwt
-        return JwtUtils.createJwt(myUserDetails);
+        return JwtUtils.createJwt(userDetailsImpl);
     }
 
-    public MyUserDetails logout() {
+    public UserDetailsImpl logout() {
         // get authentication from context
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // cast to MyUserDetails
-        MyUserDetails myUserDetails = (MyUserDetails) authentication.getPrincipal();
+        UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
         // invalidate from cache
-        userCache.invalidate(myUserDetails.user().getId());
-        return myUserDetails;
+        userCache.invalidate(userDetailsImpl.user().getId());
+        return userDetailsImpl;
     }
 }

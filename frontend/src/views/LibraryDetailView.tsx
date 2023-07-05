@@ -1,6 +1,14 @@
-import { Button, Col, Divider, Pagination, Row, Typography } from 'antd';
+import {
+  Button,
+  Col,
+  Divider,
+  Pagination,
+  PaginationProps,
+  Row,
+  Typography,
+} from 'antd';
 import { chunk } from 'lodash-es';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { scanManga, useAllMangas } from '../api';
 import Loading from '../components/Loading';
@@ -24,6 +32,16 @@ export default function LibraryDetailView(): ReactElement {
   const [pageSize, setPageSize] = useState(20);
   const [scanError, setScanError] = useState<unknown>(null);
   const { data, error, isLoading } = useAllMangas(libraryId, current, pageSize);
+  const scanMangaOnClick = useCallback(
+    () => scanManga(libraryId).catch(setScanError),
+    [libraryId]
+  );
+  const paginationOnChange = useCallback<
+    NonNullable<PaginationProps['onChange']>
+  >((page, pageSize) => {
+    setCurrent(page);
+    setPageSize(pageSize);
+  }, []);
 
   if (scanError) {
     throw scanError;
@@ -34,7 +52,7 @@ export default function LibraryDetailView(): ReactElement {
   if (isLoading) {
     return <Loading />;
   }
-  if (!data) {
+  if (data === undefined) {
     throw new Error('null or undefined data');
   }
   const mangas = data.content;
@@ -51,10 +69,7 @@ export default function LibraryDetailView(): ReactElement {
   return (
     <>
       <Title>Manga List</Title>
-      <Button
-        type="default"
-        onClick={() => scanManga(libraryId).catch(setScanError)}
-      >
+      <Button type="default" onClick={scanMangaOnClick}>
         Scan Manga
       </Button>
 
@@ -71,10 +86,7 @@ export default function LibraryDetailView(): ReactElement {
           }
           pageSize={pageSize}
           showSizeChanger
-          onChange={(page, pageSize) => {
-            setCurrent(page);
-            setPageSize(pageSize);
-          }}
+          onChange={paginationOnChange}
         />
       </div>
     </>

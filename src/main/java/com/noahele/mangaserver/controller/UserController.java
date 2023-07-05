@@ -2,7 +2,7 @@ package com.noahele.mangaserver.controller;
 
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.service.UserService;
-import com.noahele.mangaserver.utils.MyUserDetails;
+import com.noahele.mangaserver.utils.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class UserController {
     @GetMapping("/logout")
     @Operation(summary = "user logout")
     public void logout() {
-        MyUserDetails myUserDetails = userService.logout();
-        log.info("User logout: {}", myUserDetails);
+        UserDetailsImpl userDetailsImpl = userService.logout();
+        log.info("User logout: {}", userDetailsImpl);
     }
 }

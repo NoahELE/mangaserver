@@ -40,18 +40,7 @@ public class Manga extends BaseEntity {
     @JoinColumn(nullable = false)
     private Library library;
 
-    public static Manga fromFile(File mangaFile, Library library) throws IOException {
-        String filename = mangaFile.getName();
-        String name = Files.getNameWithoutExtension(filename);
-        String ext = Files.getFileExtension(filename);
-        String path = mangaFile.getPath();
-        try (MangaReader reader = MangaReader.getByPath(path)) {
-            int numOfPages = reader.getNumOfPages();
-            return new Manga(name, path, ext, numOfPages, library);
-        }
-    }
-
-    public Manga(String name, String path, String ext, int numOfPages, Library library) {
+    private Manga(String name, String path, String ext, int numOfPages, @NotNull Library library) {
         this.name = name;
         this.path = path;
         this.ext = ext;
@@ -60,6 +49,17 @@ public class Manga extends BaseEntity {
     }
 
     protected Manga() {
+    }
+
+    public static Manga fromFile(File file, Library library) throws IOException {
+        String filename = file.getName();
+        String name = Files.getNameWithoutExtension(filename);
+        String ext = Files.getFileExtension(filename);
+        String path = file.getPath();
+        try (MangaReader reader = MangaReader.getByPath(path)) {
+            int numOfPages = reader.getNumOfPages();
+            return new Manga(name, path, ext, numOfPages, library);
+        }
     }
 
     @Override

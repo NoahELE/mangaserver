@@ -16,7 +16,7 @@ class JwtUtilsTest {
 
     @Test
     void generateJwt() {
-        jwt = JwtUtils.createJwt(new MyUserDetails(user));
+        jwt = JwtUtils.createJwt(new UserDetailsImpl(user));
         System.out.println(user);
         System.out.println(jwt);
     }

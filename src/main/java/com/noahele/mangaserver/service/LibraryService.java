@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import com.noahele.mangaserver.entity.Library;
 import com.noahele.mangaserver.entity.Manga;
 import com.noahele.mangaserver.entity.User;
+import com.noahele.mangaserver.exception.CustomIOException;
 import com.noahele.mangaserver.exception.OwnerNotMatchException;
 import com.noahele.mangaserver.repository.LibraryRepository;
 import com.noahele.mangaserver.utils.CurrUserFacade;
@@ -66,24 +67,28 @@ public class LibraryService {
         return libraryRepository.findAllByOwner(user, pageRequest);
     }
 
-    public void scanManga(int id) throws OwnerNotMatchException, IOException {
+    public void scanManga(int id) {
         Library library = getLibrary(id);
         File currDir = new File(library.getPath());
         // check whether it is a valid directory
         assert currDir.isDirectory();
         List<Manga> mangaList = new ArrayList<>();
         scanMangaRecursive(mangaList, currDir, library);
-        mangaList = mangaList.stream().filter(manga -> !mangaService.existsByPath(manga.getPath())).toList();
+        mangaList = mangaList.stream().filter((manga) -> !mangaService.existsByPath(manga.getPath())).toList();
         mangaService.addAllManga(mangaList, id);
     }
 
-    private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) throws IOException {
-        for (File file : Objects.requireNonNull(currDir.listFiles())) {
-            if (file.isDirectory()) {
-                scanMangaRecursive(mangaList, file, library);
-            } else if (SUPPORTED_FORMATS.contains(Files.getFileExtension(file.getName()))) {
-                mangaList.add(Manga.fromFile(file, library));
+    private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) {
+        try {
+            for (File file : Objects.requireNonNull(currDir.listFiles())) {
+                if (file.isDirectory()) {
+                    scanMangaRecursive(mangaList, file, library);
+                } else if (SUPPORTED_FORMATS.contains(Files.getFileExtension(file.getName()))) {
+                    mangaList.add(Manga.fromFile(file, library));
+                }
             }
+        } catch (IOException e) {
+            throw new CustomIOException(e);
         }
     }
 }

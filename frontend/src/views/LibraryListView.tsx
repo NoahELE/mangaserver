@@ -1,6 +1,13 @@
-import { Col, Divider, Pagination, Row, Typography } from 'antd';
+import {
+  Col,
+  Divider,
+  Pagination,
+  PaginationProps,
+  Row,
+  Typography,
+} from 'antd';
 import { chunk } from 'lodash-es';
-import { ReactElement, useState } from 'react';
+import { ReactElement, useCallback, useState } from 'react';
 import { useAllLibraries } from '../api';
 import LibraryCard from '../components/LibraryCard';
 import Loading from '../components/Loading';
@@ -11,6 +18,12 @@ export default function LibraryListView(): ReactElement {
   const [current, setCurrent] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const { data, error, isLoading } = useAllLibraries(current, pageSize);
+  const paginationOnChange = useCallback<
+    NonNullable<PaginationProps['onChange']>
+  >((page, pageSize) => {
+    setCurrent(page);
+    setPageSize(pageSize);
+  }, []);
 
   if (error) {
     throw error;
@@ -50,10 +63,7 @@ export default function LibraryListView(): ReactElement {
           }
           pageSize={pageSize}
           showSizeChanger
-          onChange={(page, pageSize) => {
-            setCurrent(page);
-            setPageSize(pageSize);
-          }}
+          onChange={paginationOnChange}
         />
       </div>
     </>

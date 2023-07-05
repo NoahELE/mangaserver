@@ -11,7 +11,7 @@ public class CurrUserFacade {
 
     public static User getUser() {
         try {
-            return ((MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
+            return ((UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).user();
         } catch (Exception e) {
             log.warn("Get current user error", e);
             return null;

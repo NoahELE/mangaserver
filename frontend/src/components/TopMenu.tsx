@@ -1,4 +1,5 @@
 import { Menu, MenuProps } from 'antd';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const items: MenuProps['items'] = [
@@ -10,19 +11,20 @@ const items: MenuProps['items'] = [
 
 export default function TopMenu() {
   const navigate = useNavigate();
+  const onClick = useCallback<NonNullable<MenuProps['onClick']>>(
+    (info) => {
+      switch (info.key) {
+        case 'home':
+          navigate('/');
+          break;
+        default:
+          throw new Error(`unknown menu key: ${info.key}`);
+      }
+    },
+    [navigate]
+  );
+
   return (
-    <Menu
-      onClick={(info) => {
-        switch (info.key) {
-          case 'home':
-            navigate('/');
-            break;
-          default:
-            throw new Error(`Unknown menu key: ${info.key}`);
-        }
-      }}
-      mode="horizontal"
-      items={items}
-    />
+    <Menu onClick={onClick} selectedKeys={[]} mode="horizontal" items={items} /> // TODO: selectedKeys
   );
 }
