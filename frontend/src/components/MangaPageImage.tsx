@@ -1,7 +1,7 @@
 import { Spin, Typography } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { getMangaPage } from '../api';
-import { Manga } from '../entity';
+import { type Manga } from '../entity';
 
 const { Text } = Typography;
 
@@ -13,24 +13,28 @@ interface Props {
 export default function MangaPageImage({
   manga: { id, numOfPages },
   pageIndex,
-}: Props) {
+}: Props): ReactElement {
   const [page, setPage] = useState<string | null>(null);
-  const [error, setError] = useState<unknown>(null);
-  if (error !== null) {
+  const [error, setError] = useState<Error | null>(null);
+  if (error != null) {
     throw error;
   }
   useEffect(() => {
     getMangaPage(id, 0)
-      .then((page) => setPage(URL.createObjectURL(page)))
-      .catch((error) => setError(error));
+      .then((page) => {
+        setPage(URL.createObjectURL(page));
+      })
+      .catch((error) => {
+        setError(error);
+      });
     return () => {
-      if (page !== null) {
+      if (page != null) {
         URL.revokeObjectURL(page);
       }
     };
   }, [page, id]);
 
-  if (page === null) {
+  if (page == null) {
     return <Spin />;
   } else {
     return (

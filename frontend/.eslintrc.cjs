@@ -1,24 +1,34 @@
+/** @type {import('eslint').Linter.Config} */
 module.exports = {
   env: {
     browser: true,
-    es2022: true,
+    es2021: true,
   },
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'standard',
-    'standard-jsx',
-    'standard-react',
     'plugin:react/jsx-runtime',
+    'plugin:react-hooks/recommended',
+    'standard-with-typescript',
     'plugin:prettier/recommended',
   ],
+  ignorePatterns: [
+    'node_modules',
+    '.eslintrc.cjs',
+    'postcss.config.cjs',
+    'tailwind.config.cjs',
+    'vite.config.ts',
+  ],
   overrides: [],
-  parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
+    project: 'tsconfig.json',
   },
-  plugins: ['@typescript-eslint', 'react', 'prettier'],
+  plugins: ['react'],
   rules: {},
+  settings: {
+    react: {
+      version: 'detect',
+    },
+  },
 };

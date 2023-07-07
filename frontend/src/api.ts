@@ -1,22 +1,20 @@
 import axios from 'axios';
-import useSWR, { SWRResponse } from 'swr';
-import { Library, Manga, Page, User } from './entity';
+import useSWR, { type SWRResponse } from 'swr';
+import { type Library, type Manga, type Page, type User } from './entity';
 import useStore from './store';
 
 axios.defaults.baseURL = '/api';
+axios.interceptors.request.use((config) => {
+  const { jwt } = useStore.getState(); // get jwt from store
+  if (jwt != null) {
+    config.headers.Authorization = `Bearer ${jwt}`;
+  }
+  return config;
+});
 
 async function fetcher<T>(url: string): Promise<T> {
   const { data } = await axios.get<T>(url);
   return data;
-}
-
-function setJwtHeader(): void {
-  const { jwt } = useStore.getState(); // get jwt from store
-  if (jwt !== null) {
-    axios.defaults.headers.common.Authorization = `Bearer ${jwt}`;
-  } else {
-    throw new Error('jwt is null');
-  }
 }
 
 export async function login(user: User): Promise<string> {
@@ -28,7 +26,6 @@ export function useAllLibraries(
   page: number,
   size: number
 ): SWRResponse<Page<Library[]>> {
-  setJwtHeader();
   const params = new URLSearchParams({ page: `${page - 1}`, size: `${size}` });
   return useSWR<Page<Library[]>>(`/library?${params.toString()}`, fetcher);
 }
@@ -38,7 +35,6 @@ export function useAllMangas(
   page: number,
   size: number
 ): SWRResponse<Page<Manga[]>> {
-  setJwtHeader();
   const params = new URLSearchParams({
     libraryId: `${libraryId}`,
     page: `${page - 1}`,
@@ -48,21 +44,17 @@ export function useAllMangas(
 }
 
 export async function scanManga(libraryId: number): Promise<void> {
-  setJwtHeader();
-  await axios.get<void>(`/library/${libraryId}/scanManga`);
+  await axios.get<undefined>(`/library/${libraryId}/scanManga`);
 }
 
-export async function getManga(mangaId: number): Promise<Manga> {
-  setJwtHeader();
-  const { data: manga } = await axios.get<Manga>(`/manga/${mangaId}`);
-  return manga;
+export function useManga(mangaId: number): SWRResponse<Manga> {
+  return useSWR<Manga>(`/manga/${mangaId}`, fetcher);
 }
 
 export async function getMangaPage(
   mangaId: number,
   pageIndex: number
 ): Promise<Blob> {
-  setJwtHeader();
   const { data: page } = await axios.get<Blob>(
     `/manga/${mangaId}/page/${pageIndex}`,
     { responseType: 'blob' }

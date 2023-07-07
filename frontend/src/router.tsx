@@ -1,38 +1,26 @@
-import { createBrowserRouter } from 'react-router-dom';
+import {
+  Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from 'react-router-dom';
 import ErrorView from './views/ErrorView';
+import HomeView from './views/HomeView';
 import LibraryDetailView from './views/LibraryDetailView';
-import LibraryListView from './views/LibraryListView';
 import LoginView from './views/LoginView';
 import MangaDetailView from './views/MangaDetailView';
 import RootView from './views/RootView';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <RootView />,
-    errorElement: <ErrorView />,
-    children: [
-      {
-        path: '/',
-        element: <LibraryListView />,
-      },
-      {
-        path: '/library/:libraryId',
-        element: <LibraryDetailView />,
-        errorElement: <ErrorView />,
-      },
-      {
-        path: '/manga/:mangaId',
-        element: <MangaDetailView />,
-        errorElement: <ErrorView />,
-      },
-    ],
-  },
-  {
-    path: '/login',
-    element: <LoginView />,
-    errorElement: <ErrorView />,
-  },
-]);
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route errorElement={<ErrorView />}>
+      <Route path="/" element={<RootView />}>
+        <Route index element={<HomeView />} />
+        <Route path="/library/:libraryId" element={<LibraryDetailView />} />
+        <Route path="/manga/:mangaId" element={<MangaDetailView />} />
+      </Route>
+      <Route path="/login" element={<LoginView />} />
+    </Route>
+  )
+);
 
 export default router;

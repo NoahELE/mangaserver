@@ -1,15 +1,19 @@
 import { Card } from 'antd';
-import { useCallback } from 'react';
+import { useCallback, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Library } from '../entity';
+import { type Library } from '../entity';
 
 interface Props {
   library: Library;
 }
 
-export default function LibraryCard({ library: { id, name, path } }: Props) {
+export default function LibraryCard({
+  library: { id, name, path },
+}: Props): ReactElement {
   const navigate = useNavigate();
-  const onClick = useCallback(() => navigate(`/library/${id}`), [id, navigate]);
+  const onClick = useCallback(() => {
+    navigate(`/library/${id}`);
+  }, [id, navigate]);
 
   return (
     <Card title={name} hoverable onClick={onClick}>
