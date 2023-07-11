@@ -8,7 +8,7 @@ export default function ErrorView(): ReactElement {
   const error = useRouteError();
   const navigate /* eslint-env node */ = useNavigate();
   const refreshOnClick = useCallback(() => {
-    location.reload();
+    window.location.reload();
   }, []);
   const loginOnClick = useCallback(() => {
     navigate('/login', { replace: true });

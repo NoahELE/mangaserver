@@ -1,41 +1,47 @@
 import { Menu, type MenuProps } from 'antd';
+import { useAtomValue } from 'jotai';
 import { useCallback, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useStore, { CurrentPage } from '../store';
+import {
+  currentViewAtom,
+  lastLibraryIdAtom,
+  lastMangaIdAtom,
+  type CurrentView,
+} from '../store';
 
 const items: MenuProps['items'] = [
   {
     label: 'Home',
-    key: CurrentPage.HOME,
+    key: 'home',
   },
   {
     label: 'Library',
-    key: CurrentPage.LIBRARY,
+    key: 'library',
   },
   {
     label: 'Manga',
-    key: CurrentPage.MANGA,
+    key: 'manga',
   },
 ];
 
 export default function TopMenu(): ReactElement {
   const navigate = useNavigate();
-  const currentPage = useStore((state) => state.currentPage);
-  const lastLibraryId = useStore((state) => state.lastLibraryId);
-  const lastMangaId = useStore((state) => state.lastMangaId);
+  const currentView = useAtomValue(currentViewAtom);
+  const lastLibraryId = useAtomValue(lastLibraryIdAtom);
+  const lastMangaId = useAtomValue(lastMangaIdAtom);
   const onClick = useCallback<NonNullable<MenuProps['onClick']>>(
     (info) => {
-      switch (info.key) {
-        case CurrentPage.HOME:
+      switch (info.key as CurrentView) {
+        case 'home':
           navigate('/');
           break;
-        case CurrentPage.LIBRARY:
+        case 'library':
           if (lastLibraryId == null) {
             throw new Error('lastLibraryId does not exist');
           }
           navigate(`/library/${lastLibraryId.toString()}`);
           break;
-        case CurrentPage.MANGA:
+        case 'manga':
           if (lastMangaId == null) {
             throw new Error('lastMangaId does not exist');
           }
@@ -51,7 +57,7 @@ export default function TopMenu(): ReactElement {
   return (
     <Menu
       onClick={onClick}
-      selectedKeys={[currentPage]}
+      selectedKeys={[currentView ?? '']}
       mode="horizontal"
       items={items}
     />

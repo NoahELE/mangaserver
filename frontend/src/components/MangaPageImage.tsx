@@ -10,38 +10,51 @@ interface Props {
   pageIndex: number;
 }
 
-export default function MangaPageImage({
-  manga: { id, numOfPages },
-  pageIndex,
-}: Props): ReactElement {
-  const [page, setPage] = useState<string | null>(null);
+/**
+ * custom hook to fetch manga page and create corresponding object url
+ * @param mangaId the id of the manga
+ * @param pageIndex the index of the page
+ * @returns the created object url of the manga page
+ */
+function useMangaPage(mangaId: number, pageIndex: number): string | null {
+  const [pageUrl, setPageUrl] = useState<string | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  if (error != null) {
-    throw error;
-  }
   useEffect(() => {
-    getMangaPage(id, 0)
+    let url: string | null = null;
+    getMangaPage(mangaId, pageIndex)
       .then((page) => {
-        setPage(URL.createObjectURL(page));
+        url = URL.createObjectURL(page);
+        setPageUrl(url);
       })
       .catch((error) => {
         setError(error);
       });
     return () => {
-      if (page != null) {
-        URL.revokeObjectURL(page);
+      if (url != null) {
+        URL.revokeObjectURL(url);
       }
     };
-  }, [page, id]);
+  }, [mangaId, pageIndex]);
+  if (error != null) {
+    throw error;
+  }
+  return pageUrl;
+}
 
-  if (page == null) {
+export default function MangaPageImage({
+  manga,
+  pageIndex,
+}: Props): ReactElement {
+  const pageUrl = useMangaPage(manga.id, pageIndex);
+
+  if (pageUrl == null) {
     return <Spin />;
   } else {
     return (
       <>
-        <img alt={`page ${pageIndex}`} src={page} width="75%" />
+        <img src={pageUrl} alt={`page ${pageIndex}`} width="75%" />
         <Text type="secondary">
-          {pageIndex + 1} / {numOfPages}
+          {pageIndex + 1} / {manga.numOfPages}
         </Text>
       </>
     );

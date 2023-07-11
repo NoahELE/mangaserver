@@ -7,11 +7,12 @@ import {
   Typography,
   type PaginationProps,
 } from 'antd';
+import { useSetAtom } from 'jotai';
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
 import { useAllLibraries } from '../api';
 import LibraryCard from '../components/LibraryCard';
 import Loading from '../components/Loading';
-import useStore, { CurrentPage } from '../store';
+import { currentViewAtom } from '../store';
 import { useErrorNotification } from '../utils';
 
 const { Title } = Typography;
@@ -21,13 +22,13 @@ function showTotal(total: number, [start, end]: [number, number]): string {
 }
 
 export default function HomeView(): ReactElement {
-  // update currentPage in store
-  const setCurrentPage = useStore((state) => state.setCurrentPage);
+  // update currentView in store
+  const setCurrentView = useSetAtom(currentViewAtom);
   useEffect(() => {
-    setCurrentPage(CurrentPage.HOME);
-  }, [setCurrentPage]);
+    setCurrentView('home');
+  }, [setCurrentView]);
 
-  const [current, setCurrent] = useState(1);
+  const [current, setCurrent] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const paginationOnChange = useCallback<
     NonNullable<PaginationProps['onChange']>
@@ -39,7 +40,11 @@ export default function HomeView(): ReactElement {
   const [showError, contextHolder] = useErrorNotification();
 
   // retrieve libraries from api
-  const { data, error, isLoading } = useAllLibraries(current, pageSize);
+  const {
+    data: librariesPage,
+    error,
+    isLoading,
+  } = useAllLibraries(current, pageSize);
   if (error != null) {
     showError(error);
   }
@@ -51,17 +56,17 @@ export default function HomeView(): ReactElement {
       </>
     );
   }
-  if (data == null) {
+  if (librariesPage == null) {
     return (
       <>
-        <Empty />
+        <Empty className="m-10" />
         {contextHolder}
       </>
     );
   }
 
-  const libraries = data?.content ?? [];
-  const total = data?.totalElements ?? 0;
+  const libraries = librariesPage.content;
+  const total = librariesPage.totalElements;
 
   const libraryCards = libraries.map((library) => (
     <Col span={6} key={library.id}>

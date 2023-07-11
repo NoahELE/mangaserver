@@ -12,7 +12,6 @@ module.exports = {
     'plugin:prettier/recommended',
   ],
   ignorePatterns: [
-    'node_modules',
     '.eslintrc.cjs',
     'postcss.config.cjs',
     'tailwind.config.cjs',
@@ -24,7 +23,7 @@ module.exports = {
     sourceType: 'module',
     project: 'tsconfig.json',
   },
-  plugins: ['react'],
+  plugins: ['prettier', 'react', 'react-hooks'],
   rules: {},
   settings: {
     react: {

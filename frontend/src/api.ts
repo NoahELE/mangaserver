@@ -1,11 +1,11 @@
 import axios from 'axios';
 import useSWR, { type SWRResponse } from 'swr';
-import { type Library, type Manga, type Page, type User } from './entity';
-import useStore from './store';
+import type { Library, Manga, Page, User } from './entity';
+import { jwtAtom, store } from './store';
 
 axios.defaults.baseURL = '/api';
 axios.interceptors.request.use((config) => {
-  const { jwt } = useStore.getState(); // get jwt from store
+  const jwt = store.get(jwtAtom); // get jwt from store
   if (jwt != null) {
     config.headers.Authorization = `Bearer ${jwt}`;
   }
@@ -26,8 +26,7 @@ export function useAllLibraries(
   page: number,
   size: number
 ): SWRResponse<Page<Library[]>> {
-  const params = new URLSearchParams({ page: `${page - 1}`, size: `${size}` });
-  return useSWR<Page<Library[]>>(`/library?${params.toString()}`, fetcher);
+  return useSWR<Page<Library[]>>(`/library?page=${page}&size=${size}`, fetcher);
 }
 
 export function useAllMangas(
@@ -35,12 +34,10 @@ export function useAllMangas(
   page: number,
   size: number
 ): SWRResponse<Page<Manga[]>> {
-  const params = new URLSearchParams({
-    libraryId: `${libraryId}`,
-    page: `${page - 1}`,
-    size: `${size}`,
-  });
-  return useSWR<Page<Manga[]>>(`/manga?${params.toString()}`, fetcher);
+  return useSWR<Page<Manga[]>>(
+    `/manga?libraryId=${libraryId}&page=${page}&size=${size}`,
+    fetcher
+  );
 }
 
 export async function scanManga(libraryId: number): Promise<void> {

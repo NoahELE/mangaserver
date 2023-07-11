@@ -1,15 +1,16 @@
 import { Button, Form, Input, Typography } from 'antd';
+import { useSetAtom } from 'jotai';
 import { useCallback, useState, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { type User } from '../entity';
-import useStore from '../store';
+import { jwtAtom } from '../store';
 
 const { Title } = Typography;
 
 export default function LoginView(): ReactElement {
   const navigate = useNavigate();
-  const setJwt = useStore((state) => state.setJwt);
+  const setJwt = useSetAtom(jwtAtom);
   const [error, setError] = useState<Error | null>(null);
   const onFinish = useCallback(
     (user: User) => {
@@ -24,7 +25,6 @@ export default function LoginView(): ReactElement {
     },
     [navigate, setJwt]
   );
-
   if (error != null) {
     throw error;
   }

@@ -1,37 +1,30 @@
 import { Descriptions, Divider, Empty, Typography } from 'antd';
+import { useSetAtom } from 'jotai';
 import { useEffect, type ReactElement } from 'react';
-import { useParams } from 'react-router-dom';
 import { useManga } from '../api';
 import Loading from '../components/Loading';
 import MangaPageImage from '../components/MangaPageImage';
-import useStore, { CurrentPage } from '../store';
-import { useErrorNotification } from '../utils';
+import { currentViewAtom, lastMangaIdAtom } from '../store';
+import { useErrorNotification, useParamsId } from '../utils';
 
 const { Title } = Typography;
 
 export default function MangaDetailView(): ReactElement {
   // parse mangaId from url
-  const { mangaId: mangaIdString } = useParams();
-  if (mangaIdString == null) {
-    throw new Error('mangaId does not exist');
-  }
-  const mangaId = parseInt(mangaIdString);
-  if (isNaN(mangaId)) {
-    throw new Error('mangaId is not a number');
-  }
+  const mangaId = useParamsId('mangaId');
 
-  // update currentPage and lastMangaId in store
-  const setCurrentPage = useStore((state) => state.setCurrentPage);
-  const setLastMangaId = useStore((state) => state.setLastMangaId);
+  // update currentView and lastMangaId in store
+  const setCurrentView = useSetAtom(currentViewAtom);
+  const setLastMangaId = useSetAtom(lastMangaIdAtom);
   useEffect(() => {
-    setCurrentPage(CurrentPage.MANGA);
+    setCurrentView('manga');
     setLastMangaId(mangaId);
-  }, [mangaId, setCurrentPage, setLastMangaId]);
+  }, [mangaId, setCurrentView, setLastMangaId]);
 
   const [showError, contextHolder] = useErrorNotification();
 
   // retrieve manga from api
-  const { data, error, isLoading } = useManga(mangaId);
+  const { data: manga, error, isLoading } = useManga(mangaId);
   if (error != null) {
     showError(error);
   }
@@ -43,35 +36,39 @@ export default function MangaDetailView(): ReactElement {
       </>
     );
   }
-  if (data == null) {
+  if (manga == null) {
     return (
       <>
-        <Empty />
+        <Empty className="m-10" />
         {contextHolder}
       </>
     );
   }
 
   const pages: ReactElement[] = [];
-  for (let pageIndex = 0; pageIndex < data.numOfPages; pageIndex++) {
+  for (let pageIndex = 0; pageIndex < manga.numOfPages; pageIndex++) {
     pages.push(
-      <MangaPageImage manga={data} pageIndex={pageIndex} key={pageIndex} />
+      <MangaPageImage
+        manga={manga}
+        pageIndex={pageIndex}
+        key={`${manga.id}-${pageIndex}`}
+      />
     );
   }
 
   return (
     <>
-      <Title>{data.name}</Title>
+      <Title>{manga.name}</Title>
       <Divider />
       <Descriptions bordered column={2}>
-        <Descriptions.Item label="Name">{data.name}</Descriptions.Item>
-        <Descriptions.Item label="Path">{data.path}</Descriptions.Item>
-        <Descriptions.Item label="Ext">{data.ext}</Descriptions.Item>
+        <Descriptions.Item label="Name">{manga.name}</Descriptions.Item>
+        <Descriptions.Item label="Path">{manga.path}</Descriptions.Item>
+        <Descriptions.Item label="Ext">{manga.ext}</Descriptions.Item>
         <Descriptions.Item label="Number of Pages">
-          {data.numOfPages}
+          {manga.numOfPages}
         </Descriptions.Item>
         <Descriptions.Item label="Library">
-          {data.library.name}
+          {manga.library.name}
         </Descriptions.Item>
       </Descriptions>
       <Divider />

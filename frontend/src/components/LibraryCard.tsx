@@ -7,17 +7,15 @@ interface Props {
   library: Library;
 }
 
-export default function LibraryCard({
-  library: { id, name, path },
-}: Props): ReactElement {
+export default function LibraryCard({ library }: Props): ReactElement {
   const navigate = useNavigate();
   const onClick = useCallback(() => {
-    navigate(`/library/${id}`);
-  }, [id, navigate]);
+    navigate(`/library/${library.id}`);
+  }, [library.id, navigate]);
 
   return (
-    <Card title={name} hoverable onClick={onClick}>
-      <p className="break-words">{path}</p>
+    <Card title={library.name} hoverable onClick={onClick}>
+      <p className="break-words">{library.path}</p>
     </Card>
   );
 }

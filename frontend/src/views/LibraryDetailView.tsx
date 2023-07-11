@@ -8,13 +8,13 @@ import {
   Typography,
   type PaginationProps,
 } from 'antd';
+import { useSetAtom } from 'jotai';
 import { useCallback, useEffect, useState, type ReactElement } from 'react';
-import { useParams } from 'react-router-dom';
 import { scanManga, useAllMangas } from '../api';
 import Loading from '../components/Loading';
 import MangaCard from '../components/MangaCard';
-import useStore, { CurrentPage } from '../store';
-import { useErrorNotification } from '../utils';
+import { currentViewAtom, lastLibraryIdAtom } from '../store';
+import { useErrorNotification, useParamsId } from '../utils';
 
 const { Title } = Typography;
 
@@ -24,24 +24,17 @@ function showTotal(total: number, [start, end]: [number, number]): string {
 
 export default function LibraryDetailView(): ReactElement {
   // parse libraryId from url
-  const { libraryId: libraryIdString } = useParams();
-  if (libraryIdString == null) {
-    throw new Error('libraryId does not exist');
-  }
-  const libraryId = parseInt(libraryIdString);
-  if (isNaN(libraryId)) {
-    throw new Error('libraryId is not a number');
-  }
+  const libraryId = useParamsId('libraryId');
 
-  // update currentPage and lastLibraryId in store
-  const setCurrentPage = useStore((state) => state.setCurrentPage);
-  const setLastLibraryId = useStore((state) => state.setLastLibraryId);
+  // update currentView and lastLibraryId in store
+  const setCurrentView = useSetAtom(currentViewAtom);
+  const setLastLibraryId = useSetAtom(lastLibraryIdAtom);
   useEffect(() => {
-    setCurrentPage(CurrentPage.LIBRARY);
+    setCurrentView('library');
     setLastLibraryId(libraryId);
-  }, [libraryId, setCurrentPage, setLastLibraryId]);
+  }, [libraryId, setCurrentView, setLastLibraryId]);
 
-  const [current, setCurrent] = useState(1);
+  const [current, setCurrent] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [scanError, setScanError] = useState<Error | null>(null);
   const scanMangaOnClick = useCallback(() => {
@@ -59,7 +52,11 @@ export default function LibraryDetailView(): ReactElement {
   const [showError, contextHolder] = useErrorNotification();
 
   // retrieve mangas from api
-  const { data, error, isLoading } = useAllMangas(libraryId, current, pageSize);
+  const {
+    data: mangasPage,
+    error,
+    isLoading,
+  } = useAllMangas(libraryId, current, pageSize);
   if (scanError != null) {
     showError(scanError);
   }
@@ -74,7 +71,7 @@ export default function LibraryDetailView(): ReactElement {
       </>
     );
   }
-  if (data == null) {
+  if (mangasPage == null) {
     return (
       <>
         <Empty />
@@ -83,8 +80,8 @@ export default function LibraryDetailView(): ReactElement {
     );
   }
 
-  const mangas = data.content;
-  const total = data.totalElements;
+  const mangas = mangasPage.content;
+  const total = mangasPage.totalElements;
 
   const mangaCards = mangas.map((manga) => (
     <Col span={4} key={manga.id}>

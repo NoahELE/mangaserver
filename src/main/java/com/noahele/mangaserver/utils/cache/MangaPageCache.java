@@ -13,7 +13,7 @@ import java.time.Duration;
 @Component
 public class MangaPageCache {
     private final static int CACHE_INITIAL_SIZE = 64;
-    private final static int CACHE_MAX_SIZE = 128;
+    private final static int CACHE_MAX_SIZE = 256;
     private final static int CACHE_EXPIRE_MINUTES = 30;
     private final LoadingCache<Key, MangaPageInfo> cache = Caffeine.newBuilder()
             .initialCapacity(CACHE_INITIAL_SIZE)

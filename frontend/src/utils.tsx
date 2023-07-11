@@ -1,18 +1,20 @@
-import { Button, notification } from 'antd';
-import { useCallback, type ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Button, notification, Typography } from 'antd';
+import { useCallback, useId, type ReactElement } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+
+const { Paragraph } = Typography;
 
 type ErrorCallback = (error: Error) => void;
 
 export function useErrorNotification(): [ErrorCallback, ReactElement] {
-  const key = `error-${Date.now()}`;
+  const key = useId();
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
   const closeOnClick = useCallback(() => {
     api.destroy(key);
   }, [api, key]);
   const refreshOnClick = useCallback(() => {
-    location.reload();
+    window.location.reload();
   }, []);
   const loginOnClick = useCallback(() => {
     navigate('/login');
@@ -35,11 +37,30 @@ export function useErrorNotification(): [ErrorCallback, ReactElement] {
   const showError: ErrorCallback = (error) => {
     api.error({
       message: 'Error',
-      description: `An error occurred.\n\n ${error.name}\n${error.message}`,
+      description: (
+        <>
+          <Paragraph>An error occurred.</Paragraph>
+          <Paragraph>
+            ${error.name} - ${error.message}
+          </Paragraph>
+        </>
+      ),
       btn,
       key,
     });
   };
 
   return [showError, contextHolder];
+}
+
+export function useParamsId(param: string): number {
+  const idString = useParams()[param];
+  if (idString == null) {
+    throw new Error(`param ${param} does not exist`);
+  }
+  const id = parseInt(idString);
+  if (isNaN(id)) {
+    throw new Error(`param ${param} is not a number`);
+  }
+  return id;
 }

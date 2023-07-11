@@ -1,55 +1,14 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { atom, getDefaultStore } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
-interface State {
-  jwt: string | null;
-  currentPage: CurrentPage;
-  lastLibraryId: number | null;
-  lastMangaId: number | null;
-}
+export type CurrentView = 'home' | 'library' | 'manga';
 
-interface Action {
-  setJwt: (jwt: string) => void;
-  setCurrentPage: (currentPage: CurrentPage) => void;
-  setLastLibraryId: (lastLibraryId: number | null) => void;
-  setLastMangaId: (lastMangaId: number | null) => void;
-}
-
-export enum CurrentPage {
-  UNKNOWN = 'UNKNOWN',
-  HOME = 'HOME',
-  LIBRARY = 'LIBRARY',
-  MANGA = 'MANGA',
-}
-
-const useStore = create<State & Action>()(
-  persist(
-    (set) => ({
-      jwt: null,
-      setJwt: (jwt) => {
-        set({ jwt });
-      },
-      currentPage: CurrentPage.UNKNOWN,
-      setCurrentPage: (currentPage) => {
-        set({ currentPage });
-      },
-      lastLibraryId: null,
-      setLastLibraryId: (lastLibraryId) => {
-        set({ lastLibraryId });
-      },
-      lastMangaId: null,
-      setLastMangaId: (lastMangaId) => {
-        set({ lastMangaId });
-      },
-    }),
-    {
-      version: 1,
-      name: 'mangaserver-storage',
-      partialize: (state) => ({
-        jwt: state.jwt,
-      }),
-    }
-  )
+export const store = getDefaultStore();
+// XXX atomWithStorage getOnInit option is still unstable
+export const jwtAtom = atomWithStorage<string | null>(
+  'jwt',
+  localStorage.getItem('jwt')
 );
-
-export default useStore;
+export const currentViewAtom = atom<CurrentView | null>(null);
+export const lastLibraryIdAtom = atom<number | null>(null);
+export const lastMangaIdAtom = atom<number | null>(null);
