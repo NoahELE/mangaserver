@@ -51,7 +51,7 @@ export default function TopMenu(): ReactElement {
           throw new Error(`unknown menu key: ${info.key}`);
       }
     },
-    [lastLibraryId, lastMangaId, navigate]
+    [lastLibraryId, lastMangaId, navigate],
   );
 
   return (

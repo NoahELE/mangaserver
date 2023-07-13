@@ -52,7 +52,7 @@ export default function MangaDetailView(): ReactElement {
         manga={manga}
         pageIndex={pageIndex}
         key={`${manga.id}-${pageIndex}`}
-      />
+      />,
     );
   }
 

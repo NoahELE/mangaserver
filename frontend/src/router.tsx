@@ -1,14 +1,18 @@
+import { lazy } from 'react';
 import {
   Route,
   createBrowserRouter,
   createRoutesFromElements,
 } from 'react-router-dom';
-import ErrorView from './views/ErrorView';
-import HomeView from './views/HomeView';
-import LibraryDetailView from './views/LibraryDetailView';
-import LoginView from './views/LoginView';
-import MangaDetailView from './views/MangaDetailView';
-import RootView from './views/RootView';
+
+/* eslint-disable @typescript-eslint/promise-function-async */
+const ErrorView = lazy(() => import('./views/ErrorView'));
+const HomeView = lazy(() => import('./views/HomeView'));
+const LibraryDetailView = lazy(() => import('./views/LibraryDetailView'));
+const LoginView = lazy(() => import('./views/LoginView'));
+const MangaDetailView = lazy(() => import('./views/MangaDetailView'));
+const RootView = lazy(() => import('./views/RootView'));
+/* eslint-enable @typescript-eslint/promise-function-async */
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -19,8 +23,8 @@ const router = createBrowserRouter(
         <Route path="/manga/:mangaId" element={<MangaDetailView />} />
       </Route>
       <Route path="/login" element={<LoginView />} />
-    </Route>
-  )
+    </Route>,
+  ),
 );
 
 export default router;

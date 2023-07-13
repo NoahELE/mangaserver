@@ -26,7 +26,7 @@ function useMangaPage(mangaId: number, pageIndex: number): string | null {
         url = URL.createObjectURL(page);
         setPageUrl(url);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         setError(error);
       });
     return () => {

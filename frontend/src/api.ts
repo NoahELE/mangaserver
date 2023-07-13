@@ -1,11 +1,10 @@
 import axios from 'axios';
 import useSWR, { type SWRResponse } from 'swr';
 import type { Library, Manga, Page, User } from './entity';
-import { jwtAtom, store } from './store';
 
 axios.defaults.baseURL = '/api';
 axios.interceptors.request.use((config) => {
-  const jwt = store.get(jwtAtom); // get jwt from store
+  const jwt = localStorage.getItem('jwt');
   if (jwt != null) {
     config.headers.Authorization = `Bearer ${jwt}`;
   }
@@ -24,19 +23,22 @@ export async function login(user: User): Promise<string> {
 
 export function useAllLibraries(
   page: number,
-  size: number
-): SWRResponse<Page<Library[]>> {
-  return useSWR<Page<Library[]>>(`/library?page=${page}&size=${size}`, fetcher);
+  size: number,
+): SWRResponse<Page<Library[]>, Error> {
+  return useSWR<Page<Library[]>, Error>(
+    `/library?page=${page}&size=${size}`,
+    fetcher,
+  );
 }
 
 export function useAllMangas(
   libraryId: number,
   page: number,
-  size: number
-): SWRResponse<Page<Manga[]>> {
-  return useSWR<Page<Manga[]>>(
+  size: number,
+): SWRResponse<Page<Manga[]>, Error> {
+  return useSWR<Page<Manga[]>, Error>(
     `/manga?libraryId=${libraryId}&page=${page}&size=${size}`,
-    fetcher
+    fetcher,
   );
 }
 
@@ -44,17 +46,17 @@ export async function scanManga(libraryId: number): Promise<void> {
   await axios.get<undefined>(`/library/${libraryId}/scanManga`);
 }
 
-export function useManga(mangaId: number): SWRResponse<Manga> {
-  return useSWR<Manga>(`/manga/${mangaId}`, fetcher);
+export function useManga(mangaId: number): SWRResponse<Manga, Error> {
+  return useSWR<Manga, Error>(`/manga/${mangaId}`, fetcher);
 }
 
 export async function getMangaPage(
   mangaId: number,
-  pageIndex: number
+  pageIndex: number,
 ): Promise<Blob> {
   const { data: page } = await axios.get<Blob>(
     `/manga/${mangaId}/page/${pageIndex}`,
-    { responseType: 'blob' }
+    { responseType: 'blob' },
   );
   // return the data url of the page
   return page;

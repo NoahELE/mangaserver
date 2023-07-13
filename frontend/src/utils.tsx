@@ -14,8 +14,8 @@ export function useErrorNotification(): [ErrorCallback, ReactElement] {
     api.destroy(key);
   }, [api, key]);
   const refreshOnClick = useCallback(() => {
-    window.location.reload();
-  }, []);
+    navigate(0);
+  }, [navigate]);
   const loginOnClick = useCallback(() => {
     navigate('/login');
   }, [navigate]);

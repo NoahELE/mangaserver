@@ -5,10 +5,10 @@ module.exports = {
     es2021: true,
   },
   extends: [
+    'standard-with-typescript',
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
     'plugin:react-hooks/recommended',
-    'standard-with-typescript',
     'plugin:prettier/recommended',
   ],
   ignorePatterns: [
@@ -21,9 +21,10 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: 'tsconfig.json',
+    project: true,
+    tsconfigRootDir: __dirname,
   },
-  plugins: ['prettier', 'react', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'prettier', 'react', 'react-hooks'],
   rules: {},
   settings: {
     react: {

@@ -38,7 +38,7 @@ export default function LibraryDetailView(): ReactElement {
   const [pageSize, setPageSize] = useState(20);
   const [scanError, setScanError] = useState<Error | null>(null);
   const scanMangaOnClick = useCallback(() => {
-    scanManga(libraryId).catch((error) => {
+    scanManga(libraryId).catch((error: Error) => {
       setScanError(error);
     });
   }, [libraryId]);
