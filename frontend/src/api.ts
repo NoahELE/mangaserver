@@ -3,13 +3,18 @@ import useSWR, { type SWRResponse } from 'swr';
 import type { Library, Manga, Page, User } from './entity';
 
 axios.defaults.baseURL = '/api';
+let jwtCache: string | null = null;
 axios.interceptors.request.use((config) => {
-  const jwt = localStorage.getItem('jwt');
-  if (jwt != null) {
-    config.headers.Authorization = `Bearer ${jwt}`;
+  if (jwtCache == null) {
+    jwtCache = localStorage.getItem('jwt');
+  }
+  if (jwtCache != null) {
+    config.headers.Authorization = `Bearer ${jwtCache}`;
   }
   return config;
 });
+
+type Response<T> = SWRResponse<T, Error>;
 
 async function fetcher<T>(url: string): Promise<T> {
   const { data } = await axios.get<T>(url);
@@ -24,19 +29,16 @@ export async function login(user: User): Promise<string> {
 export function useAllLibraries(
   page: number,
   size: number,
-): SWRResponse<Page<Library[]>, Error> {
-  return useSWR<Page<Library[]>, Error>(
-    `/library?page=${page}&size=${size}`,
-    fetcher,
-  );
+): Response<Page<Library[]>> {
+  return useSWR<Page<Library[]>>(`/library?page=${page}&size=${size}`, fetcher);
 }
 
 export function useAllMangas(
   libraryId: number,
   page: number,
   size: number,
-): SWRResponse<Page<Manga[]>, Error> {
-  return useSWR<Page<Manga[]>, Error>(
+): Response<Page<Manga[]>> {
+  return useSWR<Page<Manga[]>>(
     `/manga?libraryId=${libraryId}&page=${page}&size=${size}`,
     fetcher,
   );
@@ -46,8 +48,8 @@ export async function scanManga(libraryId: number): Promise<void> {
   await axios.get<undefined>(`/library/${libraryId}/scanManga`);
 }
 
-export function useManga(mangaId: number): SWRResponse<Manga, Error> {
-  return useSWR<Manga, Error>(`/manga/${mangaId}`, fetcher);
+export function useManga(mangaId: number): Response<Manga> {
+  return useSWR<Manga>(`/manga/${mangaId}`, fetcher);
 }
 
 export async function getMangaPage(
@@ -58,6 +60,6 @@ export async function getMangaPage(
     `/manga/${mangaId}/page/${pageIndex}`,
     { responseType: 'blob' },
   );
-  // return the data url of the page
+  // return the object url of the page
   return page;
 }

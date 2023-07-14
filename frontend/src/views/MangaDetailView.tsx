@@ -6,6 +6,7 @@ import Loading from '../components/Loading';
 import MangaPageImage from '../components/MangaPageImage';
 import { currentViewAtom, lastMangaIdAtom } from '../store';
 import { useErrorNotification, useParamsId } from '../utils';
+import styles from './MangaDetailView.module.css';
 
 const { Title } = Typography;
 
@@ -39,7 +40,7 @@ export default function MangaDetailView(): ReactElement {
   if (manga == null) {
     return (
       <>
-        <Empty className="m-10" />
+        <Empty className={styles.empty} />
         {contextHolder}
       </>
     );
@@ -72,7 +73,7 @@ export default function MangaDetailView(): ReactElement {
         </Descriptions.Item>
       </Descriptions>
       <Divider />
-      <div className="flex flex-col items-center">{...pages}</div>
+      <div className={styles.pages}>{...pages}</div>
       {contextHolder}
     </>
   );

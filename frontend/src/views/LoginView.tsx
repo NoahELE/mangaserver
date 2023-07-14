@@ -3,6 +3,7 @@ import { useCallback, useState, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { type User } from '../entity';
+import styles from './LoginView.module.css';
 
 const { Title } = Typography;
 
@@ -12,7 +13,7 @@ export default function LoginView(): ReactElement {
   const onFinish = useCallback(
     (user: User) => {
       login(user)
-        .then(async (jwt) => {
+        .then((jwt) => {
           localStorage.setItem('jwt', jwt);
           navigate('/', { replace: true });
         })
@@ -28,12 +29,12 @@ export default function LoginView(): ReactElement {
 
   return (
     <>
-      <Title className="my-20 text-center">MangaServer</Title>
+      <Title className={styles.title}>MangaServer</Title>
       <Form
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 12 }}
         onFinish={onFinish}
-        className="mx-60"
+        className={styles.form}
       >
         <Form.Item
           name="username"

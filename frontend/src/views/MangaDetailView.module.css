@@ -1,0 +1,9 @@
+.empty {
+  margin: 2rem;
+}
+
+.pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

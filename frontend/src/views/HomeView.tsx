@@ -14,6 +14,7 @@ import LibraryCard from '../components/LibraryCard';
 import Loading from '../components/Loading';
 import { currentViewAtom } from '../store';
 import { useErrorNotification } from '../utils';
+import styles from './HomeView.module.css';
 
 const { Title } = Typography;
 
@@ -59,7 +60,7 @@ export default function HomeView(): ReactElement {
   if (librariesPage == null) {
     return (
       <>
-        <Empty className="m-10" />
+        <Empty className={styles.empty} />
         {contextHolder}
       </>
     );
@@ -79,7 +80,7 @@ export default function HomeView(): ReactElement {
       <Title>Library List</Title>
       <Divider />
       <Row gutter={[16, 16]}>{...libraryCards}</Row>
-      <div className="mt-10 flex justify-center">
+      <div className={styles.pagination}>
         <Pagination
           current={current}
           total={total}
