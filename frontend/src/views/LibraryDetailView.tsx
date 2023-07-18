@@ -9,7 +9,7 @@ import {
   type PaginationProps,
 } from 'antd';
 import { useSetAtom } from 'jotai';
-import { useCallback, useEffect, useState, type ReactElement } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { scanManga, useAllMangas } from '../api';
 import Loading from '../components/Loading';
 import MangaCard from '../components/MangaCard';
@@ -38,17 +38,15 @@ export default function LibraryDetailView(): ReactElement {
   const [current, setCurrent] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [scanError, setScanError] = useState<Error | null>(null);
-  const scanMangaOnClick = useCallback(() => {
+  const scanMangaOnClick = (): void => {
     scanManga(libraryId).catch((error: Error) => {
       setScanError(error);
     });
-  }, [libraryId]);
-  const paginationOnChange = useCallback<
-    NonNullable<PaginationProps['onChange']>
-  >((page, pageSize) => {
+  };
+  const paginationOnChange: PaginationProps['onChange'] = (page, pageSize) => {
     setCurrent(page);
     setPageSize(pageSize);
-  }, []);
+  };
 
   const [showError, contextHolder] = useErrorNotification();
 

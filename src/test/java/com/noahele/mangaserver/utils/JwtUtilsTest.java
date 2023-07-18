@@ -1,8 +1,14 @@
 package com.noahele.mangaserver.utils;
 
 import com.noahele.mangaserver.entity.User;
+import com.noahele.mangaserver.security.JwtUtils;
+import com.noahele.mangaserver.security.UserDetailsImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 
 class JwtUtilsTest {
     private final User user = new User() {
@@ -27,5 +33,12 @@ class JwtUtilsTest {
         int id = JwtUtils.parseJwt(jwt);
         System.out.println(id);
         Assertions.assertEquals(id, user.getId());
+    }
+
+    @Test
+    void writeJwt() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048);
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
     }
 }

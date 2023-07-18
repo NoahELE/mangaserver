@@ -1,8 +1,8 @@
 package com.noahele.mangaserver.controller;
 
 import com.noahele.mangaserver.entity.User;
+import com.noahele.mangaserver.security.UserDetailsImpl;
 import com.noahele.mangaserver.service.UserService;
-import com.noahele.mangaserver.utils.UserDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

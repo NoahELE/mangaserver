@@ -1,6 +1,7 @@
-import { Descriptions, Divider, Empty, Typography } from 'antd';
+import { Button, Descriptions, Divider, Empty, Typography } from 'antd';
 import { useSetAtom } from 'jotai';
 import { useEffect, type ReactElement } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useManga } from '../api';
 import Loading from '../components/Loading';
 import MangaPageImage from '../components/MangaPageImage';
@@ -23,6 +24,7 @@ export default function MangaDetailView(): ReactElement {
   }, [mangaId, setCurrentView, setLastMangaId]);
 
   const [showError, contextHolder] = useErrorNotification();
+  const navigate = useNavigate();
 
   // retrieve manga from api
   const { data: manga, error, isLoading } = useManga(mangaId);
@@ -45,6 +47,9 @@ export default function MangaDetailView(): ReactElement {
       </>
     );
   }
+  const onClick = (): void => {
+    navigate(`/library/${manga.library.id}}`);
+  };
 
   const pages: ReactElement[] = [];
   for (let pageIndex = 0; pageIndex < manga.numOfPages; pageIndex++) {
@@ -59,6 +64,9 @@ export default function MangaDetailView(): ReactElement {
 
   return (
     <>
+      <Button type="link" onClick={onClick}>
+        Go back to Library
+      </Button>
       <Title>{manga.name}</Title>
       <Divider />
       <Descriptions bordered column={2}>

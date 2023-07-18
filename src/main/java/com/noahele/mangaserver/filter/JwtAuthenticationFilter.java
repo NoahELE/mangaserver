@@ -1,7 +1,7 @@
 package com.noahele.mangaserver.filter;
 
-import com.noahele.mangaserver.utils.JwtUtils;
-import com.noahele.mangaserver.utils.UserDetailsImpl;
+import com.noahele.mangaserver.security.JwtUtils;
+import com.noahele.mangaserver.security.UserDetailsImpl;
 import com.noahele.mangaserver.utils.cache.UserCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

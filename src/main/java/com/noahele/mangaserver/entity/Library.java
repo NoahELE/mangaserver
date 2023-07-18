@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -30,6 +30,10 @@ public class Library extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "library")
     private List<Manga> mangaList;
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "library")
+    private List<Author> authorList;
     @JsonIgnore
     @CreatedBy
     @ManyToOne
@@ -41,15 +45,22 @@ public class Library extends BaseEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
+                ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() :
+                o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
+                this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
         Library library = (Library) o;
-        return id != null && Objects.equals(id, library.id);
+        return getId() != null && Objects.equals(getId(), library.getId());
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return getClass().hashCode();
     }
 }

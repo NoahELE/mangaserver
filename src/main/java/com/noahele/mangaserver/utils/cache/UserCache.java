@@ -2,7 +2,7 @@ package com.noahele.mangaserver.utils.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.noahele.mangaserver.utils.UserDetailsImpl;
+import com.noahele.mangaserver.security.UserDetailsImpl;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;

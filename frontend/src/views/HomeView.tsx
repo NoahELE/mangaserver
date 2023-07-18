@@ -8,7 +8,7 @@ import {
   type PaginationProps,
 } from 'antd';
 import { useSetAtom } from 'jotai';
-import { useCallback, useEffect, useState, type ReactElement } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { useAllLibraries } from '../api';
 import LibraryCard from '../components/LibraryCard';
 import Loading from '../components/Loading';
@@ -18,9 +18,9 @@ import styles from './HomeView.module.css';
 
 const { Title } = Typography;
 
-function showTotal(total: number, [start, end]: [number, number]): string {
+const showTotal: PaginationProps['showTotal'] = (total, [start, end]) => {
   return `${start}-${end} of ${total} items`;
-}
+};
 
 export default function HomeView(): ReactElement {
   // update currentView in store
@@ -31,12 +31,10 @@ export default function HomeView(): ReactElement {
 
   const [current, setCurrent] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const paginationOnChange = useCallback<
-    NonNullable<PaginationProps['onChange']>
-  >((page, pageSize) => {
+  const onChange: PaginationProps['onChange'] = (page, pageSize) => {
     setCurrent(page);
     setPageSize(pageSize);
-  }, []);
+  };
 
   const [showError, contextHolder] = useErrorNotification();
 
@@ -87,7 +85,7 @@ export default function HomeView(): ReactElement {
           showTotal={showTotal}
           pageSize={pageSize}
           showSizeChanger
-          onChange={paginationOnChange}
+          onChange={onChange}
         />
       </div>
       {contextHolder}

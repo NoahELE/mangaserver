@@ -1,5 +1,5 @@
 import { Button, Typography } from 'antd';
-import { useCallback, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { useNavigate, useRouteError } from 'react-router-dom';
 import styles from './ErrorView.module.css';
 
@@ -8,15 +8,15 @@ const { Title, Paragraph } = Typography;
 export default function ErrorView(): ReactElement {
   const error = useRouteError();
   const navigate /* eslint-env node */ = useNavigate();
-  const refreshOnClick = useCallback(() => {
+  const refreshOnClick = (): void => {
     navigate(0);
-  }, [navigate]);
-  const loginOnClick = useCallback(() => {
+  };
+  const loginOnClick = (): void => {
     navigate('/login', { replace: true });
-  }, [navigate]);
-  const returnOnClick = useCallback(() => {
+  };
+  const returnOnClick = (): void => {
     navigate(-1);
-  }, [navigate]);
+  };
 
   return (
     <>

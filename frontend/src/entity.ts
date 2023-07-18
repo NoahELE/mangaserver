@@ -23,6 +23,6 @@ export interface Manga extends BaseEntity {
 }
 
 export interface Page<T> {
-  content: T;
+  content: T[];
   totalElements: number;
 }

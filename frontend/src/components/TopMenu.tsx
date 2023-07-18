@@ -1,6 +1,6 @@
 import { Menu, type MenuProps } from 'antd';
 import { useAtomValue } from 'jotai';
-import { useCallback, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   currentViewAtom,
@@ -13,6 +13,10 @@ const items: MenuProps['items'] = [
   {
     label: 'Home',
     key: 'home',
+  },
+  {
+    label: 'Author',
+    key: 'author',
   },
   {
     label: 'Library',
@@ -29,30 +33,33 @@ export default function TopMenu(): ReactElement {
   const currentView = useAtomValue(currentViewAtom);
   const lastLibraryId = useAtomValue(lastLibraryIdAtom);
   const lastMangaId = useAtomValue(lastMangaIdAtom);
-  const onClick = useCallback<NonNullable<MenuProps['onClick']>>(
-    (info) => {
-      switch (info.key as CurrentView) {
-        case 'home':
-          navigate('/');
-          break;
-        case 'library':
-          if (lastLibraryId == null) {
-            throw new Error('lastLibraryId does not exist');
-          }
-          navigate(`/library/${lastLibraryId.toString()}`);
-          break;
-        case 'manga':
-          if (lastMangaId == null) {
-            throw new Error('lastMangaId does not exist');
-          }
-          navigate(`/manga/${lastMangaId.toString()}}`);
-          break;
-        default:
-          throw new Error(`unknown menu key: ${info.key}`);
-      }
-    },
-    [lastLibraryId, lastMangaId, navigate],
-  );
+  const onClick: MenuProps['onClick'] = (info) => {
+    switch (info.key as CurrentView) {
+      case 'home':
+        navigate('/');
+        break;
+      case 'author':
+        if (lastLibraryId == null) {
+          throw new Error('lastLibraryId does not exist');
+        }
+        navigate(`/author?libraryId=${lastLibraryId}`);
+        break;
+      case 'library':
+        if (lastLibraryId == null) {
+          throw new Error('lastLibraryId does not exist');
+        }
+        navigate(`/library/${lastLibraryId}`);
+        break;
+      case 'manga':
+        if (lastMangaId == null) {
+          throw new Error('lastMangaId does not exist');
+        }
+        navigate(`/manga/${lastMangaId}}`);
+        break;
+      default:
+        throw new Error(`unknown menu key: ${info.key}`);
+    }
+  };
 
   return (
     <Menu

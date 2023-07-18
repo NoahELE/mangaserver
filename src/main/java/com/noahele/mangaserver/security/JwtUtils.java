@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.utils;
+package com.noahele.mangaserver.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;

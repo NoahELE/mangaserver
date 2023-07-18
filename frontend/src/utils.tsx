@@ -1,13 +1,8 @@
 import { Button, notification, Typography } from 'antd';
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useState,
-  type ReactElement,
-} from 'react';
+import { useEffect, useId, useState, type ReactElement } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getMangaPage } from './api';
+import loadingUrl from './assets/loading.gif';
 
 const { Paragraph } = Typography;
 
@@ -21,25 +16,25 @@ export function useErrorNotification(): [ErrorCallback, ReactElement] {
   const key = useId();
   const navigate = useNavigate();
   const [api, contextHolder] = notification.useNotification();
-  const closeOnClick = useCallback(() => {
+  const closeOnClick = (): void => {
     api.destroy(key);
-  }, [api, key]);
-  const refreshOnClick = useCallback(() => {
+  };
+  const refreshOnClick = (): void => {
     navigate(0);
-  }, [navigate]);
-  const loginOnClick = useCallback(() => {
+  };
+  const loginOnClick = (): void => {
     navigate('/login');
-  }, [navigate]);
+  };
 
   const btn = (
     <>
       <Button type="primary" onClick={closeOnClick}>
         Close
       </Button>
-      <Button type="link" onClick={refreshOnClick}>
+      <Button type="default" onClick={refreshOnClick}>
         Refresh
       </Button>
-      <Button type="link" onClick={loginOnClick}>
+      <Button type="default" onClick={loginOnClick}>
         Login
       </Button>
     </>
@@ -87,11 +82,8 @@ export function useParamsId(param: string): number {
  * @param pageIndex the index of the page
  * @returns the created object url of the manga page
  */
-export function useMangaPage(
-  mangaId: number,
-  pageIndex: number,
-): string | null {
-  const [pageUrl, setPageUrl] = useState<string | null>(null);
+export function useMangaPage(mangaId: number, pageIndex: number): string {
+  const [pageUrl, setPageUrl] = useState<string>(loadingUrl);
   const [error, setError] = useState<Error | null>(null);
   useEffect(() => {
     let url: string | null = null;

@@ -45,8 +45,15 @@ public class MangaController {
     @GetMapping("")
     @Operation(summary = "get all manga from a library")
     public Page<Manga> getAllByLibrary(int libraryId, int page, int size) {
-        log.info("Library {} get all manga in page {}", libraryId, page);
-        return mangaService.getAllByLibrary(libraryId, page, size);
+        log.info("Get manga from Library {}, page = {}, size = {}", libraryId, page, size);
+        return mangaService.getAllMangaByLibrary(libraryId, page, size);
+    }
+
+    @GetMapping("")
+    public Page<Manga> getAllByLibraryAndAuthor(int authorId, int page, int size) {
+        log.info("Get manga from with Author {}, page = {}, size = {}",
+                authorId, page, size);
+        return mangaService.getAllMangaByLibraryAndAuthor(authorId, page, size);
     }
 
     @GetMapping("/{id}")
@@ -60,7 +67,7 @@ public class MangaController {
     @Operation(summary = "get a page from manga")
     public ResponseEntity<byte[]> getMangaPage(@PathVariable int id,
                                                @PathVariable int pageIndex) {
-        log.info("Get page {} from manga {}", pageIndex, id);
+        log.info("From manga {} get page {}", id, pageIndex);
         MangaPageInfo mangaPageInfo = mangaService.getMangaPage(id, pageIndex);
         return ResponseEntity.ok()
                 .contentType(mangaPageInfo.type())

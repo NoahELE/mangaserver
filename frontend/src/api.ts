@@ -29,19 +29,25 @@ export async function login(user: User): Promise<string> {
 export function useAllLibraries(
   page: number,
   size: number,
-): Response<Page<Library[]>> {
-  return useSWR<Page<Library[]>>(`/library?page=${page}&size=${size}`, fetcher);
+): Response<Page<Library>> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    size: size.toString(),
+  });
+  return useSWR<Page<Library>>(`/library?${params.toString()}`, fetcher);
 }
 
 export function useAllMangas(
   libraryId: number,
   page: number,
   size: number,
-): Response<Page<Manga[]>> {
-  return useSWR<Page<Manga[]>>(
-    `/manga?libraryId=${libraryId}&page=${page}&size=${size}`,
-    fetcher,
-  );
+): Response<Page<Manga>> {
+  const params = new URLSearchParams({
+    libraryId: libraryId.toString(),
+    page: page.toString(),
+    size: size.toString(),
+  });
+  return useSWR<Page<Manga>>(`/manga?${params.toString()}}`, fetcher);
 }
 
 export async function scanManga(libraryId: number): Promise<void> {

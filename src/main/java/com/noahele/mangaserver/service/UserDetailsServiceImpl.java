@@ -2,7 +2,7 @@ package com.noahele.mangaserver.service;
 
 import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.repository.UserRepository;
-import com.noahele.mangaserver.utils.UserDetailsImpl;
+import com.noahele.mangaserver.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

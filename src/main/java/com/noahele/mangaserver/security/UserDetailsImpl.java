@@ -1,7 +1,6 @@
-package com.noahele.mangaserver.utils;
+package com.noahele.mangaserver.security;
 
 import com.noahele.mangaserver.entity.User;
-import lombok.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-public record UserDetailsImpl(@NonNull User user) implements UserDetails {
+public record UserDetailsImpl(User user) implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("USER"));

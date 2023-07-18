@@ -1,5 +1,6 @@
 package com.noahele.mangaserver.repository;
 
+import com.noahele.mangaserver.entity.Author;
 import com.noahele.mangaserver.entity.Library;
 import com.noahele.mangaserver.entity.Manga;
 import org.springframework.data.domain.Page;
@@ -10,4 +11,6 @@ public interface MangaRepository extends JpaRepository<Manga, Integer> {
     boolean existsByPath(String path);
 
     Page<Manga> findAllByLibrary(Library library, Pageable pageable);
+
+    Page<Manga> findAllByAuthorListContaining(Author author, Pageable pageable);
 }

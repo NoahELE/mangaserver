@@ -5,14 +5,16 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 
-/* eslint-disable @typescript-eslint/promise-function-async */
-const ErrorView = lazy(() => import('./views/ErrorView'));
-const HomeView = lazy(() => import('./views/HomeView'));
-const LibraryDetailView = lazy(() => import('./views/LibraryDetailView'));
-const LoginView = lazy(() => import('./views/LoginView'));
-const MangaDetailView = lazy(() => import('./views/MangaDetailView'));
-const RootView = lazy(() => import('./views/RootView'));
-/* eslint-enable @typescript-eslint/promise-function-async */
+const ErrorView = lazy(async () => await import('./views/ErrorView'));
+const HomeView = lazy(async () => await import('./views/HomeView'));
+const LibraryDetailView = lazy(
+  async () => await import('./views/LibraryDetailView'),
+);
+const LoginView = lazy(async () => await import('./views/LoginView'));
+const MangaDetailView = lazy(
+  async () => await import('./views/MangaDetailView'),
+);
+const RootView = lazy(async () => await import('./views/RootView'));
 
 const router = createBrowserRouter(
   createRoutesFromElements(
