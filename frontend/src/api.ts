@@ -1,6 +1,6 @@
 import axios from 'axios';
 import useSWR, { type SWRResponse } from 'swr';
-import type { Library, Manga, Page, User } from './entity';
+import type { AddLibraryDto, Library, Manga, Page, User } from './entity';
 
 axios.defaults.baseURL = '/api';
 let jwtCache: string | null = null;
@@ -37,6 +37,10 @@ export function useAllLibraries(
   return useSWR<Page<Library>>(`/library?${params.toString()}`, fetcher);
 }
 
+export async function addLibrary(library: AddLibraryDto): Promise<void> {
+  await axios.post<undefined>('/library', library);
+}
+
 export function useAllMangas(
   libraryId: number,
   page: number,
@@ -47,7 +51,7 @@ export function useAllMangas(
     page: page.toString(),
     size: size.toString(),
   });
-  return useSWR<Page<Manga>>(`/manga?${params.toString()}}`, fetcher);
+  return useSWR<Page<Manga>>(`/manga?${params.toString()}`, fetcher);
 }
 
 export async function scanManga(libraryId: number): Promise<void> {

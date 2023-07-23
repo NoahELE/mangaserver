@@ -1,3 +1,4 @@
+import { App } from 'antd';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
@@ -10,7 +11,9 @@ if (root != null) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <Suspense fallback={<Loading />}>
-        <RouterProvider router={router} />
+        <App>
+          <RouterProvider router={router} />
+        </App>
       </Suspense>
     </React.StrictMode>,
   );

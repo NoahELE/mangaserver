@@ -6,7 +6,7 @@ import { useManga } from '../api';
 import Loading from '../components/Loading';
 import MangaPageImage from '../components/MangaPageImage';
 import { currentViewAtom, lastMangaIdAtom } from '../store';
-import { useErrorNotification, useParamsId } from '../utils';
+import { useParamsId, useShowError } from '../utils';
 import styles from './MangaDetailView.module.css';
 
 const { Title } = Typography;
@@ -23,7 +23,7 @@ export default function MangaDetailView(): ReactElement {
     setLastMangaId(mangaId);
   }, [mangaId, setCurrentView, setLastMangaId]);
 
-  const [showError, contextHolder] = useErrorNotification();
+  const showError = useShowError();
   const navigate = useNavigate();
 
   // retrieve manga from api
@@ -32,20 +32,10 @@ export default function MangaDetailView(): ReactElement {
     showError(error);
   }
   if (isLoading) {
-    return (
-      <>
-        <Loading />
-        {contextHolder}
-      </>
-    );
+    return <Loading />;
   }
   if (manga == null) {
-    return (
-      <>
-        <Empty className={styles.empty} />
-        {contextHolder}
-      </>
-    );
+    return <Empty className={styles.empty} />;
   }
   const onClick = (): void => {
     navigate(`/library/${manga.library.id}}`);
@@ -82,7 +72,6 @@ export default function MangaDetailView(): ReactElement {
       </Descriptions>
       <Divider />
       <div className={styles.pages}>{...pages}</div>
-      {contextHolder}
     </>
   );
 }

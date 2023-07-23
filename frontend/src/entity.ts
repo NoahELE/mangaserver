@@ -14,6 +14,8 @@ export interface Library extends BaseEntity {
   path: string;
 }
 
+export type AddLibraryDto = Omit<Library, keyof BaseEntity>;
+
 export interface Manga extends BaseEntity {
   name: string;
   path: string;

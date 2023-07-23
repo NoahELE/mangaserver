@@ -1,6 +1,6 @@
 package com.noahele.mangaserver.utils;
 
-import com.noahele.mangaserver.entity.User;
+import com.noahele.mangaserver.domain.user.User;
 import com.noahele.mangaserver.security.JwtUtils;
 import com.noahele.mangaserver.security.UserDetailsImpl;
 import org.junit.jupiter.api.Assertions;

@@ -1,5 +1,9 @@
+.empty {
+  margin: 2rem;
+}
+
 .pagination {
-  margin-top: 2rem;
   display: flex;
   justify-content: center;
+  margin: 2rem;
 }

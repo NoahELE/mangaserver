@@ -1,4 +1,6 @@
+import { PlusOutlined } from '@ant-design/icons';
 import {
+  Card,
   Col,
   Divider,
   Empty,
@@ -10,10 +12,11 @@ import {
 import { useSetAtom } from 'jotai';
 import { useEffect, useState, type ReactElement } from 'react';
 import { useAllLibraries } from '../api';
+import AddLibraryModal from '../components/AddLibraryModal';
 import LibraryCard from '../components/LibraryCard';
 import Loading from '../components/Loading';
 import { currentViewAtom } from '../store';
-import { useErrorNotification } from '../utils';
+import { useShowError } from '../utils';
 import styles from './HomeView.module.css';
 
 const { Title } = Typography;
@@ -31,12 +34,9 @@ export default function HomeView(): ReactElement {
 
   const [current, setCurrent] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-  const onChange: PaginationProps['onChange'] = (page, pageSize) => {
-    setCurrent(page);
-    setPageSize(pageSize);
-  };
+  const [open, setOpen] = useState(false);
 
-  const [showError, contextHolder] = useErrorNotification();
+  const showError = useShowError();
 
   // retrieve libraries from api
   const {
@@ -48,20 +48,10 @@ export default function HomeView(): ReactElement {
     showError(error);
   }
   if (isLoading) {
-    return (
-      <>
-        <Loading />
-        {contextHolder}
-      </>
-    );
+    return <Loading />;
   }
   if (librariesPage == null) {
-    return (
-      <>
-        <Empty className={styles.empty} />
-        {contextHolder}
-      </>
-    );
+    return <Empty className={styles.empty} />;
   }
 
   const libraries = librariesPage.content;
@@ -73,11 +63,27 @@ export default function HomeView(): ReactElement {
     </Col>
   ));
 
+  const onClick = (): void => {
+    setOpen(true);
+  };
+  libraryCards.push(
+    <Col span={6} key={'addLibrary'}>
+      <Card className={styles.addCard} hoverable onClick={onClick}>
+        <PlusOutlined className={styles.addIcon} />
+      </Card>
+    </Col>,
+  );
+
+  const onChange: PaginationProps['onChange'] = (page, pageSize) => {
+    setCurrent(page);
+    setPageSize(pageSize);
+  };
   return (
     <>
       <Title>Library List</Title>
       <Divider />
       <Row gutter={[16, 16]}>{...libraryCards}</Row>
+      <AddLibraryModal open={open}></AddLibraryModal>
       <div className={styles.pagination}>
         <Pagination
           current={current}
@@ -88,7 +94,6 @@ export default function HomeView(): ReactElement {
           onChange={onChange}
         />
       </div>
-      {contextHolder}
     </>
   );
 }

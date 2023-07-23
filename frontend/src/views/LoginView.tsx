@@ -1,15 +1,16 @@
 import { Button, Form, Input, Typography } from 'antd';
-import { useState, type ReactElement } from 'react';
+import { type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { type User } from '../entity';
+import { useShowError } from '../utils';
 import styles from './LoginView.module.css';
 
 const { Title } = Typography;
 
 export default function LoginView(): ReactElement {
   const navigate = useNavigate();
-  const [error, setError] = useState<Error | null>(null);
+  const showError = useShowError();
   const onFinish = (user: User): void => {
     login(user)
       .then((jwt) => {
@@ -17,12 +18,9 @@ export default function LoginView(): ReactElement {
         navigate('/', { replace: true });
       })
       .catch((error: Error) => {
-        setError(error);
+        showError(error);
       });
   };
-  if (error != null) {
-    throw error;
-  }
 
   return (
     <>

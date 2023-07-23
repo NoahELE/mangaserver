@@ -1,62 +1,58 @@
-import { Button, notification, Typography } from 'antd';
-import { useEffect, useId, useState, type ReactElement } from 'react';
+import { App, Button, Space, Typography } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getMangaPage } from './api';
 import loadingUrl from './assets/loading.gif';
 
 const { Paragraph } = Typography;
 
-type ErrorCallback = (error: Error) => void;
-
 /**
  * custom hook to show an error notification
- * @returns the callback to show an error notification and the context holder
+ * @returns the callback to show an error notification
  */
-export function useErrorNotification(): [ErrorCallback, ReactElement] {
-  const key = useId();
+export function useShowError(): (error: Error) => void {
+  const { notification } = App.useApp();
   const navigate = useNavigate();
-  const [api, contextHolder] = notification.useNotification();
-  const closeOnClick = (): void => {
-    api.destroy(key);
-  };
-  const refreshOnClick = (): void => {
-    navigate(0);
-  };
-  const loginOnClick = (): void => {
-    navigate('/login');
-  };
-
-  const btn = (
-    <>
-      <Button type="primary" onClick={closeOnClick}>
-        Close
-      </Button>
-      <Button type="default" onClick={refreshOnClick}>
-        Refresh
-      </Button>
-      <Button type="default" onClick={loginOnClick}>
-        Login
-      </Button>
-    </>
+  const showError = useCallback(
+    (error: Error): void => {
+      const key = `error-${Date.now()}}`;
+      const closeOnClick = (): void => {
+        notification.destroy(key);
+      };
+      const refreshOnClick = (): void => {
+        navigate(0);
+      };
+      const loginOnClick = (): void => {
+        navigate('/login');
+      };
+      notification.error({
+        message: 'Error',
+        description: (
+          <>
+            <Paragraph>An error occurred.</Paragraph>
+            <Paragraph>{error.name}</Paragraph>
+            <Paragraph>{error.message}</Paragraph>
+          </>
+        ),
+        btn: (
+          <Space>
+            <Button type="primary" onClick={closeOnClick}>
+              Close
+            </Button>
+            <Button type="default" onClick={refreshOnClick}>
+              Refresh
+            </Button>
+            <Button type="default" onClick={loginOnClick}>
+              Login
+            </Button>
+          </Space>
+        ),
+        key,
+      });
+    },
+    [navigate, notification],
   );
-
-  const showError: ErrorCallback = (error) => {
-    api.error({
-      message: 'Error',
-      description: (
-        <>
-          <Paragraph>An error occurred.</Paragraph>
-          <Paragraph>
-            ${error.name} - ${error.message}
-          </Paragraph>
-        </>
-      ),
-      btn,
-      key,
-    });
-  };
-
-  return [showError, contextHolder];
+  return showError;
 }
 
 /**
@@ -84,7 +80,8 @@ export function useParamsId(param: string): number {
  */
 export function useMangaPage(mangaId: number, pageIndex: number): string {
   const [pageUrl, setPageUrl] = useState<string>(loadingUrl);
-  const [error, setError] = useState<Error | null>(null);
+  const showError = useShowError();
+
   useEffect(() => {
     let url: string | null = null;
     getMangaPage(mangaId, pageIndex)
@@ -93,16 +90,13 @@ export function useMangaPage(mangaId: number, pageIndex: number): string {
         setPageUrl(url);
       })
       .catch((error: Error) => {
-        setError(error);
+        showError(error);
       });
     return () => {
       if (url != null) {
         URL.revokeObjectURL(url);
       }
     };
-  }, [mangaId, pageIndex]);
-  if (error != null) {
-    throw error;
-  }
+  }, [mangaId, pageIndex, showError]);
   return pageUrl;
 }

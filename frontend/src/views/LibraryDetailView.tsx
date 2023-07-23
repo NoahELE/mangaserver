@@ -14,7 +14,7 @@ import { scanManga, useAllMangas } from '../api';
 import Loading from '../components/Loading';
 import MangaCard from '../components/MangaCard';
 import { currentViewAtom, lastLibraryIdAtom } from '../store';
-import { useErrorNotification, useParamsId } from '../utils';
+import { useParamsId, useShowError } from '../utils';
 import styles from './LibraryDetailView.module.css';
 
 const { Title } = Typography;
@@ -48,7 +48,7 @@ export default function LibraryDetailView(): ReactElement {
     setPageSize(pageSize);
   };
 
-  const [showError, contextHolder] = useErrorNotification();
+  const showError = useShowError();
 
   // retrieve mangas from api
   const {
@@ -63,20 +63,10 @@ export default function LibraryDetailView(): ReactElement {
     showError(error);
   }
   if (isLoading) {
-    return (
-      <>
-        <Loading />
-        {contextHolder}
-      </>
-    );
+    return <Loading />;
   }
   if (mangasPage == null) {
-    return (
-      <>
-        <Empty />
-        {contextHolder}
-      </>
-    );
+    return <Empty className={styles.empty} />;
   }
 
   const mangas = mangasPage.content;
@@ -106,7 +96,6 @@ export default function LibraryDetailView(): ReactElement {
           onChange={paginationOnChange}
         />
       </div>
-      {contextHolder}
     </>
   );
 }

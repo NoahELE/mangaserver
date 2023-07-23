@@ -15,12 +15,12 @@ const items: MenuProps['items'] = [
     key: 'home',
   },
   {
-    label: 'Author',
-    key: 'author',
-  },
-  {
     label: 'Library',
     key: 'library',
+  },
+  {
+    label: 'Series',
+    key: 'series',
   },
   {
     label: 'Manga',
@@ -38,11 +38,11 @@ export default function TopMenu(): ReactElement {
       case 'home':
         navigate('/');
         break;
-      case 'author':
+      case 'series':
         if (lastLibraryId == null) {
           throw new Error('lastLibraryId does not exist');
         }
-        navigate(`/author?libraryId=${lastLibraryId}`);
+        navigate(`/series?libraryId=${lastLibraryId}`);
         break;
       case 'library':
         if (lastLibraryId == null) {
