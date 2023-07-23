@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.utils.cache;
+package com.noahele.mangaserver.cache;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -16,15 +16,15 @@ public class UserCache {
             .expireAfterAccess(Duration.ofDays(EXPIRE_DAYS))
             .build();
 
-    public UserDetailsImpl getIfPresent(int id) {
-        return cache.getIfPresent(id);
+    public UserDetailsImpl getIfPresent(int userId) {
+        return cache.getIfPresent(userId);
     }
 
-    public void put(int id, UserDetailsImpl user) {
-        cache.put(id, user);
+    public void put(int userId, UserDetailsImpl user) {
+        cache.put(userId, user);
     }
 
-    public void invalidate(int id) {
-        cache.invalidate(id);
+    public void invalidate(int userId) {
+        cache.invalidate(userId);
     }
 }

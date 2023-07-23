@@ -1,15 +1,17 @@
-package com.noahele.mangaserver.entity;
+package com.noahele.mangaserver.domain.series;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import com.noahele.mangaserver.domain.BaseEntity;
+import com.noahele.mangaserver.domain.library.Library;
+import com.noahele.mangaserver.domain.manga.Manga;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,21 +20,27 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-public class User extends BaseEntity {
-    @NotBlank
-    @Column(nullable = false, unique = true)
-    private String username;
-    @ToString.Exclude
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+@EntityListeners(AuditingEntityListener.class)
+public class Series extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
-    private String password;
+    public String name;
+    @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false)
+    public Library library;
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "owner")
-    private List<Library> libraries;
+    @ManyToMany
+    @JoinTable
+    public List<Manga> mangaList;
 
-    protected User() {
+
+    public Series(String name) {
+        this.name = name;
+    }
+
+    protected Series() {
     }
 
     @Override
@@ -46,8 +54,8 @@ public class User extends BaseEntity {
                 ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
                 this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        User user = (User) o;
-        return getId() != null && Objects.equals(getId(), user.getId());
+        Series series = (Series) o;
+        return getId() != null && Objects.equals(getId(), series.getId());
     }
 
     @Override

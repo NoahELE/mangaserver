@@ -1,6 +1,9 @@
-package com.noahele.mangaserver.entity;
+package com.noahele.mangaserver.domain.manga;
 
 import com.google.common.io.Files;
+import com.noahele.mangaserver.domain.BaseEntity;
+import com.noahele.mangaserver.domain.library.Library;
+import com.noahele.mangaserver.domain.series.Series;
 import com.noahele.mangaserver.utils.reader.MangaReader;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +16,6 @@ import org.hibernate.proxy.HibernateProxy;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,7 +39,7 @@ public class Manga extends BaseEntity {
     @ToString.Exclude
     @ManyToMany(mappedBy = "mangaList", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
             CascadeType.REFRESH})
-    private List<Author> authorList;
+    private List<Series> seriesList;
     @ManyToOne
     @NotNull
     @JoinColumn(nullable = false)
@@ -47,27 +49,24 @@ public class Manga extends BaseEntity {
     }
 
     private Manga(String name, String path, String ext, int numOfPages,
-                  @NotNull Library library) {
+                  List<Series> seriesList, @NotNull Library library) {
         this.name = name;
         this.path = path;
         this.ext = ext;
         this.numOfPages = numOfPages;
-        this.authorList = new ArrayList<>();
+        this.seriesList = seriesList;
         this.library = library;
     }
 
-    public static Manga fromFile(File file, Library library)
-            throws IOException {
+    public static Manga fromFile(File file, Library library) throws IOException {
         String filename = file.getName();
         String name = Files.getNameWithoutExtension(filename);
         String ext = Files.getFileExtension(filename);
         String path = file.getPath();
-        Author author = new Author(file.getParentFile().getName());
-        try (MangaReader reader = MangaReader.getByPath(path)) {
+        Series series = new Series(file.getParentFile().getName());
+        try (MangaReader reader = MangaReader.fromFile(file)) {
             int numOfPages = reader.getNumOfPages();
-            Manga manga = new Manga(name, path, ext, numOfPages, library);
-            manga.authorList.add(author);
-            return manga;
+            return new Manga(name, path, ext, numOfPages, List.of(series), library);
         }
     }
 

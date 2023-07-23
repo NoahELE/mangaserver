@@ -1,6 +1,5 @@
-package com.noahele.mangaserver.repository;
+package com.noahele.mangaserver.domain.user;
 
-import com.noahele.mangaserver.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

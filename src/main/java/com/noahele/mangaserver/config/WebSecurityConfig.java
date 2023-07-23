@@ -1,7 +1,7 @@
 package com.noahele.mangaserver.config;
 
 import com.noahele.mangaserver.filter.JwtAuthenticationFilter;
-import com.noahele.mangaserver.service.UserDetailsServiceImpl;
+import com.noahele.mangaserver.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.controller;
+package com.noahele.mangaserver.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WebUIController {
     @GetMapping({"", "/login", "/library/**", "/manga/**"})
     public String index() {
-        log.info("Request index");
+        log.info("Request web ui");
         return "forward:/index.html";
     }
 }

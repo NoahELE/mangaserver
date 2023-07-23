@@ -1,13 +1,12 @@
-package com.noahele.mangaserver.service;
+package com.noahele.mangaserver.domain.library;
 
 import com.google.common.io.Files;
-import com.noahele.mangaserver.entity.Library;
-import com.noahele.mangaserver.entity.Manga;
-import com.noahele.mangaserver.entity.User;
+import com.noahele.mangaserver.domain.manga.Manga;
+import com.noahele.mangaserver.domain.manga.MangaService;
+import com.noahele.mangaserver.domain.user.User;
 import com.noahele.mangaserver.exception.CustomIOException;
-import com.noahele.mangaserver.exception.OwnerNotMatchException;
-import com.noahele.mangaserver.repository.LibraryRepository;
-import com.noahele.mangaserver.utils.CurrUserFacade;
+import com.noahele.mangaserver.exception.UserOwnershipException;
+import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.reader.MangaReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -39,35 +38,35 @@ public class LibraryService {
         libraryRepository.save(library);
     }
 
-    public void deleteLibrary(int id) {
-        getLibrary(id); // check if the user can access the library
-        libraryRepository.deleteById(id);
+    public void deleteLibrary(int libraryId) {
+        getLibrary(libraryId); // check if the user can access the library
+        libraryRepository.deleteById(libraryId);
     }
 
-    public void updateLibrary(int id, Library library) {
-        getLibrary(id); // check if the user can access the library
+    public void updateLibrary(int libraryId, Library library) {
+        getLibrary(libraryId); // check if the user can access the library
         assert library.getId() == null;
-        library.setId(id);
+        library.setId(libraryId);
         libraryRepository.save(library);
     }
 
-    public Library getLibrary(int id) {
-        Library library = libraryRepository.findById(id).orElseThrow();
-        User user = CurrUserFacade.getUser();
+    public Library getLibrary(int libraryId) {
+        Library library = libraryRepository.findById(libraryId).orElseThrow();
+        User user = SecurityUtils.getCurrentUser();
         if (user == null || !user.equals(library.getOwner())) {
-            throw new OwnerNotMatchException(user);
+            throw new UserOwnershipException(user);
         }
         return library;
     }
 
     public Page<Library> getAllLibraries(int page, int size) {
-        User user = CurrUserFacade.getUser();
+        User user = SecurityUtils.getCurrentUser();
         PageRequest pageRequest = PageRequest.of(page, size, LIBRARY_SORT);
         return libraryRepository.findAllByOwner(user, pageRequest);
     }
 
-    public void scanManga(int id) {
-        Library library = getLibrary(id);
+    public void scanManga(int libraryId) {
+        Library library = getLibrary(libraryId);
         deleteInvalidManga(library);
         File currDir = new File(library.getPath());
         // check whether it is a valid directory
@@ -75,7 +74,7 @@ public class LibraryService {
         List<Manga> mangaList = new ArrayList<>();
         scanMangaRecursive(mangaList, currDir, library);
         mangaList = mangaList.stream().filter((manga) -> !mangaService.existsByPath(manga.getPath())).toList();
-        mangaService.addAllManga(mangaList, id);
+        mangaService.addAllManga(mangaList, libraryId);
     }
 
     private void scanMangaRecursive(List<Manga> mangaList, File currDir, Library library) {

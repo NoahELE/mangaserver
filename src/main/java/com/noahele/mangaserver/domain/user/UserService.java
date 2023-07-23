@@ -1,10 +1,8 @@
-package com.noahele.mangaserver.service;
+package com.noahele.mangaserver.domain.user;
 
-import com.noahele.mangaserver.entity.User;
-import com.noahele.mangaserver.repository.UserRepository;
+import com.noahele.mangaserver.cache.UserCache;
 import com.noahele.mangaserver.security.JwtUtils;
 import com.noahele.mangaserver.security.UserDetailsImpl;
-import com.noahele.mangaserver.utils.cache.UserCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,18 +36,18 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void deleteUser(int id) {
-        userRepository.deleteById(id);
+    public void deleteUser(int userId) {
+        userRepository.deleteById(userId);
     }
 
-    public void updateUser(int id, User user) {
+    public void updateUser(int userId, User user) {
         assert user.getId() == null;
-        user.setId(id);
+        user.setId(userId);
         userRepository.save(user);
     }
 
-    public User getUser(int id) {
-        return userRepository.findById(id).orElseThrow();
+    public User getUser(int userId) {
+        return userRepository.findById(userId).orElseThrow();
     }
 
     public String login(User user) {

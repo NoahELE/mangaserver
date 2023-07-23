@@ -1,15 +1,17 @@
-package com.noahele.mangaserver.entity;
+package com.noahele.mangaserver.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.noahele.mangaserver.domain.BaseEntity;
+import com.noahele.mangaserver.domain.library.Library;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,30 +20,21 @@ import java.util.Objects;
 @Setter
 @ToString
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Library extends BaseEntity {
+public class User extends BaseEntity {
+    @NotBlank
+    @Column(nullable = false, unique = true)
+    private String username;
+    @ToString.Exclude
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
     @Column(nullable = false)
-    private String name;
-    @NotBlank
-    @Column(nullable = false)
-    private String path;
+    private String password;
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "library")
-    private List<Manga> mangaList;
-    @ToString.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "library")
-    private List<Author> authorList;
-    @JsonIgnore
-    @CreatedBy
-    @ManyToOne
-    @NotNull
-    @JoinColumn(nullable = false)
-    private User owner;
+    @OneToMany(mappedBy = "owner")
+    private List<Library> libraries;
 
-    protected Library() {
+    protected User() {
     }
 
     @Override
@@ -55,8 +48,8 @@ public class Library extends BaseEntity {
                 ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
                 this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Library library = (Library) o;
-        return getId() != null && Objects.equals(getId(), library.getId());
+        User user = (User) o;
+        return getId() != null && Objects.equals(getId(), user.getId());
     }
 
     @Override

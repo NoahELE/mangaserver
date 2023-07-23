@@ -1,8 +1,6 @@
-package com.noahele.mangaserver.controller;
+package com.noahele.mangaserver.domain.user;
 
-import com.noahele.mangaserver.entity.User;
 import com.noahele.mangaserver.security.UserDetailsImpl;
-import com.noahele.mangaserver.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +18,23 @@ public class UserController {
     }
 
     @PostMapping("")
-    @Operation(summary = "add a user")
+    @Operation(summary = "Add a user")
     public void addUser(@RequestBody User user) {
-        log.info("Add user: {}", user);
+        log.info("Add user, user = {}", user);
         userService.addUser(user);
     }
 
     @PostMapping("/login")
-    @Operation(summary = "user login")
+    @Operation(summary = "User login")
     public String login(@RequestBody User user) {
-        log.info("User login: {}", user);
+        log.info("User login, user = {}", user);
         return userService.login(user);
     }
 
     @GetMapping("/logout")
-    @Operation(summary = "user logout")
+    @Operation(summary = "User logout")
     public void logout() {
         UserDetailsImpl userDetailsImpl = userService.logout();
-        log.info("User logout: {}", userDetailsImpl);
+        log.info("User logout, user = {}", userDetailsImpl);
     }
 }

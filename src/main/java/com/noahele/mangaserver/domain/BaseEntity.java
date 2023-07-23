@@ -1,4 +1,4 @@
-package com.noahele.mangaserver.entity;
+package com.noahele.mangaserver.domain;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;

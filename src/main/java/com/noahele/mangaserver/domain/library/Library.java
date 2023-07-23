@@ -1,6 +1,10 @@
-package com.noahele.mangaserver.entity;
+package com.noahele.mangaserver.domain.library;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.noahele.mangaserver.domain.BaseEntity;
+import com.noahele.mangaserver.domain.manga.Manga;
+import com.noahele.mangaserver.domain.series.Series;
+import com.noahele.mangaserver.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -8,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
@@ -18,26 +23,29 @@ import java.util.Objects;
 @ToString
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class Author extends BaseEntity {
+public class Library extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
-    public String name;
+    private String name;
+    @NotBlank
+    @Column(nullable = false)
+    private String path;
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "library")
+    private List<Manga> mangaList;
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToMany(mappedBy = "library")
+    private List<Series> seriesList;
+    @JsonIgnore
+    @CreatedBy
     @ManyToOne
     @NotNull
     @JoinColumn(nullable = false)
-    public Library library;
-    @ToString.Exclude
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable
-    public List<Manga> mangaList;
+    private User owner;
 
-
-    public Author(String name) {
-        this.name = name;
-    }
-
-    protected Author() {
+    protected Library() {
     }
 
     @Override
@@ -51,8 +59,8 @@ public class Author extends BaseEntity {
                 ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() :
                 this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Author author = (Author) o;
-        return getId() != null && Objects.equals(getId(), author.getId());
+        Library library = (Library) o;
+        return getId() != null && Objects.equals(getId(), library.getId());
     }
 
     @Override

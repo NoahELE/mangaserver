@@ -1,16 +1,15 @@
-package com.noahele.mangaserver.utils;
+package com.noahele.mangaserver.security;
 
-import com.noahele.mangaserver.entity.User;
-import com.noahele.mangaserver.security.UserDetailsImpl;
+import com.noahele.mangaserver.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @Slf4j
-public class CurrUserFacade {
-    private CurrUserFacade() {
+public class SecurityUtils {
+    private SecurityUtils() {
     }
 
-    public static User getUser() {
+    public static User getCurrentUser() {
         try {
             return ((UserDetailsImpl) SecurityContextHolder.getContext()
                     .getAuthentication().getPrincipal()).user();

@@ -1,6 +1,6 @@
 package com.noahele.mangaserver.security;
 
-import com.noahele.mangaserver.entity.User;
+import com.noahele.mangaserver.domain.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
