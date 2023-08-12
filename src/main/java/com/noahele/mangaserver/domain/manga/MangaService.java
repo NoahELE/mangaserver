@@ -9,8 +9,7 @@ import com.noahele.mangaserver.domain.user.User;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.MangaPageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,23 +19,13 @@ import java.io.File;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MangaService {
     private static final Sort MANGA_SORT = Sort.sort(Manga.class).by(Manga::getName).ascending();
     private final MangaRepository mangaRepository;
     private final LibraryService libraryService;
     private final SeriesService seriesService;
     private final MangaPageCache mangaPageCache;
-
-    @Autowired
-    public MangaService(MangaRepository mangaRepository,
-                        @Lazy LibraryService libraryService,
-                        SeriesService seriesService,
-                        MangaPageCache mangaPageCache) {
-        this.mangaRepository = mangaRepository;
-        this.libraryService = libraryService;
-        this.seriesService = seriesService;
-        this.mangaPageCache = mangaPageCache;
-    }
 
     public void addManga(Manga manga, int libraryId) {
         assert manga.getId() == null;

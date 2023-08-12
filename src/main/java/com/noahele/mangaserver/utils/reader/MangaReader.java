@@ -10,10 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-public abstract class MangaReader implements Closeable {
-    public static final Set<String> SUPPORTED_FORMATS = Set.of("zip", "cbz", "7z", "cb7");
+public interface MangaReader extends Closeable {
+    Set<String> SUPPORTED_FORMATS = Set.of("zip", "cbz", "7z", "cb7");
 
-    public static MangaReader fromFile(File file) throws IOException {
+    static MangaReader fromFile(File file) throws IOException {
         String ext = Files.getFileExtension(file.getName());
         return switch (ext) {
             case "zip", "cbz" -> new ZipMangaReader(file);
@@ -23,17 +23,18 @@ public abstract class MangaReader implements Closeable {
         };
     }
 
-    protected static MediaType getPageMediaType(String filename) {
+    static MediaType getPageMediaType(String filename) {
         String ext = Files.getFileExtension(filename).toLowerCase();
         return switch (ext) {
             case "jpg", "jpeg" -> MediaType.IMAGE_JPEG;
             case "png" -> MediaType.IMAGE_PNG;
             case "gif" -> MediaType.IMAGE_GIF;
+            case "webp" -> new MediaType("image", "webp");
             default -> throw new UnsupportedFormatException(ext);
         };
     }
 
-    public abstract int getNumOfPages();
+    int getNumOfPages();
 
-    public abstract MangaPageInfo getPage(int pageIndex) throws IOException;
+    MangaPageInfo getPage(int pageIndex) throws IOException;
 }

@@ -7,20 +7,19 @@ import com.noahele.mangaserver.domain.manga.Manga;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @ToString
-@Entity
-@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Series extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
@@ -35,12 +34,8 @@ public class Series extends BaseEntity {
     @JoinTable
     public List<Manga> mangaList;
 
-
     public Series(String name) {
         this.name = name;
-    }
-
-    protected Series() {
     }
 
     @Override

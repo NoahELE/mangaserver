@@ -8,13 +8,3 @@
   align-items: center;
   margin: 2rem;
 }
-
-.addCard {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.addIcon {
-  font-size: 5rem;
-}

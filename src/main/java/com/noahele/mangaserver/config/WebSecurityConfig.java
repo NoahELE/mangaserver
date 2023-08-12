@@ -2,7 +2,7 @@ package com.noahele.mangaserver.config;
 
 import com.noahele.mangaserver.filter.JwtAuthenticationFilter;
 import com.noahele.mangaserver.security.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,16 +19,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    @Autowired
-    public WebSecurityConfig(UserDetailsServiceImpl userDetailsServiceImpl,
-                             JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.userDetailsServiceImpl = userDetailsServiceImpl;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

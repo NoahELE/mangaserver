@@ -12,10 +12,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
 
-@Getter
-@Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@Getter
+@Setter
 public abstract class BaseEntity {
     @Id
     @GeneratedValue

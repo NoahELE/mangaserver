@@ -13,7 +13,7 @@ const { Paragraph } = Typography;
 export function useShowError(): (error: Error) => void {
   const { notification } = App.useApp();
   const navigate = useNavigate();
-  const showError = useCallback(
+  return useCallback(
     (error: Error): void => {
       const key = `error-${Date.now()}}`;
       const closeOnClick = (): void => {
@@ -52,7 +52,6 @@ export function useShowError(): (error: Error) => void {
     },
     [navigate, notification],
   );
-  return showError;
 }
 
 /**

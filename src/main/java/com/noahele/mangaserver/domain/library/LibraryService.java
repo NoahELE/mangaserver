@@ -8,8 +8,8 @@ import com.noahele.mangaserver.exception.CustomIOException;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.reader.MangaReader;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,16 +22,12 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class LibraryService {
     private static final Sort LIBRARY_SORT = Sort.sort(Library.class).by(Library::getName).ascending();
     private final LibraryRepository libraryRepository;
-    private final MangaService mangaService;
-
-    @Autowired
-    public LibraryService(LibraryRepository libraryRepository, @Lazy MangaService mangaService) {
-        this.libraryRepository = libraryRepository;
-        this.mangaService = mangaService;
-    }
+    @Setter // use setter injection to prevent circular dependency
+    private MangaService mangaService;
 
     public void addLibrary(Library library) {
         assert library.getId() == null;

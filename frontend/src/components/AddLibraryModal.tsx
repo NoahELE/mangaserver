@@ -6,8 +6,12 @@ import { useShowError } from '../utils';
 
 interface Props {
   open: boolean;
+  setOpen: (open: boolean) => void;
 }
-export default function AddLibraryModal({ open }: Props): ReactElement {
+export default function AddLibraryModal({
+  open,
+  setOpen,
+}: Props): ReactElement {
   const [form] = Form.useForm();
   const showError = useShowError();
   const onFinish: FormProps['onFinish'] = (library: AddLibraryDto) => {
@@ -15,9 +19,13 @@ export default function AddLibraryModal({ open }: Props): ReactElement {
       showError(error);
     });
   };
+  const onOk = (): void => {
+    form.submit();
+    setOpen(false);
+  };
 
   return (
-    <Modal title="Add Library" open={open} onOk={form.submit}>
+    <Modal title="Add Library" open={open} onOk={onOk}>
       <Form
         form={form}
         labelCol={{ span: 8 }}

@@ -5,16 +5,16 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 
+const RootView = lazy(async () => await import('./views/RootView'));
+const LoginView = lazy(async () => await import('./views/LoginView'));
 const ErrorView = lazy(async () => await import('./views/ErrorView'));
 const HomeView = lazy(async () => await import('./views/HomeView'));
 const LibraryDetailView = lazy(
   async () => await import('./views/LibraryDetailView'),
 );
-const LoginView = lazy(async () => await import('./views/LoginView'));
 const MangaDetailView = lazy(
   async () => await import('./views/MangaDetailView'),
 );
-const RootView = lazy(async () => await import('./views/RootView'));
 
 const router = createBrowserRouter(
   createRoutesFromElements(

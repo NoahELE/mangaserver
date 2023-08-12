@@ -2,24 +2,20 @@ package com.noahele.mangaserver.domain.manga;
 
 import com.noahele.mangaserver.utils.MangaPageInfo;
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/manga")
+@Slf4j
+@RequiredArgsConstructor
 public class MangaController {
     private final MangaService mangaService;
-
-    @Autowired
-    public MangaController(MangaService mangaService) {
-        this.mangaService = mangaService;
-    }
 
     @PostMapping("")
     @Operation(summary = "Add a manga")

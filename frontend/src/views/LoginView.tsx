@@ -15,7 +15,7 @@ export default function LoginView(): ReactElement {
     login(user)
       .then((jwt) => {
         localStorage.setItem('jwt', jwt);
-        navigate('/', { replace: true });
+        navigate('/');
       })
       .catch((error: Error) => {
         showError(error);

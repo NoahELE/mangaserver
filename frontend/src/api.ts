@@ -3,7 +3,7 @@ import useSWR, { type SWRResponse } from 'swr';
 import type { AddLibraryDto, Library, Manga, Page, User } from './entity';
 
 axios.defaults.baseURL = '/api';
-let jwtCache: string | null = null;
+let jwtCache: string | null = null; // the jwt token is cached here
 axios.interceptors.request.use((config) => {
   if (jwtCache == null) {
     jwtCache = localStorage.getItem('jwt');

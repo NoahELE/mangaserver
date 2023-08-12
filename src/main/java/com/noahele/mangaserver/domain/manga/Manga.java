@@ -9,9 +9,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.File;
@@ -19,44 +17,33 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 @Getter
 @Setter
 @ToString
-@Entity
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Manga extends BaseEntity {
-    @NotBlank
     @Column(nullable = false)
+    @NotBlank
     private String name;
-    @NotBlank
     @Column(nullable = false, unique = true)
-    private String path;
     @NotBlank
+    private String path;
     @Column(nullable = false)
+    @NotBlank
     private String ext;
-    @Positive
     @Column(nullable = false)
+    @Positive
     private int numOfPages;
+    @ManyToMany(mappedBy = "mangaList", cascade = {CascadeType.DETACH,
+            CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @ToString.Exclude
-    @ManyToMany(mappedBy = "mangaList", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST,
-            CascadeType.REFRESH})
     private List<Series> seriesList;
     @ManyToOne
-    @NotNull
     @JoinColumn(nullable = false)
+    @NotNull
     private Library library;
-
-    protected Manga() {
-    }
-
-    private Manga(String name, String path, String ext, int numOfPages,
-                  List<Series> seriesList, @NotNull Library library) {
-        this.name = name;
-        this.path = path;
-        this.ext = ext;
-        this.numOfPages = numOfPages;
-        this.seriesList = seriesList;
-        this.library = library;
-    }
 
     public static Manga fromFile(File file, Library library) throws IOException {
         String filename = file.getName();

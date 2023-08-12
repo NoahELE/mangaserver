@@ -1,21 +1,17 @@
 package com.noahele.mangaserver.domain.library;
 
 import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/library")
+@Slf4j
+@RequiredArgsConstructor
 public class LibraryController {
     private final LibraryService libraryService;
-
-    @Autowired
-    public LibraryController(LibraryService libraryService) {
-        this.libraryService = libraryService;
-    }
 
     @PostMapping("")
     @Operation(summary = "Add a library")

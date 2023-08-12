@@ -1,9 +1,11 @@
 package com.noahele.mangaserver.domain.user;
 
 import com.noahele.mangaserver.cache.UserCache;
+import com.noahele.mangaserver.exception.NotAdminException;
 import com.noahele.mangaserver.security.JwtUtils;
+import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.security.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,27 +14,33 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserCache userCache;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    public UserService(UserRepository userRepository,
-                       UserCache userCache,
-                       PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager) {
-        this.userRepository = userRepository;
-        this.userCache = userCache;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-    }
-
     public void addUser(User user) {
-        assert user.getId() != null;
+        assert user.getId() == null;
         // encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // set the role ROLE_USER
+        user.setRole(Role.ROLE_USER);
+        userRepository.save(user);
+    }
+
+    public void addAdminUser(User user) {
+        assert user.getId() == null;
+        // check if the current user is an admin
+        User currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null && !currentUser.getRole().equals(Role.ROLE_ADMIN)) {
+            throw new NotAdminException();
+        }
+        // encrypt password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // set the role ROLE_ADMIN
+        user.setRole(Role.ROLE_ADMIN);
         userRepository.save(user);
     }
 

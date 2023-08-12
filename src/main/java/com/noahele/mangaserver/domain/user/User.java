@@ -6,36 +6,38 @@ import com.noahele.mangaserver.domain.BaseEntity;
 import com.noahele.mangaserver.domain.library.Library;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 @Getter
 @Setter
 @ToString
-@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
-    @NotBlank
     @Column(nullable = false, unique = true)
-    private String username;
-    @ToString.Exclude
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotBlank
+    private String username;
     @Column(nullable = false)
-    private String password;
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ToString.Exclude
-    @JsonIgnore
+    private String password;
     @OneToMany(mappedBy = "owner")
+    @JsonIgnore
+    @ToString.Exclude
     private List<Library> libraries;
-
-    protected User() {
-    }
+    @Enumerated
+    @Column(nullable = false)
+    @JsonIgnore
+    @ToString.Exclude
+    private Role role;
 
     @Override
     public final boolean equals(Object o) {

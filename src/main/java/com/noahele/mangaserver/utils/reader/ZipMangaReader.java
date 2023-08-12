@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.List;
 
-public class ZipMangaReader extends MangaReader {
+public class ZipMangaReader implements MangaReader {
     private final ZipFile zipFile;
     private final List<ZipArchiveEntry> entries;
 
@@ -38,7 +38,7 @@ public class ZipMangaReader extends MangaReader {
     @Override
     public MangaPageInfo getPage(int pageIndex) throws IOException {
         ZipArchiveEntry entry = entries.get(pageIndex);
-        MediaType mediaType = getPageMediaType(entry.getName());
+        MediaType mediaType = MangaReader.getPageMediaType(entry.getName());
         try (InputStream input = zipFile.getInputStream(entry)) {
             return new MangaPageInfo(IOUtils.toByteArray(input), mediaType);
         }

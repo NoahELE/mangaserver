@@ -8,9 +8,7 @@ import com.noahele.mangaserver.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,11 +16,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @ToString
-@Entity
-@EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Library extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
@@ -44,9 +43,6 @@ public class Library extends BaseEntity {
     @NotNull
     @JoinColumn(nullable = false)
     private User owner;
-
-    protected Library() {
-    }
 
     @Override
     public final boolean equals(Object o) {

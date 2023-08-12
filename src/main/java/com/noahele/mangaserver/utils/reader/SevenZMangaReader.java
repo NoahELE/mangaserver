@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-public class SevenZMangaReader extends MangaReader {
+public class SevenZMangaReader implements MangaReader {
     private final SevenZFile sevenZFile;
     private final List<SevenZArchiveEntry> entries;
 
@@ -36,7 +36,7 @@ public class SevenZMangaReader extends MangaReader {
     @Override
     public MangaPageInfo getPage(int pageIndex) throws IOException {
         SevenZArchiveEntry entry = entries.get(pageIndex);
-        MediaType mediaType = getPageMediaType(entry.getName());
+        MediaType mediaType = MangaReader.getPageMediaType(entry.getName());
         try (InputStream input = sevenZFile.getInputStream(entry)) {
             return new MangaPageInfo(IOUtils.toByteArray(input), mediaType);
         }

@@ -1,9 +1,9 @@
 import { PlusOutlined } from '@ant-design/icons';
 import {
-  Card,
   Col,
   Divider,
   Empty,
+  FloatButton,
   Pagination,
   Row,
   Typography,
@@ -66,14 +66,6 @@ export default function HomeView(): ReactElement {
   const onClick = (): void => {
     setOpen(true);
   };
-  libraryCards.push(
-    <Col span={6} key={'addLibrary'}>
-      <Card className={styles.addCard} hoverable onClick={onClick}>
-        <PlusOutlined className={styles.addIcon} />
-      </Card>
-    </Col>,
-  );
-
   const onChange: PaginationProps['onChange'] = (page, pageSize) => {
     setCurrent(page);
     setPageSize(pageSize);
@@ -83,7 +75,8 @@ export default function HomeView(): ReactElement {
       <Title>Library List</Title>
       <Divider />
       <Row gutter={[16, 16]}>{...libraryCards}</Row>
-      <AddLibraryModal open={open}></AddLibraryModal>
+      <FloatButton icon={<PlusOutlined />} onClick={onClick} />
+      <AddLibraryModal open={open} setOpen={setOpen} />
       <div className={styles.pagination}>
         <Pagination
           current={current}
