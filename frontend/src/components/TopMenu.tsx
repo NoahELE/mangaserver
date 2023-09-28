@@ -34,7 +34,8 @@ export default function TopMenu(): ReactElement {
   const lastLibraryId = useAtomValue(lastLibraryIdAtom);
   const lastMangaId = useAtomValue(lastMangaIdAtom);
   const onClick: MenuProps['onClick'] = (info) => {
-    switch (info.key as CurrentView) {
+    const currentView = info.key as CurrentView;
+    switch (currentView) {
       case 'home':
         navigate('/');
         break;
@@ -57,7 +58,7 @@ export default function TopMenu(): ReactElement {
         navigate(`/manga/${lastMangaId}}`);
         break;
       default:
-        throw new Error(`unknown menu key: ${info.key}`);
+        assertNever(currentView);
     }
   };
 
@@ -69,4 +70,8 @@ export default function TopMenu(): ReactElement {
       items={items}
     />
   );
+}
+
+function assertNever(_: never): never {
+  throw new Error('Unexpected value');
 }

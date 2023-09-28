@@ -17,7 +17,6 @@ import LibraryCard from '../components/LibraryCard';
 import Loading from '../components/Loading';
 import { currentViewAtom } from '../store';
 import { useShowError } from '../utils';
-import styles from './HomeView.module.css';
 
 const { Title } = Typography;
 
@@ -51,7 +50,7 @@ export default function HomeView(): ReactElement {
     return <Loading />;
   }
   if (librariesPage == null) {
-    return <Empty className={styles.empty} />;
+    return <Empty className="m-10" />;
   }
 
   const libraries = librariesPage.content;
@@ -77,7 +76,7 @@ export default function HomeView(): ReactElement {
       <Row gutter={[16, 16]}>{...libraryCards}</Row>
       <FloatButton icon={<PlusOutlined />} onClick={onClick} />
       <AddLibraryModal open={open} setOpen={setOpen} />
-      <div className={styles.pagination}>
+      <div className="flex justify-center items-center m-10">
         <Pagination
           current={current}
           total={total}

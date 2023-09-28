@@ -7,14 +7,15 @@ import Loading from './components/Loading';
 import router from './router';
 
 const root = document.getElementById('root');
-if (root != null) {
-  ReactDOM.createRoot(root).render(
-    <React.StrictMode>
-      <Suspense fallback={<Loading />}>
-        <App>
-          <RouterProvider router={router} />
-        </App>
-      </Suspense>
-    </React.StrictMode>,
-  );
+if (root === null) {
+  throw new Error('root element not found');
 }
+ReactDOM.createRoot(root).render(
+  <React.StrictMode>
+    <Suspense fallback={<Loading />}>
+      <App>
+        <RouterProvider router={router} />
+      </App>
+    </Suspense>
+  </React.StrictMode>,
+);

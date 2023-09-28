@@ -1,10 +1,9 @@
 import { Spin } from 'antd';
 import { type ReactElement } from 'react';
-import styles from './Loading.module.css';
 
 export default function Loading(): ReactElement {
   return (
-    <div className={styles.loading}>
+    <div className="inset-0 absolute flex justify-center items-center">
       <Spin size="large" />
     </div>
   );

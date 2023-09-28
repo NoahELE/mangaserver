@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { login } from '../api';
 import { type User } from '../entity';
 import { useShowError } from '../utils';
-import styles from './LoginView.module.css';
 
 const { Title } = Typography;
 
@@ -24,12 +23,12 @@ export default function LoginView(): ReactElement {
 
   return (
     <>
-      <Title className={styles.title}>MangaServer</Title>
+      <Title className="my-10 mx-32 text-center">MangaServer</Title>
       <Form
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         onFinish={onFinish}
-        className={styles.form}
+        className="my-10 mx-32"
       >
         <Form.Item
           name="username"

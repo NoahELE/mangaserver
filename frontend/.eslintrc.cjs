@@ -13,8 +13,8 @@ module.exports = {
   ],
   ignorePatterns: [
     '.eslintrc.cjs',
-    'postcss.config.cjs',
-    'tailwind.config.cjs',
+    'postcss.config.js',
+    'tailwind.config.js',
     'vite.config.ts',
   ],
   overrides: [],

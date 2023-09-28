@@ -7,7 +7,6 @@ import Loading from '../components/Loading';
 import MangaPageImage from '../components/MangaPageImage';
 import { currentViewAtom, lastMangaIdAtom } from '../store';
 import { useParamsId, useShowError } from '../utils';
-import styles from './MangaDetailView.module.css';
 
 const { Title } = Typography;
 
@@ -35,7 +34,7 @@ export default function MangaDetailView(): ReactElement {
     return <Loading />;
   }
   if (manga == null) {
-    return <Empty className={styles.empty} />;
+    return <Empty className="m-10" />;
   }
   const onClick = (): void => {
     navigate(`/library/${manga.library.id}}`);
@@ -71,7 +70,7 @@ export default function MangaDetailView(): ReactElement {
         </Descriptions.Item>
       </Descriptions>
       <Divider />
-      <div className={styles.pages}>{...pages}</div>
+      <div className="flex flex-col items-center">{...pages}</div>
     </>
   );
 }

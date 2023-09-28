@@ -15,7 +15,6 @@ import Loading from '../components/Loading';
 import MangaCard from '../components/MangaCard';
 import { currentViewAtom, lastLibraryIdAtom } from '../store';
 import { useParamsId, useShowError } from '../utils';
-import styles from './LibraryDetailView.module.css';
 
 const { Title } = Typography;
 
@@ -66,7 +65,7 @@ export default function LibraryDetailView(): ReactElement {
     return <Loading />;
   }
   if (mangasPage == null) {
-    return <Empty className={styles.empty} />;
+    return <Empty className="m-10" />;
   }
 
   const mangas = mangasPage.content;
@@ -86,7 +85,7 @@ export default function LibraryDetailView(): ReactElement {
       </Button>
       <Divider />
       <Row gutter={[16, 16]}>{...mangaCards}</Row>
-      <div className={styles.pagination}>
+      <div className="flex justify-center items-center">
         <Pagination
           current={current}
           total={total}

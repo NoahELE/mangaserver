@@ -1,5 +1,6 @@
 import axios from 'axios';
 import useSWR, { type SWRResponse } from 'swr';
+import { z } from 'zod';
 import type { AddLibraryDto, Library, Manga, Page, User } from './entity';
 
 axios.defaults.baseURL = '/api';
@@ -21,8 +22,10 @@ async function fetcher<T>(url: string): Promise<T> {
   return data;
 }
 
+const jwtSchema = z.string().nonempty();
 export async function login(user: User): Promise<string> {
   const { data: jwt } = await axios.post<string>('/user/login', user);
+  jwtSchema.parse(jwt);
   return jwt;
 }
 

@@ -14,7 +14,7 @@ public interface MangaReader extends Closeable {
     Set<String> SUPPORTED_FORMATS = Set.of("zip", "cbz", "7z", "cb7");
 
     static MangaReader fromFile(File file) throws IOException {
-        String ext = Files.getFileExtension(file.getName());
+        String ext = Files.getFileExtension(file.getName()).toLowerCase();
         return switch (ext) {
             case "zip", "cbz" -> new ZipMangaReader(file);
             case "7z", "cb7" -> new SevenZMangaReader(file);
