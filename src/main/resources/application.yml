@@ -1,7 +1,13 @@
-server:
-  port: 10033
+spring:
+  profiles:
+    active: dev
+
+---
 
 spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     driver-class-name: org.sqlite.JDBC
     url: jdbc:sqlite:${mangaserver.database}
@@ -9,8 +15,24 @@ spring:
     hibernate:
       ddl-auto: update
     open-in-view: true
-  artemis:
-    mode: embedded
+    show-sql: true
+
+server:
+  port: 10033
 
 mangaserver:
   database: database.sqlite
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mangaserver
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: none
