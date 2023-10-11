@@ -16,12 +16,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(indexes = @Index(columnList = "owner_id"))
 public class Library extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
@@ -38,9 +39,9 @@ public class Library extends BaseEntity {
     @OneToMany(mappedBy = "library")
     private List<Series> seriesList;
     @JsonIgnore
+    @NotNull
     @CreatedBy
     @ManyToOne
-    @NotNull
     @JoinColumn(nullable = false)
     private User owner;
 

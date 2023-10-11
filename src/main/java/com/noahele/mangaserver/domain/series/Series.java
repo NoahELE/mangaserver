@@ -14,12 +14,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-@EntityListeners(AuditingEntityListener.class)
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(indexes = @Index(columnList = "library_id"))
 public class Series extends BaseEntity {
     @NotBlank
     @Column(nullable = false)

@@ -10,7 +10,7 @@ spring:
       on-profile: dev
   datasource:
     driver-class-name: org.sqlite.JDBC
-    url: jdbc:sqlite:${mangaserver.database}
+    url: jdbc:sqlite:database.sqlite
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,9 +19,6 @@ spring:
 
 server:
   port: 10033
-
-mangaserver:
-  database: database.sqlite
 
 ---
 
@@ -36,3 +33,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
+
+server:
+  port: 10033

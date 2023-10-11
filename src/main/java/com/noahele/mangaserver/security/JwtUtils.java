@@ -3,8 +3,6 @@ package com.noahele.mangaserver.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.security.KeyPair;
@@ -13,7 +11,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 public final class JwtUtils {
-    private static final KeyPair SECRET_KEYS = Keys.keyPairFor(SignatureAlgorithm.ES256);
+    private static final KeyPair SECRET_KEYS = Jwts.SIG.ES256.keyPair().build();
     private static final int EXPIRE_DAYS = 1;
 
     private JwtUtils() {
@@ -23,19 +21,19 @@ public final class JwtUtils {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusDays(EXPIRE_DAYS);
         return Jwts.builder()
-                .setIssuer("mangaserver")
-                .setSubject(String.valueOf(userDetailsImpl.user().getId()))
-                .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
-                .setExpiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
+                .issuer("mangaserver")
+                .subject(String.valueOf(userDetailsImpl.user().getId()))
+                .issuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
+                .expiration(Date.from(expiration.atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(SECRET_KEYS.getPrivate())
                 .compact();
     }
 
     public static int parseJwt(String jwt) {
-        Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEYS.getPublic())
+        Jws<Claims> claims = Jwts.parser()
+                .verifyWith(SECRET_KEYS.getPublic())
                 .build()
-                .parseClaimsJws(jwt);
-        return Integer.parseInt(claims.getBody().getSubject());
+                .parseSignedClaims(jwt);
+        return Integer.parseInt(claims.getPayload().getSubject());
     }
 }

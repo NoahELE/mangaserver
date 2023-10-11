@@ -17,32 +17,36 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
 @Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
+@Table(indexes = @Index(columnList = "library_id"))
 public class Manga extends BaseEntity {
-    @Column(nullable = false)
     @NotBlank
+    @Column(nullable = false)
     private String name;
+    @NotBlank
     @Column(nullable = false, unique = true)
-    @NotBlank
     private String path;
-    @Column(nullable = false)
     @NotBlank
-    private String ext;
     @Column(nullable = false)
+    private String ext;
     @Positive
+    @Column(nullable = false)
     private int numOfPages;
-    @ManyToMany(mappedBy = "mangaList", cascade = {CascadeType.DETACH,
-            CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToMany(mappedBy = "mangaList", cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.PERSIST,
+            CascadeType.REFRESH})
     @ToString.Exclude
     private List<Series> seriesList;
+    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
-    @NotNull
     private Library library;
 
     public static Manga fromFile(File file, Library library) throws IOException {
