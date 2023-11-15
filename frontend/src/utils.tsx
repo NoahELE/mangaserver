@@ -1,6 +1,6 @@
 import { App, Button, Space, Typography } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getMangaPage } from './api';
 import loadingUrl from './assets/loading.gif';
 
@@ -22,9 +22,6 @@ export function useShowError(): (error: Error) => void {
       const refreshOnClick = (): void => {
         navigate(0);
       };
-      const loginOnClick = (): void => {
-        navigate('/login');
-      };
       notification.error({
         message: 'Error',
         description: (
@@ -39,11 +36,11 @@ export function useShowError(): (error: Error) => void {
             <Button type="primary" onClick={closeOnClick}>
               Close
             </Button>
-            <Button type="default" onClick={refreshOnClick}>
+            <Button type="primary" onClick={refreshOnClick}>
               Refresh
             </Button>
-            <Button type="default" onClick={loginOnClick}>
-              Login
+            <Button type="default">
+              <Link to="/login">Login</Link>
             </Button>
           </Space>
         ),
