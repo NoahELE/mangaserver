@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.util.List;
@@ -27,6 +28,7 @@ public class MangaService {
     private final SeriesService seriesService;
     private final MangaPageCache mangaPageCache;
 
+    @Transactional
     public void addManga(Manga manga, int libraryId) {
         assert manga.getId() == null;
         Library library = libraryService.getLibrary(libraryId);
@@ -34,6 +36,7 @@ public class MangaService {
         mangaRepository.save(manga);
     }
 
+    @Transactional
     public void addAllManga(List<Manga> mangaList, int libraryId) {
         Library library = libraryService.getLibrary(libraryId);
         for (Manga manga : mangaList) {
@@ -43,11 +46,13 @@ public class MangaService {
         mangaRepository.saveAll(mangaList);
     }
 
+    @Transactional
     public void deleteManga(int mangaId) {
         getManga(mangaId); // check if the user can access the manga
         mangaRepository.deleteById(mangaId);
     }
 
+    @Transactional
     public void updateManga(int mangaId, Manga manga) {
         getManga(mangaId); // check if the user can access the manga
         assert manga.getId() == null;
@@ -55,12 +60,14 @@ public class MangaService {
         mangaRepository.save(manga);
     }
 
+    @Transactional
     public Page<Manga> getAllMangaByLibrary(int libraryId, int page, int size) {
         Library library = libraryService.getLibrary(libraryId);
         PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
         return mangaRepository.findAllByLibrary(library, pageRequest);
     }
 
+    @Transactional
     public Page<Manga> getAllMangaBySeries(int seriesId, int page, int size) {
         Series series = seriesService.getSeries(seriesId);
         PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);

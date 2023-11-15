@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +35,13 @@ public class LibraryService {
         libraryRepository.save(library);
     }
 
+    @Transactional
     public void deleteLibrary(int libraryId) {
         getLibrary(libraryId); // check if the user can access the library
         libraryRepository.deleteById(libraryId);
     }
 
+    @Transactional
     public void updateLibrary(int libraryId, Library library) {
         getLibrary(libraryId); // check if the user can access the library
         assert library.getId() == null;
@@ -61,6 +64,7 @@ public class LibraryService {
         return libraryRepository.findAllByOwner(user, pageRequest);
     }
 
+    @Transactional
     public void scanManga(int libraryId) {
         Library library = getLibrary(libraryId);
         deleteInvalidManga(library);
