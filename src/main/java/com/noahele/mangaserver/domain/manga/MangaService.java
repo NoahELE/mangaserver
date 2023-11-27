@@ -6,6 +6,7 @@ import com.noahele.mangaserver.domain.library.LibraryService;
 import com.noahele.mangaserver.domain.series.Series;
 import com.noahele.mangaserver.domain.series.SeriesService;
 import com.noahele.mangaserver.domain.user.User;
+import com.noahele.mangaserver.exception.CustomIOException;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.MangaPageInfo;
@@ -15,8 +16,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @Service
@@ -28,17 +33,15 @@ public class MangaService {
     private final SeriesService seriesService;
     private final MangaPageCache mangaPageCache;
 
-    @Transactional
     public void addManga(Manga manga, int libraryId) {
-        assert manga.getId() == null;
-        Library library = libraryService.getLibrary(libraryId);
+        Library library = libraryService.getLibraryReference(libraryId);
         manga.setLibrary(library);
+        assert manga.getId() == null;
         mangaRepository.save(manga);
     }
 
-    @Transactional
     public void addAllManga(List<Manga> mangaList, int libraryId) {
-        Library library = libraryService.getLibrary(libraryId);
+        Library library = libraryService.getLibraryReference(libraryId);
         for (Manga manga : mangaList) {
             assert manga.getId() == null;
             manga.setLibrary(library);
@@ -46,30 +49,32 @@ public class MangaService {
         mangaRepository.saveAll(mangaList);
     }
 
-    @Transactional
     public void deleteManga(int mangaId) {
-        getManga(mangaId); // check if the user can access the manga
         mangaRepository.deleteById(mangaId);
     }
 
     @Transactional
     public void updateManga(int mangaId, Manga manga) {
-        getManga(mangaId); // check if the user can access the manga
         assert manga.getId() == null;
-        manga.setId(mangaId);
-        mangaRepository.save(manga);
+        mangaRepository
+                .findById(mangaId)
+                .map(m -> {
+                    manga.setId(m.getId());
+                    return mangaRepository.save(manga);
+                })
+                .orElseThrow();
     }
 
     @Transactional
     public Page<Manga> getAllMangaByLibrary(int libraryId, int page, int size) {
-        Library library = libraryService.getLibrary(libraryId);
+        Library library = libraryService.getLibraryReference(libraryId);
         PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
         return mangaRepository.findAllByLibrary(library, pageRequest);
     }
 
     @Transactional
     public Page<Manga> getAllMangaBySeries(int seriesId, int page, int size) {
-        Series series = seriesService.getSeries(seriesId);
+        Series series = seriesService.getSeriesReference(seriesId);
         PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
         return mangaRepository.findAllBySeriesListContaining(series, pageRequest);
     }
@@ -90,6 +95,22 @@ public class MangaService {
 
     public MangaPageInfo getMangaPage(int mangaId, int pageIndex) {
         Manga manga = getManga(mangaId);
-        return mangaPageCache.get(new File(manga.getPath()), pageIndex);
+        return mangaPageCache.get(Path.of(manga.getPath()), pageIndex);
+    }
+
+    public void uploadManga(MultipartFile file, int libraryId) {
+        Library library = libraryService.getLibraryReference(libraryId);
+        String filename = file.getOriginalFilename();
+        assert filename != null;
+        Path path = Path.of(library.getPath(), filename);
+        try {
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, path);
+            }
+            Manga manga = Manga.fromPath(path, library);
+            addManga(manga, libraryId);
+        } catch (IOException e) {
+            throw new CustomIOException(e);
+        }
     }
 }

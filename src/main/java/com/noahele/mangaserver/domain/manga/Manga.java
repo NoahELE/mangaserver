@@ -1,6 +1,6 @@
 package com.noahele.mangaserver.domain.manga;
 
-import com.google.common.io.Files;
+import com.google.common.io.MoreFiles;
 import com.noahele.mangaserver.domain.BaseEntity;
 import com.noahele.mangaserver.domain.library.Library;
 import com.noahele.mangaserver.domain.series.Series;
@@ -12,8 +12,8 @@ import jakarta.validation.constraints.Positive;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 
@@ -49,15 +49,13 @@ public class Manga extends BaseEntity {
     @JoinColumn(nullable = false)
     private Library library;
 
-    public static Manga fromFile(File file, Library library) throws IOException {
-        String filename = file.getName();
-        String name = Files.getNameWithoutExtension(filename);
-        String ext = Files.getFileExtension(filename);
-        String path = file.getPath();
-        Series series = new Series(file.getParentFile().getName());
-        try (MangaReader reader = MangaReader.fromFile(file)) {
+    public static Manga fromPath(Path path, Library library) throws IOException {
+        String name = MoreFiles.getNameWithoutExtension(path);
+        String ext = MoreFiles.getFileExtension(path);
+        Series series = new Series(path.getParent().getFileName().toString());
+        try (MangaReader reader = MangaReader.fromPath(path)) {
             int numOfPages = reader.getNumOfPages();
-            return new Manga(name, path, ext, numOfPages, List.of(series), library);
+            return new Manga(name, path.toString(), ext, numOfPages, List.of(series), library);
         }
     }
 

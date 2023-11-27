@@ -26,7 +26,7 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // disable csrf as the application uses jwt
+        // disable csrf as the application uses JWT
         http.csrf(AbstractHttpConfigurer::disable);
         // disable session id
         http.sessionManagement((session) ->

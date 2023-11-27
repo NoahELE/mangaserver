@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -67,5 +68,11 @@ public class MangaController {
         return ResponseEntity.ok()
                 .contentType(mangaPageInfo.type())
                 .body(mangaPageInfo.page());
+    }
+
+    @PostMapping("/upload")
+    public void uploadManga(MultipartFile file, int libraryId) {
+        log.info("Upload a manga file to library, libraryId = {}", libraryId);
+        mangaService.uploadManga(file, libraryId);
     }
 }

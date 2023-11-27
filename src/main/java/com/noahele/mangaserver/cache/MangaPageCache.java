@@ -7,7 +7,7 @@ import com.noahele.mangaserver.utils.reader.MangaReader;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.time.Duration;
 
 
@@ -21,15 +21,15 @@ public class MangaPageCache {
             .maximumSize(CACHE_MAX_SIZE)
             .expireAfterWrite(Duration.ofMinutes(CACHE_EXPIRE_MINUTES))
             .build((key) -> {
-                try (MangaReader reader = MangaReader.fromFile(key.file)) {
+                try (MangaReader reader = MangaReader.fromPath(key.path)) {
                     return reader.getPage(key.index);
                 }
             });
 
-    public @NonNull MangaPageInfo get(File file, int index) {
-        return cache.get(new Key(file, index));
+    public @NonNull MangaPageInfo get(Path path, int index) {
+        return cache.get(new Key(path, index));
     }
 
-    private record Key(File file, int index) {
+    private record Key(Path path, int index) {
     }
 }

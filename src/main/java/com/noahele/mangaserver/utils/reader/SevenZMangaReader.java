@@ -8,17 +8,17 @@ import org.apache.commons.compress.archivers.sevenz.SevenZFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.http.MediaType;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 
 public class SevenZMangaReader implements MangaReader {
     private final SevenZFile sevenZFile;
     private final List<SevenZArchiveEntry> entries;
 
-    public SevenZMangaReader(File file) throws IOException {
-        this.sevenZFile = new SevenZFile(file);
+    public SevenZMangaReader(Path path) throws IOException {
+        this.sevenZFile = new SevenZFile(path.toFile());
         Iterable<SevenZArchiveEntry> entries = sevenZFile.getEntries();
         this.entries = Streams.stream(entries)
                 // remove directory entry

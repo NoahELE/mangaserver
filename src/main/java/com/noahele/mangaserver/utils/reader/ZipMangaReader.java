@@ -8,9 +8,9 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.http.MediaType;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class ZipMangaReader implements MangaReader {
     private final ZipFile zipFile;
     private final List<ZipArchiveEntry> entries;
 
-    public ZipMangaReader(File file) throws IOException {
-        this.zipFile = new ZipFile(file);
+    public ZipMangaReader(Path path) throws IOException {
+        this.zipFile = new ZipFile(path);
         Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         this.entries = Streams.stream(entries::asIterator)
                 // remove directory entry
