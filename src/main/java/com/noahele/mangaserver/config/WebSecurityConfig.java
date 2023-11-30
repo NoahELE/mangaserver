@@ -17,9 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@RequiredArgsConstructor
 @EnableWebSecurity
 @Configuration
-@RequiredArgsConstructor
 public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -29,12 +29,12 @@ public class WebSecurityConfig {
         // disable csrf as the application uses JWT
         http.csrf(AbstractHttpConfigurer::disable);
         // disable session id
-        http.sessionManagement((session) ->
+        http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         // set UserDetailsService
         http.userDetailsService(userDetailsServiceImpl);
         // authorize requests
-        http.authorizeHttpRequests((requests) -> {
+        http.authorizeHttpRequests(requests -> {
             // allow all access to sign up and login
             requests.requestMatchers(HttpMethod.POST, "/api/user", "/api/user/login").permitAll();
             // all other api require authentication
@@ -53,8 +53,9 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-            throws Exception {
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration authenticationConfiguration
+    ) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }

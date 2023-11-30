@@ -1,6 +1,7 @@
 package com.noahele.mangaserver.utils.reader;
 
 import com.google.common.collect.Streams;
+import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.utils.MangaPageInfo;
 import com.noahele.mangaserver.utils.NaturalOrder;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
@@ -17,8 +18,12 @@ public class SevenZMangaReader implements MangaReader {
     private final SevenZFile sevenZFile;
     private final List<SevenZArchiveEntry> entries;
 
-    public SevenZMangaReader(Path path) throws IOException {
-        this.sevenZFile = new SevenZFile(path.toFile());
+    public SevenZMangaReader(Path path) {
+        try {
+            this.sevenZFile = new SevenZFile(path.toFile());
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
+        }
         Iterable<SevenZArchiveEntry> entries = sevenZFile.getEntries();
         this.entries = Streams.stream(entries)
                 // remove directory entry
@@ -34,11 +39,13 @@ public class SevenZMangaReader implements MangaReader {
     }
 
     @Override
-    public MangaPageInfo getPage(int pageIndex) throws IOException {
+    public MangaPageInfo getPage(int pageIndex) {
         SevenZArchiveEntry entry = entries.get(pageIndex);
         MediaType mediaType = MangaReader.getPageMediaType(entry.getName());
         try (InputStream input = sevenZFile.getInputStream(entry)) {
             return new MangaPageInfo(IOUtils.toByteArray(input), mediaType);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
         }
     }
 

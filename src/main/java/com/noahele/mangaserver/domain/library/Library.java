@@ -8,20 +8,20 @@ import com.noahele.mangaserver.domain.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(indexes = @Index(columnList = "owner_id"))
 public class Library extends BaseEntity {
     @NotBlank
@@ -30,11 +30,9 @@ public class Library extends BaseEntity {
     @NotBlank
     @Column(nullable = false)
     private String path;
-    @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "library")
     private List<Manga> mangaList;
-    @ToString.Exclude
     @JsonIgnore
     @OneToMany(mappedBy = "library")
     private List<Series> seriesList;

@@ -4,7 +4,7 @@ import com.google.common.io.MoreFiles;
 import com.noahele.mangaserver.domain.manga.Manga;
 import com.noahele.mangaserver.domain.manga.MangaService;
 import com.noahele.mangaserver.domain.user.User;
-import com.noahele.mangaserver.exception.CustomIOException;
+import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.reader.MangaReader;
@@ -93,7 +93,7 @@ public class LibraryService {
                 }
             }
         } catch (IOException e) {
-            throw new CustomIOException(e);
+            throw new RuntimeIOException(e);
         }
     }
 

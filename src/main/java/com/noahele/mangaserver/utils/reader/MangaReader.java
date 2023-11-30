@@ -7,14 +7,13 @@ import com.noahele.mangaserver.utils.MangaPageInfo;
 import org.springframework.http.MediaType;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Set;
 
 public interface MangaReader extends Closeable {
     Set<String> SUPPORTED_FORMATS = Set.of("zip", "cbz", "7z", "cb7");
 
-    static MangaReader fromPath(Path path) throws IOException {
+    static MangaReader fromPath(Path path) {
         String ext = MoreFiles.getFileExtension(path);
         return switch (ext) {
             case "zip", "cbz" -> new ZipMangaReader(path);
@@ -37,5 +36,5 @@ public interface MangaReader extends Closeable {
 
     int getNumOfPages();
 
-    MangaPageInfo getPage(int pageIndex) throws IOException;
+    MangaPageInfo getPage(int pageIndex);
 }

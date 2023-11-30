@@ -4,6 +4,7 @@ import com.google.common.io.MoreFiles;
 import com.noahele.mangaserver.domain.BaseEntity;
 import com.noahele.mangaserver.domain.library.Library;
 import com.noahele.mangaserver.domain.series.Series;
+import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.utils.reader.MangaReader;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -19,7 +20,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -41,21 +41,23 @@ public class Manga extends BaseEntity {
             CascadeType.DETACH,
             CascadeType.MERGE,
             CascadeType.PERSIST,
-            CascadeType.REFRESH})
-    @ToString.Exclude
+            CascadeType.REFRESH
+    })
     private List<Series> seriesList;
     @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private Library library;
 
-    public static Manga fromPath(Path path, Library library) throws IOException {
+    public static Manga fromPath(Path path, Library library) {
         String name = MoreFiles.getNameWithoutExtension(path);
         String ext = MoreFiles.getFileExtension(path);
         Series series = new Series(path.getParent().getFileName().toString());
         try (MangaReader reader = MangaReader.fromPath(path)) {
             int numOfPages = reader.getNumOfPages();
             return new Manga(name, path.toString(), ext, numOfPages, List.of(series), library);
+        } catch (IOException e) {
+            throw new RuntimeIOException(e);
         }
     }
 

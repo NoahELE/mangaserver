@@ -7,19 +7,19 @@ import com.noahele.mangaserver.domain.manga.Manga;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(indexes = @Index(columnList = "library_id"))
 public class Series extends BaseEntity {
     @NotBlank
@@ -29,7 +29,6 @@ public class Series extends BaseEntity {
     @NotNull
     @JoinColumn(nullable = false)
     public Library library;
-    @ToString.Exclude
     @JsonIgnore
     @ManyToMany
     @JoinTable

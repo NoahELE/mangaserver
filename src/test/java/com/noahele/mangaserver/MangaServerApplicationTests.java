@@ -1,7 +1,6 @@
 package com.noahele.mangaserver;
 
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,7 +10,7 @@ import java.security.KeyPair;
 class MangaServerApplicationTests {
     @Test
     void generateJwtKeyPair() {
-        KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.ES256);
+        KeyPair keyPair = Jwts.SIG.ES256.keyPair().build();
         System.out.println(keyPair.getPublic());
         System.out.println(keyPair.getPrivate());
     }

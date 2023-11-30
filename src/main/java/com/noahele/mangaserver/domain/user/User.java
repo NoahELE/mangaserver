@@ -6,7 +6,10 @@ import com.noahele.mangaserver.domain.BaseEntity;
 import com.noahele.mangaserver.domain.library.Library;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.List;
@@ -14,7 +17,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(indexes = @Index(columnList = "username"))
@@ -25,16 +27,13 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     @NotBlank
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ToString.Exclude
     private String password;
     @OneToMany(mappedBy = "owner")
     @JsonIgnore
-    @ToString.Exclude
     private List<Library> libraries;
     @Enumerated
     @Column(nullable = false)
     @JsonIgnore
-    @ToString.Exclude
     private Role role;
 
     @Override

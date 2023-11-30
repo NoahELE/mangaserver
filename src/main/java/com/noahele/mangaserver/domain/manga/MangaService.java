@@ -6,16 +6,16 @@ import com.noahele.mangaserver.domain.library.LibraryService;
 import com.noahele.mangaserver.domain.series.Series;
 import com.noahele.mangaserver.domain.series.SeriesService;
 import com.noahele.mangaserver.domain.user.User;
-import com.noahele.mangaserver.exception.CustomIOException;
+import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.MangaPageInfo;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -42,10 +42,10 @@ public class MangaService {
 
     public void addAllManga(List<Manga> mangaList, int libraryId) {
         Library library = libraryService.getLibraryReference(libraryId);
-        for (Manga manga : mangaList) {
+        mangaList.forEach(manga -> {
             assert manga.getId() == null;
             manga.setLibrary(library);
-        }
+        });
         mangaRepository.saveAll(mangaList);
     }
 
@@ -53,7 +53,6 @@ public class MangaService {
         mangaRepository.deleteById(mangaId);
     }
 
-    @Transactional
     public void updateManga(int mangaId, Manga manga) {
         assert manga.getId() == null;
         mangaRepository
@@ -65,14 +64,12 @@ public class MangaService {
                 .orElseThrow();
     }
 
-    @Transactional
     public Page<Manga> getAllMangaByLibrary(int libraryId, int page, int size) {
         Library library = libraryService.getLibraryReference(libraryId);
         PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
         return mangaRepository.findAllByLibrary(library, pageRequest);
     }
 
-    @Transactional
     public Page<Manga> getAllMangaBySeries(int seriesId, int page, int size) {
         Series series = seriesService.getSeriesReference(seriesId);
         PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
@@ -98,19 +95,18 @@ public class MangaService {
         return mangaPageCache.get(Path.of(manga.getPath()), pageIndex);
     }
 
+    @Transactional
     public void uploadManga(MultipartFile file, int libraryId) {
         Library library = libraryService.getLibraryReference(libraryId);
         String filename = file.getOriginalFilename();
         assert filename != null;
         Path path = Path.of(library.getPath(), filename);
-        try {
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, path);
-            }
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, path);
             Manga manga = Manga.fromPath(path, library);
             addManga(manga, libraryId);
         } catch (IOException e) {
-            throw new CustomIOException(e);
+            throw new RuntimeIOException(e);
         }
     }
 }
