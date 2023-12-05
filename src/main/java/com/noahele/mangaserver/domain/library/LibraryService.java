@@ -4,12 +4,12 @@ import com.google.common.io.MoreFiles;
 import com.noahele.mangaserver.domain.manga.Manga;
 import com.noahele.mangaserver.domain.manga.MangaService;
 import com.noahele.mangaserver.domain.user.User;
-import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.reader.MangaReader;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -83,6 +83,7 @@ public class LibraryService {
         mangaService.addAllManga(mangaList, libraryId);
     }
 
+    @SneakyThrows(IOException.class)
     private void scanMangaRecursive(List<Manga> mangaList, Path dir, Library library) {
         try (Stream<Path> paths = Files.list(dir)) {
             for (Path path : (Iterable<Path>) paths::iterator) {
@@ -92,8 +93,6 @@ public class LibraryService {
                     mangaList.add(Manga.fromPath(path, library));
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeIOException(e);
         }
     }
 

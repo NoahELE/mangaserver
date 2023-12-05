@@ -6,12 +6,12 @@ import com.noahele.mangaserver.domain.library.LibraryService;
 import com.noahele.mangaserver.domain.series.Series;
 import com.noahele.mangaserver.domain.series.SeriesService;
 import com.noahele.mangaserver.domain.user.User;
-import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.exception.UserOwnershipException;
 import com.noahele.mangaserver.security.SecurityUtils;
 import com.noahele.mangaserver.utils.MangaPageInfo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -95,6 +95,7 @@ public class MangaService {
         return mangaPageCache.get(Path.of(manga.getPath()), pageIndex);
     }
 
+    @SneakyThrows(IOException.class)
     @Transactional
     public void uploadManga(MultipartFile file, int libraryId) {
         Library library = libraryService.getLibraryReference(libraryId);
@@ -105,8 +106,6 @@ public class MangaService {
             Files.copy(inputStream, path);
             Manga manga = Manga.fromPath(path, library);
             addManga(manga, libraryId);
-        } catch (IOException e) {
-            throw new RuntimeIOException(e);
         }
     }
 }

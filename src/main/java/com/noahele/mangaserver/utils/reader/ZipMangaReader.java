@@ -1,9 +1,9 @@
 package com.noahele.mangaserver.utils.reader;
 
 import com.google.common.collect.Streams;
-import com.noahele.mangaserver.exception.RuntimeIOException;
 import com.noahele.mangaserver.utils.MangaPageInfo;
 import com.noahele.mangaserver.utils.NaturalOrder;
+import lombok.SneakyThrows;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.IOUtils;
@@ -19,12 +19,9 @@ public class ZipMangaReader implements MangaReader {
     private final ZipFile zipFile;
     private final List<ZipArchiveEntry> entries;
 
+    @SneakyThrows(IOException.class)
     public ZipMangaReader(Path path) {
-        try {
-            this.zipFile = new ZipFile(path);
-        } catch (IOException e) {
-            throw new RuntimeIOException(e);
-        }
+        this.zipFile = new ZipFile(path);
         Enumeration<ZipArchiveEntry> entries = zipFile.getEntries();
         this.entries = Streams.stream(entries::asIterator)
                 // remove directory entry
@@ -40,14 +37,13 @@ public class ZipMangaReader implements MangaReader {
     }
 
 
+    @SneakyThrows(IOException.class)
     @Override
     public MangaPageInfo getPage(int pageIndex) {
         ZipArchiveEntry entry = entries.get(pageIndex);
         MediaType mediaType = MangaReader.getPageMediaType(entry.getName());
         try (InputStream input = zipFile.getInputStream(entry)) {
             return new MangaPageInfo(IOUtils.toByteArray(input), mediaType);
-        } catch (IOException e) {
-            throw new RuntimeIOException(e);
         }
     }
 
