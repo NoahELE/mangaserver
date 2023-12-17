@@ -27,7 +27,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MangaService {
-    private static final Sort MANGA_SORT = Sort.sort(Manga.class).by(Manga::getName).ascending();
     private final MangaRepository mangaRepository;
     private final LibraryService libraryService;
     private final SeriesService seriesService;
@@ -66,13 +65,15 @@ public class MangaService {
 
     public Page<Manga> getAllMangaByLibrary(int libraryId, int page, int size) {
         Library library = libraryService.getLibraryReference(libraryId);
-        PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
+        Sort sort = Sort.sort(Manga.class).by(Manga::getName).ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         return mangaRepository.findAllByLibrary(library, pageRequest);
     }
 
     public Page<Manga> getAllMangaBySeries(int seriesId, int page, int size) {
         Series series = seriesService.getSeriesReference(seriesId);
-        PageRequest pageRequest = PageRequest.of(page, size, MANGA_SORT);
+        Sort sort = Sort.sort(Manga.class).by(Manga::getName).ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         return mangaRepository.findAllBySeriesListContaining(series, pageRequest);
     }
 

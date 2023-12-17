@@ -26,7 +26,6 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 public class LibraryService {
-    private static final Sort LIBRARY_SORT = Sort.sort(Library.class).by(Library::getName).ascending();
     private final LibraryRepository libraryRepository;
     @Setter // use setter injection to prevent circular dependency
     private MangaService mangaService;
@@ -66,7 +65,8 @@ public class LibraryService {
 
     public Page<Library> getAllLibraries(int page, int size) {
         User user = SecurityUtils.getCurrentUser();
-        PageRequest pageRequest = PageRequest.of(page, size, LIBRARY_SORT);
+        Sort sort = Sort.sort(Library.class).by(Library::getName).ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         return libraryRepository.findAllByOwner(user, pageRequest);
     }
 

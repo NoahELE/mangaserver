@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SeriesService {
-    private static final Sort SERIES_SORT = Sort.sort(Series.class).by(Series::getName).ascending();
     private final SeriesRepository seriesRepository;
     private final LibraryService libraryService;
 
     public Page<Series> getAllSeriesByLibrary(int libraryId, int page, int size) {
         Library library = libraryService.getLibraryReference(libraryId);
-        PageRequest pageRequest = PageRequest.of(page, size, SERIES_SORT);
+        Sort sort = Sort.sort(Series.class).by(Series::getName).ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         return seriesRepository.findAllByLibrary(library, pageRequest);
     }
 
