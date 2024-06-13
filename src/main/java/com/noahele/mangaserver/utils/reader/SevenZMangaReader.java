@@ -10,7 +10,7 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.apache.commons.compress.archivers.sevenz.SevenZArchiveEntry;
 import org.apache.commons.compress.archivers.sevenz.SevenZFile;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.MediaType;
 
 public class SevenZMangaReader implements MangaReader {
