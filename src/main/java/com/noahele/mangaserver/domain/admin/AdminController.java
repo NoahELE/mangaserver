@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class AdminController {
-    private final UserService userService;
+  private final UserService userService;
 
-    @PostMapping("/user")
-    public void addAdminUser(@RequestBody User user) {
-        log.info("Add admin user, user = {}", user);
-        userService.addAdminUser(user);
-    }
+  @PostMapping("/user")
+  public void addAdminUser(@RequestBody User user) {
+    log.info("Add admin user, user = {}", user);
+    userService.addAdminUser(user);
+  }
 }

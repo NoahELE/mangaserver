@@ -7,15 +7,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 @Slf4j
 public class SecurityUtils {
-    private SecurityUtils() {
-    }
+  private SecurityUtils() {}
 
-    public static User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
-        } else {
-            return ((UserDetailsImpl) authentication.getPrincipal()).user();
-        }
+  public static User getCurrentUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null) {
+      return null;
+    } else {
+      return ((UserDetailsImpl) authentication.getPrincipal()).user();
     }
+  }
 }

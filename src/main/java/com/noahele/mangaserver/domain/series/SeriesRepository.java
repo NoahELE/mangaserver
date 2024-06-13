@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SeriesRepository extends JpaRepository<Series, Integer> {
-    Page<Series> findAllByLibrary(Library library, Pageable pageable);
+  Page<Series> findAllByLibrary(Library library, Pageable pageable);
 }
