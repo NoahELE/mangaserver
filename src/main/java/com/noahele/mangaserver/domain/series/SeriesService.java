@@ -13,26 +13,26 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class SeriesService {
-  private final SeriesRepository seriesRepository;
-  private LibraryService libraryService;
+    private final SeriesRepository seriesRepository;
+    private LibraryService libraryService;
 
-  @Autowired
-  public void setLibraryService(@Lazy LibraryService libraryService) {
-    this.libraryService = libraryService;
-  }
+    @Autowired
+    public void setLibraryService(@Lazy LibraryService libraryService) {
+        this.libraryService = libraryService;
+    }
 
-  public Page<Series> getAllSeriesByLibrary(int libraryId, int page, int size) {
-    Library library = libraryService.getLibraryReference(libraryId);
-    Sort sort = Sort.sort(Series.class).by(Series::getName).ascending();
-    PageRequest pageRequest = PageRequest.of(page, size, sort);
-    return seriesRepository.findAllByLibrary(library, pageRequest);
-  }
+    public Page<Series> getAllSeriesByLibrary(int libraryId, int page, int size) {
+        Library library = libraryService.getLibraryReference(libraryId);
+        Sort sort = Sort.sort(Series.class).by(Series::getName).ascending();
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return seriesRepository.findAllByLibrary(library, pageRequest);
+    }
 
-  public Series getSeries(int seriesId) {
-    return seriesRepository.findById(seriesId).orElseThrow();
-  }
+    public Series getSeries(int seriesId) {
+        return seriesRepository.findById(seriesId).orElseThrow();
+    }
 
-  public Series getSeriesReference(int seriesId) {
-    return seriesRepository.getReferenceById(seriesId);
-  }
+    public Series getSeriesReference(int seriesId) {
+        return seriesRepository.getReferenceById(seriesId);
+    }
 }

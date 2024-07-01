@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-  @ExceptionHandler(BaseException.class)
-  public ResponseEntity<?> handleException(BaseException exception) {
-    return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-  }
+    @ExceptionHandler(BaseException.class)
+    public ResponseEntity<?> handleException(BaseException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

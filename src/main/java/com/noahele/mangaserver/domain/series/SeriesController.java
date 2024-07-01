@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 public class SeriesController {
-  private final SeriesService seriesService;
+    private final SeriesService seriesService;
 
-  @GetMapping("")
-  @Operation(summary = "Get all series from a library")
-  public Page<Series> getAllSeriesByLibrary(int libraryId, int page, int size) {
-    log.info("Get all series, libraryId = {}, page = {}, size = {}", libraryId, page, size);
-    return seriesService.getAllSeriesByLibrary(libraryId, page, size);
-  }
+    @GetMapping("")
+    @Operation(summary = "Get all series from a library")
+    public Page<Series> getAllSeriesByLibrary(int libraryId, int page, int size) {
+        log.info("Get all series, libraryId = {}, page = {}, size = {}", libraryId, page, size);
+        return seriesService.getAllSeriesByLibrary(libraryId, page, size);
+    }
 }
