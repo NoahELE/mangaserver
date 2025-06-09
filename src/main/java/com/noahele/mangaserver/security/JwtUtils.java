@@ -3,7 +3,6 @@ package com.noahele.mangaserver.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.security.KeyPair;
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ public final class JwtUtils {
     private JwtUtils() {
     }
 
-    public static String createJwt(@NonNull UserDetailsImpl userDetailsImpl) {
+    public static String createJwt(UserDetailsImpl userDetailsImpl) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime expiration = now.plusDays(EXPIRE_DAYS);
         return Jwts.builder()

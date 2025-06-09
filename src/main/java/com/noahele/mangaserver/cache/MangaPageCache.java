@@ -4,7 +4,6 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.noahele.mangaserver.utils.MangaPageInfo;
 import com.noahele.mangaserver.utils.reader.MangaReader;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
@@ -27,7 +26,7 @@ public class MangaPageCache {
                                 }
                             });
 
-    public @NonNull MangaPageInfo get(Path path, int index) {
+    public MangaPageInfo get(Path path, int index) {
         return cache.get(new Key(path, index));
     }
 
