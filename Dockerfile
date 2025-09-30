@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17
+FROM eclipse-temurin:21
 WORKDIR /app
 
 ENV VERSION=0.0.1-SNAPSHOT
